@@ -1,17 +1,13 @@
-import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { Topbar, Content } from "@/components/Shell";
 import { ChangePasswordForm } from "@/components/ChangePasswordForm";
 import { SiswaSignatureCard } from "./SiswaSignatureCard";
 import { SiswaPhoneForm } from "./SiswaPhoneForm";
 import type { Profile } from "@/lib/types";
+import { backendRequest } from "@/lib/backend";
 
 export default async function SiswaProfilPage() {
-  const supabase = createSupabaseServerClient();
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user!.id).single();
-  const p = profile as Profile;
+  const { data: p } = await backendRequest<Profile>("/api/me");
+  if (!p) return null;
 
   return (
     <>
@@ -39,7 +35,7 @@ export default async function SiswaProfilPage() {
             <div className="text-muted">Email</div>
             <div className="font-semibold">{p.email}</div>
           </div>
-          <SiswaPhoneForm userId={p.id} currentPhone={p.no_hp} />
+          <SiswaPhoneForm currentPhone={p.no_hp} />
         </div>
 
         <div className="card mt-4">

@@ -1,0 +1,371 @@
+openapi: 3.1.0
+info:
+  title: SIM-PKL Backend API
+  version: 1.0.0
+  description: >
+    Backend for the SIM-PKL Next.js frontend. Protected requests use the
+    Supabase SSR session cookie; the Next.js server forwards the browser's
+    cookies and propagates refreshed Set-Cookie values. All writes require
+    the exact configured frontend Origin. Writes are not automatically retried.
+servers:
+  - url: http://localhost:4000
+    description: Local backend
+security:
+  - SupabaseSSRSession: []
+paths:
+  /health:
+    get:
+      operationId: healthCheck
+      security: []
+      responses:
+        "200":
+          description: API process is responding.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+  /api/auth/login:
+    post:
+      operationId: signIn
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email, maxLength: 254 }
+                password: { type: string, minLength: 1, maxLength: 256 }
+      responses:
+        "200": { $ref: "#/components/responses/Success" }
+        "400": { $ref: "#/components/responses/InvalidInput" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+  /api/auth/logout:
+    post:
+      operationId: signOut
+      security: []
+      responses:
+        "200": { $ref: "#/components/responses/Success" }
+  /api/auth/change-password:
+    post:
+      operationId: changePassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [password]
+              properties:
+                password: { type: string, minLength: 4, maxLength: 128 }
+      responses:
+        "200": { $ref: "#/components/responses/Success" }
+        "400": { $ref: "#/components/responses/InvalidInput" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+  /api/me:
+    get:
+      operationId: getMyProfile
+      responses:
+        "200": { $ref: "#/components/responses/Success" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+  /api/me/profile:
+    patch:
+      operationId: updateMyProfile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              minProperties: 1
+              properties:
+                noHp: { type: string, maxLength: 30 }
+                signatureUrl: { type: string, format: uri, maxLength: 2000 }
+      responses:
+        "200": { $ref: "#/components/responses/Success" }
+        "400": { $ref: "#/components/responses/InvalidInput" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+  /api/dashboard/student:
+    get:
+      operationId: getStudentDashboard
+      responses:
+        "200": { $ref: "#/components/responses/Success" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /api/dashboard/approvals:
+    get:
+      operationId: getApprovalsDashboard
+      responses:
+        "200": { $ref: "#/components/responses/Success" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /api/dashboard/admin-summary:
+    get:
+      operationId: getAdminSummary
+      responses:
+        "200": { $ref: "#/components/responses/Success" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /api/admin/submissions:
+    get:
+      operationId: listAllSubmissions
+      responses:
+        "200": { $ref: "#/components/responses/Success" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /api/admin/users:
+    get:
+      operationId: listUsers
+      responses:
+        "200": { $ref: "#/components/responses/Success" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+    post:
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewUser"
+      responses:
+        "201": { $ref: "#/components/responses/Success" }
+        "400": { $ref: "#/components/responses/InvalidInput" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /api/admin/users/{id}:
+    parameters:
+      - $ref: "#/components/parameters/UuidPath"
+    patch:
+      operationId: updateUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nama]
+              properties:
+                nama: { type: string, maxLength: 150 }
+                nis: { type: string, maxLength: 40 }
+                kelas: { type: string, maxLength: 40 }
+                jurusan: { type: string, maxLength: 150 }
+                nip: { type: string, maxLength: 40 }
+                newPassword: { type: string, minLength: 4, maxLength: 128 }
+      responses:
+        "200": { $ref: "#/components/responses/Success" }
+        "400": { $ref: "#/components/responses/InvalidInput" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+    delete:
+      operationId: deleteUser
+      responses:
+        "200": { $ref: "#/components/responses/Success" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "409": { $ref: "#/components/responses/Conflict" }
+  /api/students/candidates:
+    get:
+      operationId: searchStudentCandidates
+      parameters:
+        - name: q
+          in: query
+          schema: { type: string, maxLength: 80 }
+        - name: exclude
+          in: query
+          description: Comma-separated UUIDs to exclude.
+          schema: { type: string, maxLength: 1500 }
+      responses:
+        "200": { $ref: "#/components/responses/Success" }
+        "400": { $ref: "#/components/responses/InvalidInput" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /api/submissions:
+    post:
+      operationId: createSubmission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/F01Submission"
+      responses:
+        "200": { $ref: "#/components/responses/Success" }
+        "400": { $ref: "#/components/responses/InvalidInput" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "422": { $ref: "#/components/responses/RequestFailed" }
+  /api/submissions/{id}/resubmit:
+    post:
+      operationId: resubmitSubmission
+      parameters:
+        - $ref: "#/components/parameters/UuidPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/F01Submission"
+      responses:
+        "200": { $ref: "#/components/responses/Success" }
+        "400": { $ref: "#/components/responses/InvalidInput" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "422": { $ref: "#/components/responses/RequestFailed" }
+  /api/submissions/{id}/approve:
+    post:
+      operationId: approveSubmission
+      parameters:
+        - $ref: "#/components/parameters/UuidPath"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                signerId: { type: string, format: uuid, description: Required only for a superadmin acting for a verified stage signer. }
+      responses:
+        "200": { $ref: "#/components/responses/Success" }
+        "400": { $ref: "#/components/responses/InvalidInput" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "422": { $ref: "#/components/responses/RequestFailed" }
+  /api/submissions/{id}/reject:
+    post:
+      operationId: rejectSubmission
+      parameters:
+        - $ref: "#/components/parameters/UuidPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [note]
+              properties:
+                note: { type: string, minLength: 1, maxLength: 1000 }
+                signerId: { type: string, format: uuid, description: Required only for a superadmin acting for a verified stage signer. }
+      responses:
+        "200": { $ref: "#/components/responses/Success" }
+        "400": { $ref: "#/components/responses/InvalidInput" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "422": { $ref: "#/components/responses/RequestFailed" }
+components:
+  securitySchemes:
+    SupabaseSSRSession:
+      type: apiKey
+      in: cookie
+      name: sb-<project-ref>-auth-token
+      description: >
+        Supabase SSR auth cookie; Supabase may chunk this cookie into suffixed
+        cookies. Frontend integration should forward the complete Cookie header.
+  parameters:
+    UuidPath:
+      name: id
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            status: { type: string, const: ok }
+    NewUser:
+      type: object
+      required: [role, nama, email]
+      properties:
+        role: { type: string, enum: [siswa, guru_bk, wali_kelas, ka_prodi, superadmin] }
+        nama: { type: string, maxLength: 150 }
+        email: { type: string, format: email, maxLength: 254 }
+        nis: { type: string, maxLength: 40 }
+        kelas: { type: string, maxLength: 40 }
+        jurusan: { type: string, maxLength: 150 }
+        nip: { type: string, maxLength: 40 }
+        password: { type: string, minLength: 4, maxLength: 128 }
+    F01Submission:
+      type: object
+      required:
+        - namaPerusahaan
+        - alamatKantor
+        - alamatPkl
+        - kontakNama
+        - kontakJabatan
+        - kontakHp
+        - bulanMulai
+        - bulanSelesai
+        - tahun
+        - anggotaIds
+      properties:
+        namaPerusahaan: { type: string, maxLength: 200 }
+        alamatKantor: { type: string, maxLength: 1000 }
+        alamatPkl: { type: string, maxLength: 1000 }
+        kontakNama: { type: string, maxLength: 150 }
+        kontakJabatan: { type: string, maxLength: 150 }
+        kontakHp: { type: string, maxLength: 40 }
+        bulanMulai: { type: string, maxLength: 40 }
+        bulanSelesai: { type: string, maxLength: 40 }
+        tahun: { type: string, pattern: "^\\d{4}$" }
+        anggotaIds:
+          type: array
+          maxItems: 40
+          uniqueItems: true
+          items: { type: string, format: uuid }
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code: { type: string }
+            message: { type: string }
+  responses:
+    Success:
+      description: Request succeeded.
+      headers:
+        X-Correlation-ID:
+          schema: { type: string }
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data: {}
+    InvalidInput:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorResponse" }
+    Unauthorized:
+      description: Missing, invalid, or expired session.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorResponse" }
+    Forbidden:
+      description: Caller role or request origin is not permitted.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorResponse" }
+    Conflict:
+      description: Operation conflicts with account safety rules.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorResponse" }
+    RequestFailed:
+      description: Database or domain operation rejected the request.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorResponse" }
+    RateLimited:
+      description: Too many login attempts.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorResponse" }

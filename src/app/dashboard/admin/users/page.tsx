@@ -1,17 +1,17 @@
-import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { Topbar, Content } from "@/components/Shell";
 import { UsersClient } from "./UsersClient";
 import type { Profile } from "@/lib/types";
+import { backendRequest } from "@/lib/backend";
 
 export default async function AdminUsersPage() {
-  const supabase = createSupabaseServerClient();
-  const { data: users } = await supabase.from("profiles").select("*").order("created_at", { ascending: false });
+  const { data: users } = await backendRequest<Profile[]>("/api/admin/users");
+  if (!users) return null;
 
   return (
     <>
       <Topbar title="Kelola Pengguna" sub="Data siswa dan guru pada sistem" />
       <Content>
-        <UsersClient users={(users as Profile[]) || []} />
+        <UsersClient users={users} />
       </Content>
     </>
   );

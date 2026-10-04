@@ -5,22 +5,25 @@ import { NextResponse, type NextRequest } from "next/server";
 // tidak kedaluwarsa saat pengguna berpindah halaman.
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request: { headers: request.headers } });
+  const refreshedCookies = new Map<string, { name: string; value: string; options: CookieOptions }>();
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value;
+        getAll() {
+          return request.cookies.getAll();
         },
-        set(name: string, value: string, options: CookieOptions) {
+        setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
+          for (const cookie of cookiesToSet) {
+            request.cookies.set(cookie.name, cookie.value);
+            refreshedCookies.set(cookie.name, cookie);
+          }
           response = NextResponse.next({ request: { headers: request.headers } });
-          response.cookies.set({ name, value, ...options });
-        },
-        remove(name: string, options: CookieOptions) {
-          response = NextResponse.next({ request: { headers: request.headers } });
-          response.cookies.set({ name, value: "", ...options });
+          for (const cookie of refreshedCookies.values()) {
+            response.cookies.set({ name: cookie.name, value: cookie.value, ...cookie.options });
+          }
         }
       }
     }

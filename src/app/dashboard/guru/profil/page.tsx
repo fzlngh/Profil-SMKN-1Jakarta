@@ -1,16 +1,12 @@
-import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { Topbar, Content } from "@/components/Shell";
 import { ChangePasswordForm } from "@/components/ChangePasswordForm";
 import { GuruSignatureCard } from "./GuruSignatureCard";
 import { ROLE_LABEL, type Profile } from "@/lib/types";
+import { backendRequest } from "@/lib/backend";
 
 export default async function GuruProfilPage() {
-  const supabase = createSupabaseServerClient();
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user!.id).single();
-  const p = profile as Profile;
+  const { data: p } = await backendRequest<Profile>("/api/me");
+  if (!p) return null;
 
   return (
     <>

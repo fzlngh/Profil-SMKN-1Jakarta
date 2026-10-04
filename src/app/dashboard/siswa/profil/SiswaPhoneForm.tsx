@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import { useRouter } from "next/navigation";
+import { updateMyProfile } from "@/lib/actions/auth";
 
-export function SiswaPhoneForm({ userId, currentPhone }: { userId: string; currentPhone: string | null }) {
+export function SiswaPhoneForm({ currentPhone }: { currentPhone: string | null }) {
   const [value, setValue] = useState(currentPhone || "");
   const [pending, startTransition] = useTransition();
   const toast = useToast();
@@ -13,10 +13,9 @@ export function SiswaPhoneForm({ userId, currentPhone }: { userId: string; curre
 
   function handleSave() {
     startTransition(async () => {
-      const supabase = createSupabaseBrowserClient();
-      const { error } = await supabase.from("profiles").update({ no_hp: value.trim() }).eq("id", userId);
-      if (error) {
-        toast(error.message, "err");
+      const result = await updateMyProfile({ noHp: value.trim() });
+      if (result.error) {
+        toast(result.error, "err");
         return;
       }
       toast("No. HP disimpan", "ok");

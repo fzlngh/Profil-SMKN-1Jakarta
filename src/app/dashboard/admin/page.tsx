@@ -1,8 +1,8 @@
-import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { Topbar, Content } from "@/components/Shell";
 import { StatusBadge } from "@/components/Badge";
 import { fmtDateTime } from "@/lib/format";
 import type { PengajuanF01 } from "@/lib/types";
+import { backendRequest } from "@/lib/backend";
 
 function StatCard({ label, value, color }: { label: string; value: number; color: string }) {
   return (
@@ -16,11 +16,12 @@ function StatCard({ label, value, color }: { label: string; value: number; color
 }
 
 export default async function AdminRingkasanPage() {
-  const supabase = createSupabaseServerClient();
-  const { data: subsData } = await supabase.from("pengajuan_f01").select("*").order("updated_at", { ascending: false });
-  const subs = (subsData as PengajuanF01[]) || [];
-  const { data: usersData } = await supabase.from("profiles").select("role");
-  const users = usersData || [];
+  const { data } = await backendRequest<{ submissions: PengajuanF01[]; profiles: { role: string }[] }>(
+    "/api/dashboard/admin-summary"
+  );
+  if (!data) return null;
+  const subs = data.submissions;
+  const users = data.profiles;
 
   const cnt = (k: string) => subs.filter(s => s.status === k).length;
   const students = users.filter(u => u.role === "siswa").length;

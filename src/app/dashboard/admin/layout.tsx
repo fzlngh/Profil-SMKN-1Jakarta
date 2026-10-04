@@ -1,11 +1,10 @@
 import { redirect } from "next/navigation";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { backendRequest } from "@/lib/backend";
+import type { Profile } from "@/lib/types";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const supabase = createSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+  const { data: profile } = await backendRequest<Profile>("/api/me");
+  if (!profile) redirect("/login");
   if (!profile || profile.role !== "superadmin") redirect("/");
   return <>{children}</>;
 }
