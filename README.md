@@ -9,7 +9,12 @@ The Express API in `backend/` is the application backend of record. Next.js Serv
 1. Install frontend dependencies from the project root with `npm ci`. Install backend dependencies separately with `npm --prefix backend ci`.
 2. Copy the root `.env.example` to `.env.local` for Next.js, then set the Supabase project URL and anon key. `BACKEND_API_URL` must point to the Express API reachable by the Next.js server, and `FRONTEND_ORIGIN` must match the frontend's exact origin.
 3. Copy `backend/.env.example` to `backend/.env` and fill in the Supabase URL, anon key, and service-role key. The service-role key belongs only in this backend file/process; never put it in the frontend environment or any `NEXT_PUBLIC_*` variable.
-4. Start the API with `npm run backend:dev` and Next.js with `npm run dev`.
+4. Add an OpenRouter API key to `OPENROUTER_API_KEY` in `backend/.env` to enable the school-information chatbot. The example configures three free models in fallback order; replace their IDs if OpenRouter availability changes. Never expose this key in the frontend.
+5. Start the API with `npm run backend:dev` and Next.js with `npm run dev`.
+
+### School information chatbot
+
+The public chatbot sends the submitted question and a fixed school knowledge base to the configured OpenRouter-compatible API. It does not receive Supabase cookies, account data, or service-role credentials. Its prompt limits responses to school information explicitly in that knowledge base and instructs the models to decline unrelated topics or identify unverified information. The backend endpoint is rate limited at `POST /api/public/chat`; the Next.js route proxies requests without exposing the provider key. Questions are processed by a third-party AI provider, so visitors are told not to submit personal information.
 
 Production must set `FRONTEND_ORIGIN` to the exact frontend origin (scheme/host/port, no path or trailing slash) in both processes, `BACKEND_API_URL` to a private/reachable API URL in the Next.js server environment, and `COOKIE_SECURE=true` on the API. The API enables credentialed CORS for that one configured origin and validates the origin on writes. Keep the API behind HTTPS in production. Only configure `TRUST_PROXY` when the API is behind a known reverse proxy, and set it to the trusted hop count.
 

@@ -24,6 +24,45 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthResponse"
+  /api/public/chat:
+    post:
+      operationId: askSchoolProfileChatbot
+      description: >
+        Public, rate-limited chatbot. Sends only the submitted question and a
+        fixed, curated school knowledge base to the configured OpenRouter-compatible
+        provider. Answers must not add facts outside that knowledge base.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatRequest"
+      responses:
+        "200":
+          description: Chatbot answer and the configured model that responded.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatResponse"
+        "400": { $ref: "#/components/responses/InvalidInput" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "502":
+          description: All configured model attempts failed.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+        "503":
+          description: Chatbot provider or model configuration is missing or invalid.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+        "504":
+          description: All configured model attempts timed out.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
   /api/auth/login:
     post:
       operationId: signIn
@@ -277,6 +316,22 @@ components:
           type: object
           properties:
             status: { type: string, const: ok }
+    ChatRequest:
+      type: object
+      additionalProperties: false
+      required: [message]
+      properties:
+        message: { type: string, minLength: 1, maxLength: 2000 }
+    ChatResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [reply, model]
+          properties:
+            reply: { type: string, maxLength: 4000 }
+            model: { type: string, description: The configured free model ID that answered. }
     NewUser:
       type: object
       required: [role, nama, email]
