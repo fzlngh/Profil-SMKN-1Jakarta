@@ -3,13 +3,15 @@ import { notFound } from "next/navigation";
 import { PublicSection } from "@/components/PublicSection";
 import { publicSections } from "@/lib/public-sections";
 
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return Object.keys(publicSections).map((section) => ({ section }));
 }
 
-export async function generateMetadata({ params }: { params: { section: string } }): Promise<Metadata> {
+export function generateMetadata({ params }: { params: { section: string } }): Metadata {
   const data = publicSections[params.section];
-  return data ? { title: `${data.title} — SMKN1Plus`, description: data.intro } : {};
+  return data ? { title: `${data.title} — SMK Negeri 1 Jakarta`, description: data.intro } : {};
 }
 
 export default function InfoPage({ params }: { params: { section: string } }) {

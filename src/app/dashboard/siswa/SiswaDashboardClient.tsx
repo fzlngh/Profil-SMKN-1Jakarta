@@ -10,7 +10,10 @@ import { SiswaPicker } from "@/components/SiswaPicker";
 import { useToast } from "@/components/Toast";
 import { createSubmission, resubmitSubmission, type F01Payload } from "@/lib/actions/submissions";
 import { fmtDate } from "@/lib/format";
-import { downloadF01Pdf } from "@/lib/pdf/generateF01Pdf";
+
+
+const { downloadF01Pdf } = await import("@/lib/pdf/generateF01Pdf");
+await downloadF01Pdf;
 
 const STAGE_LABEL_ID: Record<string, string> = {
   guru_bk: "Guru BK/BP",
