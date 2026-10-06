@@ -1,4 +1,10 @@
-export type PublicCard = { title: string; description: string; category?: string; label?: string };
+export type PublicCard = {
+  title: string;
+  description: string;
+  category?: string;
+  label?: string;
+  href?: string;
+};
 
 export type PublicBlock = {
   id: string;
@@ -6,6 +12,8 @@ export type PublicBlock = {
   body?: string;
   categories?: string[];
   cards?: PublicCard[];
+  sourceUrl?: string;
+  sourceLabel?: string;
 };
 
 export type PublicSectionData = {
@@ -16,90 +24,188 @@ export type PublicSectionData = {
   contactForm?: boolean;
 };
 
-const pending = "Menunggu verifikasi sekolah.";
+const pending = "Belum tersedia pada sumber sekolah yang ditinjau.";
+const schoolAddress = "Jl. Budi Utomo No. 7 RT.004 RW.008, Kel. Pasar Baru, Kec. Sawah Besar, Jakarta Pusat, DKI Jakarta 10710.";
+const archivedProgramLabel = "Arsip 2022/2023 · nama disesuaikan";
 
 export const publicSections: Record<string, PublicSectionData> = {
   tentang: {
-    eyebrow: "TENTANG SEKOLAH",
+    eyebrow: "PROFIL SEKOLAH",
     title: "Mengenal SMK Negeri 1 Jakarta",
-    intro: "Sejarah, program keahlian, fasilitas, pendidik, dan siswa dalam satu halaman.",
+    intro: "Informasi identitas, visi dan misi, sejarah, serta kompetensi yang tercantum pada sumber resmi sekolah.",
     blocks: [
-      { id: "sejarah", title: "Sejarah & misi", body: `Riwayat pendirian, visi, misi, dan struktur organisasi. ${pending}` },
       {
-        id: "program", title: "Program keahlian",
-        body: "Daftar jurusan, kurikulum, dan kemitraan industri akan ditambahkan setelah data resmi tersedia.",
-        cards: ["Bidang keahlian", "Kurikulum & praktik", "Kemitraan industri"].map((title) => ({
-          title, description: pending, label: "Placeholder · bukan daftar resmi"
-        }))
-      },
-      {
-        id: "fasilitas", title: "Fasilitas",
-        cards: ["Ruang belajar", "Area praktik", "Layanan siswa"].map((title) => ({
-          title, description: pending, label: "Contoh kategori · belum terverifikasi"
-        }))
-      },
-      {
-        id: "pendidik", title: "Pendidik & staf",
-        categories: ["Semua", "Akademik", "Layanan siswa", "Administrasi"],
-        cards: ["Akademik", "Layanan siswa", "Administrasi"].map((category) => ({
-          category, title: `Departemen ${category}`, description: pending, label: "Contoh kategori · belum terverifikasi"
-        }))
-      },
-      {
-        id: "siswa", title: "Siswa",
-        body: `Jumlah siswa per angkatan, cerita, dan karya siswa. ${pending}`,
+        id: "identitas",
+        title: "Identitas sekolah",
+        sourceUrl: "https://smkn1jakarta.sch.id/identitas-sekolah/",
+        sourceLabel: "Halaman Identitas Sekolah",
         cards: [
-          { title: "Jumlah siswa per angkatan", description: pending, label: "Belum ada data" },
-          { title: "Cerita & karya siswa", description: "Hanya diterbitkan dengan materi dan izin resmi.", label: "Menunggu materi" }
+          { title: "Nama sekolah", description: "SMK Negeri 1 Jakarta", label: "Identitas resmi" },
+          { title: "NPSN", description: "20100143", label: "Identitas resmi" },
+          { title: "NSS", description: "321016002004", label: "Identitas resmi" },
+          { title: "NIS", description: "40056", label: "Identitas resmi" },
+          { title: "Status", description: "Negeri", label: "Identitas sekolah" },
+          { title: "Alamat", description: schoolAddress, label: "Alamat sekolah" }
         ]
+      },
+      {
+        id: "visi-misi",
+        title: "Visi, misi, dan motto",
+        sourceUrl: "https://smkn1jakarta.sch.id/visi-dan-misi/",
+        sourceLabel: "Halaman Visi dan Misi",
+        body: "Visi: “Menjadikan SMK Negeri 1 Jakarta sebagai sekolah pilihan masyarakat dan sebagai pilar bagi dunia usaha dan dunia industri.”",
+        cards: [
+          { title: "Misi 1", description: "Menerapkan Keterbukaan, Kemitraan dan Pelayanan prima." },
+          { title: "Misi 2", description: "Mengembangkan Keunggulan Keterampilan, dan ketelitian dengan mengutamakan Kedisiplinan dan kejujuran yang dilandasi oleh jiwa dan semangat Keimanan, Kreatifitas, Kekeluargaan dan Kepedulian serta kasih sayang terhadap sesama dan lingkungan." },
+          { title: "Misi 3", description: "Membangun dan membina jaringan kerjasama dengan dunia usaha dan industri Nasional dan Internasional serta masyarakat luas dalam mengembangkan standart lulusan." },
+          { title: "Misi 4", description: "Mewujudkan SMK Negeri 1 Jakarta menjadi Sekolah Bertaraf Internasional." },
+          { title: "Motto", description: "SMK NEGERI 1 JAKARTA MENJADI NOMOR SATU, PANUTAN, ACUAN, DAN TELADAN." }
+        ]
+      },
+      {
+        id: "sejarah",
+        title: "Ringkasan sejarah sekolah",
+        sourceUrl: "https://smkn1jakarta.sch.id/sejarah/",
+        sourceLabel: "Halaman Sejarah",
+        body: "Berikut ringkasan sejarah berdasarkan keterangan pada situs resmi SMK Negeri 1 Jakarta.",
+        cards: [
+        { title: "1906 · KWS", description: "Sekolah bermula dengan nama Koningin Wilhelmina School (KWS), menurut keterangan sejarah sekolah." },
+          { title: "1946 · STM", description: "Setelah Indonesia merdeka, KWS berganti nama menjadi Sekolah Teknik Menengah (STM)." },
+          { title: "1979 · STM Negeri 1", description: "Perubahan menjadi STM Negeri 1 disebut berdasarkan SK Mendikbud Nomor 090/O/1979 tanggal 26 Mei 1979." },
+          { title: "1997 · SMK Negeri 1 Jakarta", description: "Nama SMK Negeri 1 Jakarta digunakan berdasarkan SK Mendikbud Nomor 0036/O/1997 tertanggal 7 Maret 1997." },
+          { title: "Gedung bersejarah", description: "Situs sekolah menyebut gedung memiliki nilai sejarah dan termasuk aset cagar budaya daerah." }
+        ]
+      },
+      {
+        id: "program",
+        title: "Kompetensi keahlian",
+        sourceUrl: "https://smkn1jakarta.sch.id/identitas-sekolah/",
+        sourceLabel: "Halaman Identitas Sekolah",
+        body: "Daftar berikut berasal dari arsip tahun ajaran 2022/2023 dan bukan konfirmasi pembukaan tahun ini. Portal SPMB DKI 2026/2027 mencatat SMK Negeri 1 memiliki 10 kompetensi, tetapi nama-nama final yang dibuka tahun ajaran tersebut perlu diperiksa langsung pada portal resmi atau dikonfirmasi sekolah. Informasi masa belajar, materi, praktik, fasilitas, sertifikasi, dan peluang lulusan menunggu keterangan ketua program keahlian.",
+        cards: [
+          "Teknik Pemesinan (TP)",
+          "Desain Gambar Mesin (DGM)",
+          "Teknik Kendaraan Ringan (TKR)",
+          "Teknik Instalasi Tenaga Listrik (TITL)",
+          "Desain Pemodelan dan Informasi Bangunan (DPIB)",
+          "Teknik Konstruksi dan Properti (TKP)",
+          "Teknik Komputer dan Jaringan (TKJ)",
+          "Sistem Informatika, Jaringan dan Aplikasi (SIJA), program 4 tahun",
+          "Rekayasa Perangkat Lunak (RPL)",
+          "Desain Komunikasi Visual (DKV)"
+        ].map((title) => ({ title, description: "Nama kompetensi sebagaimana tercantum pada sumber sekolah.", label: archivedProgramLabel }))
+      },
+      {
+        id: "fasilitas",
+        title: "Fasilitas",
+        body: pending
+      },
+      {
+        id: "pendidik",
+        title: "Pendidik dan tenaga kependidikan",
+        body: pending
+      },
+      {
+        id: "siswa",
+        title: "Informasi siswa",
+        body: "Jumlah siswa, karya, dan cerita siswa tidak ditampilkan karena belum ditemukan data terverifikasi beserta tanggal pemutakhirannya."
       }
     ]
   },
   kegiatan: {
-    eyebrow: "KEGIATAN & PRESTASI",
-    title: "Kegiatan & prestasi sekolah",
-    intro: "Agenda, arsip kegiatan, dan capaian warga sekolah.",
+    eyebrow: "ARSIP KEGIATAN & PRESTASI",
+    title: "Prestasi sekolah",
+    intro: "Catatan prestasi berikut berasal dari arsip prestasi pada situs resmi. Tahun pada setiap catatan menunjukkan periode capaian, bukan prestasi terbaru.",
     blocks: [
       {
-        id: "prestasi", title: "Prestasi",
-        categories: ["Semua", "Akademik", "Olahraga", "Ekstrakurikuler"],
-        cards: ["Akademik", "Olahraga", "Ekstrakurikuler"].map((category) => ({
-          category, title: `Prestasi ${category.toLocaleLowerCase()}`,
-          description: "Belum ada capaian terverifikasi.", label: pending
-        }))
+        id: "prestasi",
+        title: "Arsip prestasi",
+        sourceUrl: "https://smkn1jakarta.sch.id/prestasi/",
+        sourceLabel: "Halaman Prestasi",
+        categories: ["Semua", "Akademik", "Non-akademik"],
+        cards: [
+          {
+            category: "Akademik",
+            title: "Penerimaan siswa ke perguruan tinggi",
+            description: "31 siswa/i diterima melalui SNMPTN 2022; 3 siswa/i melalui SMPTN (Politeknik) 2022; dan 15 siswa/i melalui SBMPTN.",
+            label: "Arsip 2022 · Akademik"
+          },
+          {
+            category: "Non-akademik",
+            title: "CNC Milling",
+            description: "Juara 1 tingkat Provinsi; Juara 7 tingkat Nasional (sumber menulis “CNC Miling” untuk hasil tingkat Nasional).",
+            label: "Arsip 2022 · Non-akademik"
+          },
+          {
+            category: "Non-akademik",
+            title: "CNC Milling",
+            description: "Juara 1 tingkat Provinsi dan Juara 5 tingkat Nasional.",
+            label: "Arsip 2020 · Non-akademik"
+          },
+          {
+            category: "Akademik",
+            title: "Penerimaan siswa ke perguruan tinggi",
+            description: "5 siswa/i diterima di perguruan tinggi melalui jalur SNMPTN.",
+            label: "Arsip 2017 · Akademik"
+          },
+          {
+            category: "Non-akademik",
+            title: "Plumbing and Heating",
+            description: "Juara 1 tingkat Nasional dan Juara 1 tingkat Provinsi.",
+            label: "Arsip 2017 · Non-akademik"
+          },
+          {
+            category: "Non-akademik",
+            title: "IT Network System Administrasi",
+            description: "Juara 1 tingkat Nasional dan Juara 1 tingkat Provinsi.",
+            label: "Arsip 2016 · Non-akademik"
+          },
+          {
+            category: "Non-akademik",
+            title: "IT Networking",
+            description: "Juara 6 tingkat Nasional di Tangerang.",
+            label: "Arsip 2015 · Non-akademik"
+          },
+          {
+            category: "Non-akademik",
+            title: "IT Networking",
+            description: "Juara 6 tingkat Nasional di Palembang.",
+            label: "Arsip 2014 · Non-akademik"
+          }
+        ]
       },
       {
-        id: "agenda", title: "Agenda & arsip",
-        categories: ["Semua", "Mendatang", "Arsip"],
-        cards: [
-          { category: "Mendatang", title: "Agenda mendatang", description: "Belum ada acara yang dikonfirmasi.", label: pending },
-          { category: "Arsip", title: "Arsip kegiatan", description: "Belum ada dokumentasi yang dikonfirmasi.", label: "Menunggu materi & persetujuan" }
-        ]
+        id: "agenda",
+        title: "Kegiatan dan agenda",
+        body: "Agenda mendatang dan kegiatan sekolah hanya ditampilkan apabila tanggal serta informasinya sudah diterbitkan melalui CMS sekolah."
       }
     ]
   },
   kesiswaan: {
     eyebrow: "KEHIDUPAN SISWA",
     title: "Kesiswaan",
-    intro: "Informasi organisasi, kegiatan pengembangan diri, dan prestasi siswa akan ditampilkan setelah materi sekolah dikonfirmasi.",
+    intro: "Kanal resmi sekolah dapat diikuti untuk informasi kegiatan siswa yang dipublikasikan.",
     blocks: [
       {
         id: "organisasi",
         title: "Organisasi siswa",
-        body: `Informasi organisasi dan kegiatan siswa belum tersedia untuk ditayangkan. ${pending}`
+        body: pending
       },
       {
         id: "ekstrakurikuler",
         title: "Ekstrakurikuler",
-        cards: [
-          { title: "Daftar kegiatan", description: pending, label: "Belum ada daftar terverifikasi" }
-        ]
+        body: pending
       },
       {
         id: "prestasi",
         title: "Prestasi siswa",
+        body: "Prestasi yang tercatat pada sumber resmi ditampilkan pada halaman arsip prestasi.",
         cards: [
-          { title: "Capaian siswa", description: "Belum ada capaian siswa yang dikonfirmasi untuk halaman ini.", label: pending }
+          {
+            title: "Lihat arsip prestasi",
+            description: "Catatan dilengkapi tahun dan tingkat kompetisi sesuai informasi sumber.",
+            href: "/kegiatan#prestasi"
+          }
         ]
       }
     ]
@@ -107,35 +213,62 @@ export const publicSections: Record<string, PublicSectionData> = {
   informasi: {
     eyebrow: "PUSAT INFORMASI",
     title: "Informasi sekolah",
-    intro: "Berita, pengumuman, dan agenda akademik akan ditampilkan setelah sumber konten sekolah tersedia dan terhubung.",
+    intro: "Berita, pengumuman, dan agenda yang diterbitkan pengelola sekolah ditampilkan dari CMS sekolah.",
     blocks: [
       {
         id: "berita",
         title: "Berita terbaru",
+        sourceUrl: "https://smkn1jakarta.sch.id/",
+        sourceLabel: "Situs resmi sekolah",
         cards: [
-          { title: "Belum ada berita untuk ditampilkan", description: "Berita sekolah akan muncul di sini setelah konten terverifikasi tersedia.", label: "Belum ada konten terhubung" }
+          { title: "Belum ada berita terbaru", description: "Berita terbaru akan muncul di sini setelah diterbitkan melalui CMS sekolah.", label: "Menunggu konten CMS" }
         ]
       },
       {
         id: "pengumuman",
         title: "Pengumuman",
         cards: [
-          { title: "Belum ada pengumuman", description: "Periksa kanal resmi sekolah untuk informasi terbaru. Daftar pengumuman pada situs ini belum dikonfigurasi.", label: "Menunggu integrasi CMS" }
+          { title: "Belum ada pengumuman", description: "Pengumuman akan ditampilkan setelah diterbitkan melalui CMS sekolah.", label: "Menunggu konten CMS" }
         ]
       },
       {
         id: "agenda-akademik",
         title: "Agenda akademik",
         cards: [
-          { title: "Belum ada agenda terkonfirmasi", description: "Tanggal dan agenda akademik belum tersedia untuk ditayangkan.", label: pending }
+          { title: "Belum ada agenda terkonfirmasi", description: "Agenda akan ditampilkan setelah tanggal dan informasinya diterbitkan melalui CMS sekolah.", label: "Menunggu konten CMS" }
+        ]
+      },
+      {
+        id: "arsip-situs-resmi",
+        title: "Arsip berita situs resmi",
+        body: "Berita berikut berasal dari situs resmi dan ditampilkan sebagai arsip. Tanggalnya bukan penanda kegiatan terkini.",
+        cards: [
+          {
+            title: "Kiat Untuk Pendidik Berdasarkan Arahan Rasulullah",
+            description: "Artikel membahas teladan akhlak dan sikap dalam proses belajar mengajar, dirangkum dari buku karya Dr. Ahmad Irfan.",
+            label: "Arsip · 15 Maret 2025",
+            href: "https://smkn1jakarta.sch.id/kiat-untuk-pendidik-berdasarkan-arahan-rasulullah/"
+          },
+          {
+            title: "SMKN 1 JUARA UMUM Pramuka Penegak Kwarcab Tingkat Kota Administrasi Jakarta Pusat",
+            description: "Berita tentang Lomba Kreativitas Penegak yang berlangsung pada 28 September 2024 di Kantor Pemerintahan Kota Administrasi Jakarta Pusat.",
+            label: "Arsip · 1 Oktober 2024",
+            href: "https://smkn1jakarta.sch.id/smkn-1-juara-umum-lkp-tingkat-kota-administrasi-jakarta-pusat/"
+          },
+          {
+            title: "SISWA SMKN 1 JAKARTA BERPRESTASI PADA LKS KE -32 DI LAMPUNG",
+            description: "Berita sekolah mengenai prestasi siswa pada Lomba Keterampilan Siswa ke-32 di Lampung.",
+            label: "Arsip · 26 Agustus 2024",
+            href: "https://smkn1jakarta.sch.id/siswa-smkn-1-jakarta-berprestasi-pada-lks-ke-32-di-lampung/"
+          }
         ]
       }
     ]
   },
   ppdb: {
     eyebrow: "PENERIMAAN PESERTA DIDIK BARU",
-    title: "Informasi PPDB",
-    intro: "Jadwal, persyaratan, kanal pendaftaran, dan hasil seleksi resmi belum tersedia pada halaman ini. Informasi berikut adalah kerangka panduan, bukan ketentuan resmi.",
+        title: "Informasi SPMB",
+    intro: "SPMB SMK Negeri 1 Jakarta mengikuti kebijakan dan jadwal Pemerintah Provinsi DKI Jakarta. Periksa persyaratan, jalur, kuota, dan pengumuman melalui portal resmi untuk tahun ajaran berjalan.",
     blocks: [
       {
         id: "alur",
@@ -150,11 +283,14 @@ export const publicSections: Record<string, PublicSectionData> = {
       },
       {
         id: "dokumen",
-        title: "Persyaratan & dokumen",
-        body: `Daftar dokumen yang diperlukan belum dicantumkan karena persyaratan resmi belum diverifikasi. ${pending}`,
-        cards: [
-          { title: "Daftar dokumen resmi", description: "Placeholder—belum ada nama atau jenis dokumen yang dapat dipastikan. Lengkapi dokumen hanya berdasarkan pengumuman resmi.", label: "Belum tersedia" }
-        ]
+        title: "Persyaratan dan dokumen",
+        body: `Daftar dokumen yang diperlukan belum dicantumkan karena persyaratan resmi belum diverifikasi. ${pending}`
+      },
+      {
+        id: "portal-resmi",
+        title: "Portal resmi SPMB DKI Jakarta 2026/2027",
+        body: "Portal pemerintah mencantumkan SMK Negeri 1 Jakarta dengan 10 kompetensi. Periksa informasi terbaru di portal sebelum mendaftar.",
+        cards: [{ title: "SPMB DKI Jakarta", description: "Lihat pagu, kompetensi, jalur, dan pengumuman resmi.", label: "Tahun ajaran 2026/2027", href: "https://spmb.jakarta.go.id/040401/pagu" }]
       },
       {
         id: "hasil-seleksi",
@@ -165,22 +301,40 @@ export const publicSections: Record<string, PublicSectionData> = {
   },
   kontak: {
     eyebrow: "INFORMASI & PERTANYAAN",
-    title: "Hubungi sekolah",
-    intro: "Kontak, alamat, dan jam layanan resmi belum dikonfirmasi. Formulir ini hanya memeriksa kelengkapan di perangkat Anda; pesan tidak dikirim.",
+    title: "Hubungi SMK Negeri 1 Jakarta",
+    intro: "Alamat dan kanal kontak berikut tercantum pada halaman Identitas Sekolah.",
     blocks: [
-      { id: "info", title: "Informasi kontak", body: `Alamat, telepon, email, dan jam layanan. ${pending}` },
+      {
+        id: "info",
+        title: "Informasi kontak",
+        sourceUrl: "https://smkn1jakarta.sch.id/identitas-sekolah/",
+        sourceLabel: "Halaman Identitas Sekolah",
+        cards: [
+          { title: "Alamat", description: schoolAddress, label: "Alamat sekolah" },
+          { title: "Telepon", description: "(021) 381-3630", label: "Telepon sekolah", href: "tel:+62213813630" },
+          { title: "Telepon alternatif", description: "(021) 350-4091", label: "Nomor pada halaman Identitas Sekolah", href: "tel:+62213504091" },
+          { title: "Email", description: "smkn1jakarta@gmail.com", label: "Email sekolah", href: "mailto:smkn1jakarta@gmail.com" }
+        ]
+      },
       {
         id: "peta",
-        title: "Peta lokasi",
-        body: "Peta dan penanda lokasi belum ditampilkan karena alamat resmi belum diverifikasi. Tidak ada lokasi sementara yang ditetapkan."
+        title: "Alamat sekolah",
+        body: "Alamat berikut tercantum pada halaman Identitas Sekolah.",
+        cards: [
+          {
+            title: "Jl. Budi Utomo No. 7",
+            description: schoolAddress,
+            label: "Pasar Baru · Sawah Besar · Jakarta Pusat"
+          }
+        ]
       },
       {
         id: "faq",
         title: "Pertanyaan yang sering diajukan",
         cards: [
-          { title: "Bagaimana cara memperoleh informasi PPDB?", description: "Jadwal dan kanal informasi PPDB resmi menunggu konfirmasi sekolah.", label: "Jawaban menunggu verifikasi" },
-          { title: "Apa saja program keahlian yang tersedia?", description: "Daftar program keahlian resmi belum dicantumkan. Informasi akan diperbarui setelah diverifikasi.", label: "Jawaban menunggu verifikasi" },
-          { title: "Bagaimana cara menghubungi sekolah?", description: "Nomor telepon, alamat email, dan jam layanan belum dikonfirmasi pada halaman ini.", label: "Jawaban menunggu verifikasi" }
+          { title: "Bagaimana cara memperoleh informasi PPDB?", description: "Ikuti pengumuman di kanal resmi sekolah atau penyelenggara penerimaan." },
+          { title: "Apa saja program keahlian yang tersedia?", description: "Daftar pada halaman ini merujuk arsip kompetensi tahun ajaran 2022/2023 dengan sejumlah perubahan nama terbaru. Status program untuk tahun berjalan belum dapat dipastikan." },
+          { title: "Bagaimana cara menghubungi sekolah?", description: "Hubungi sekolah melalui nomor telepon atau email yang tercantum pada halaman ini." }
         ]
       }
     ],

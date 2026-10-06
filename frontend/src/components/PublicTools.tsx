@@ -7,11 +7,6 @@ type ChatMessage = {
   content: string;
 };
 
-type ChatResponse = {
-  data?: { reply?: string };
-  error?: { message?: string };
-};
-
 type SpeechRecognitionResultEvent = {
   results: ArrayLike<ArrayLike<{ transcript: string }>>;
 };
@@ -36,7 +31,7 @@ type SpeechWindow = Window & {
 const preferencesKey = "smkn1-public-accessibility";
 
 const welcomeMessage =
-  "Halo! Saya asisten informasi SMK Negeri 1 Jakarta. Saya hanya menjawab seputar informasi sekolah yang tersedia dan akan memberi tahu jika informasi belum terverifikasi.";
+  "Halo Sobat Vokasi! 👋 Saya Wilhel, asisten Virtual SMKN 1 Jakarta (Budi Utomo). Ada yang bisa saya bantu seputar PPDB 2025/2026, Program Keahlian, Jadwal Loket PTSP, atau Legalisir Ijazah?";
 
 const quickQuestions = [
   "Apa saja program keahliannya?",
@@ -60,7 +55,6 @@ export function PublicTools() {
   ]);
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
-  const chatTriggerRef = useRef<HTMLButtonElement>(null);
   const accessTriggerRef = useRef<HTMLButtonElement>(null);
   const questionInputRef = useRef<HTMLInputElement>(null);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
@@ -104,6 +98,12 @@ export function PublicTools() {
   useEffect(() => {
     if (chatOpen) questionInputRef.current?.focus();
   }, [chatOpen]);
+
+  useEffect(() => {
+    const openChat = () => setChatOpen(true);
+    window.addEventListener("open-school-chat", openChat);
+    return () => window.removeEventListener("open-school-chat", openChat);
+  }, []);
 
   useEffect(() => () => {
     recognitionRef.current?.stop();
@@ -174,24 +174,16 @@ export function PublicTools() {
     setQuestion("");
     setMessages((current) => [...current, { role: "user", content: normalized }]);
     setPending(true);
-    try {
-      const response = await fetch("/api/public/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: normalized })
-      });
-      const result = (await response.json()) as ChatResponse;
-      const reply = result.data?.reply;
-      if (!response.ok || !reply) {
-        throw new Error(result.error?.message || "Asisten belum dapat menjawab. Silakan coba lagi.");
-      }
-      setMessages((current) => [...current, { role: "assistant", content: reply }]);
-    } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : "Koneksi asisten terganggu. Silakan coba lagi.");
-      setQuestion(normalized);
-    } finally {
-      setPending(false);
-    }
+    const text = normalized.toLocaleLowerCase("id-ID");
+    const reply = text.includes("program") || text.includes("keahlian")
+      ? "Informasi program keahlian dapat dilihat pada halaman Program Keahlian. Data di situs ini bersifat pratinjau dan tidak mengambil data layanan sekolah."
+      : text.includes("prestasi") || text.includes("kegiatan")
+        ? "Silakan lihat halaman Kesiswaan untuk informasi kegiatan dan prestasi yang tercantum pada desain situs."
+        : text.includes("kontak") || text.includes("hubung")
+          ? "Kanal kontak sekolah dan formulir pratinjau tersedia pada halaman Hubungi Kami. Formulir tidak mengirim atau menyimpan data."
+          : "Asisten ini sedang dalam mode pratinjau dan belum terhubung ke layanan sekolah. Silakan gunakan tautan halaman atau kontak yang tersedia di situs.";
+    setMessages((current) => [...current, { role: "assistant", content: reply }]);
+    setPending(false);
   }
 
   function submitQuestion(event: FormEvent<HTMLFormElement>) {
@@ -203,15 +195,13 @@ export function PublicTools() {
     recognitionRef.current?.stop();
     setListening(false);
     setChatOpen(false);
-    chatTriggerRef.current?.focus();
   }
 
-  function toggleChat() {
-    if (chatOpen) {
-      closeChat();
-    } else {
-      setChatOpen(true);
-    }
+  function clearConversation() {
+    setMessages([{ role: "assistant", content: welcomeMessage }]);
+    setQuestion("");
+    setError("");
+    setChatSpeechStatus("");
   }
 
   function onChatKeyDown(event: React.KeyboardEvent<HTMLElement>) {
@@ -264,32 +254,18 @@ export function PublicTools() {
       </div>
 
       <div className="chat-widget">
-        <button
-          ref={chatTriggerRef}
-          className="chat-trigger"
-          type="button"
-          aria-expanded={chatOpen}
-          aria-controls="school-chat"
-          aria-label={chatOpen ? "Tutup chatbot informasi sekolah" : "Buka chatbot informasi sekolah"}
-          onClick={toggleChat}
-        >
-          {chatOpen ? "Tutup" : "Tanya sekolah"} <span aria-hidden="true">✳</span>
-        </button>
         <section className="chat-panel" id="school-chat" aria-labelledby="chat-title" hidden={!chatOpen} onKeyDown={onChatKeyDown}>
           <div className="chat-brand-row">
-            <span className="chat-avatar" aria-hidden="true">S1</span>
-            <div><span>ASISTEN INFORMASI SEKOLAH</span><strong>SMKN 1 Jakarta</strong></div>
-            <button type="button" aria-label="Tutup chatbot" onClick={closeChat}>×</button>
+            <span className="chat-avatar" aria-hidden="true">♧</span>
+            <div className="chat-brand-copy"><div className="chat-brand-name"><strong>Wilhel</strong><span>AI VOKASI</span></div><span>Asisten Virtual SMKN 1 Jakarta</span><small>Jakarta <b>● Online • Siap membantu 24/7</b></small></div>
+            <div className="chat-header-actions"><button type="button" aria-label="Percakapan baru" title="Percakapan baru" onClick={clearConversation}>⟳</button><button type="button" aria-label="Minimalkan chatbot" title="Minimalkan" onClick={closeChat}>−</button><button type="button" aria-label="Tutup chatbot" title="Tutup" onClick={closeChat}>×</button></div>
           </div>
-          <div className="chat-heading">
-            <div><span>CHATBOT AI · 3 MODEL GRATIS</span><h2 id="chat-title">Ada yang ingin diketahui?</h2></div>
-          </div>
-          <p className="chat-scope">Jawaban hanya seputar SMK Negeri 1 Jakarta. Informasi yang belum terverifikasi akan disebutkan apa adanya.</p>
+          <h2 className="sr-only" id="chat-title">Chat dengan Wilhel, Asisten Virtual SMKN 1 Jakarta</h2>
           <div className="chat-messages" role="log" aria-live="polite" aria-relevant="additions">
             {messages.map((message, index) => (
               <div className={`chat-message chat-message-${message.role}`} key={`${message.role}-${index}`}>
                 <p>{message.content}</p>
-                {message.role === "assistant" && <button type="button" onClick={() => speak(message.content)}>Bacakan jawaban</button>}
+                {message.role === "assistant" && <button className="chat-read-aloud" type="button" onClick={() => speak(message.content)}>Bacakan jawaban</button>}
                 {message.role === "assistant" && /belum tersedia|belum terverifikasi|tidak dapat membantu/i.test(message.content) && (
                   <a className="chat-contact-link" href="/kontak#faq">Lihat FAQ &amp; kontak sekolah</a>
                 )}
@@ -298,16 +274,11 @@ export function PublicTools() {
             {pending && <p className="chat-loading" role="status">Asisten sedang menyiapkan jawaban…</p>}
           </div>
           <div className="chat-composer">
-            <div className="chat-quick-heading"><strong>Pertanyaan cepat</strong></div>
-            <div className="chat-quick-questions">
-              {quickQuestions.map((item) => (
-                <button type="button" key={item} disabled={pending} onClick={() => void ask(item)}>{item}</button>
-              ))}
-            </div>
             {error && <p className="chat-error" role="alert">{error} <a href="/kontak#faq">Lihat FAQ &amp; kontak sekolah</a></p>}
             <form onSubmit={submitQuestion}>
-              <label className="sr-only" htmlFor="chat-question">Tulis pertanyaan tentang sekolah</label>
+              <label className="sr-only" htmlFor="chat-question">Tulis pertanyaan Anda di sini</label>
               <div className="chat-form-row">
+                <label className="chat-attachment" aria-label="Lampirkan file" title="Lampirkan file"><input type="file" accept="image/*,.pdf" onChange={(event) => { if (event.target.files?.[0]) setChatSpeechStatus(`Lampiran dipilih: ${event.target.files[0].name}`); }} /><span aria-hidden="true">♧</span></label>
                 <input
                   id="chat-question"
                   ref={questionInputRef}
@@ -316,19 +287,18 @@ export function PublicTools() {
                   required
                   maxLength={2000}
                   disabled={pending}
-                  placeholder="Tulis pesan tentang sekolah…"
+                  placeholder="Tulis pertanyaan Anda di sini..."
                 />
-                <button className="speech-toggle" type="button" aria-pressed={listening} onClick={toggleSpeechInput}>
-                  {listening ? "Hentikan dikte" : "Dikte suara"}
+                <button className="speech-toggle" type="button" aria-label={listening ? "Hentikan dikte suara" : "Dikte suara"} title={listening ? "Hentikan dikte suara" : "Dikte suara"} aria-pressed={listening} onClick={toggleSpeechInput}>
+                  {listening ? "■" : "♩"}
                 </button>
                 <button type="submit" disabled={pending || !question.trim()} aria-label="Kirim pertanyaan">
-                  {pending ? "…" : "↑"}
+                  {pending ? "…" : "➤"}
                 </button>
               </div>
             </form>
-            <p className="speech-status" role="status" aria-live="polite">{chatSpeechStatus}</p>
-            <p className="chat-speech-note">Dikte suara menggunakan layanan ucapan yang tersedia di browser dan hanya dimulai saat dipilih.</p>
-            <p className="chat-privacy">Pertanyaan diproses oleh penyedia AI pihak ketiga. Jangan kirim data pribadi.</p>
+            <p className="speech-status chat-speech-status" role="status" aria-live="polite">{chatSpeechStatus}</p>
+            <div className="chat-footer"><span>◉ Didukung oleh AI Vokasi • Terintegrasi TPS SMKN 1 Jakarta</span><button type="button" onClick={clearConversation}>Bersihkan Percakapan</button></div>
           </div>
         </section>
       </div>

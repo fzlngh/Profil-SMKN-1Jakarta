@@ -50,16 +50,34 @@ export function PublicSection({ data, feeds = {} }: { data: PublicSectionData; f
                 <p className="cms-feed-status">Belum ada konten yang diterbitkan untuk bagian ini.</p>
               ))}
             {!feedByBlock[block.id] && block.cards && block.categories && <FilteredCards cards={block.cards} categories={block.categories} />}
-            {!feedByBlock[block.id] && block.cards && !block.categories && (
+            {block.cards && !block.categories && (
+              (!feedByBlock[block.id] || !feeds[feedByBlock[block.id]]?.configured) && (
               <div className="public-card-grid">
                 {block.cards.map((card) => (
                   <article className="public-card" key={card.title}>
                     <span className="public-card-label">{card.label}</span>
                     <h3>{card.title}</h3>
                     <p>{card.description}</p>
+                    {card.href && (
+                      <a
+                        className="public-card-link"
+                        href={card.href}
+                        target={card.href.startsWith("http") ? "_blank" : undefined}
+                        rel={card.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                      >
+                        {card.href.startsWith("http") ? "Buka tautan" : "Lihat informasi"}
+                        <span aria-hidden="true"> ↗</span>
+                      </a>
+                    )}
                   </article>
                 ))}
               </div>
+              )
+            )}
+            {block.sourceUrl && (
+              <p className="source-attribution">
+                Rujukan: <a href={block.sourceUrl} target="_blank" rel="noopener noreferrer">{block.sourceLabel || "Situs resmi sekolah"} <span aria-hidden="true">↗</span></a>
+              </p>
             )}
           </section>
         ))}

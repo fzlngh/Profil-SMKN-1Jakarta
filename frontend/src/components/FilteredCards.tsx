@@ -21,6 +21,17 @@ export function FilteredCards({ cards, categories }: { cards: PublicCard[]; cate
             <span className="public-card-label">{card.label || card.category}</span>
             <h3>{card.title}</h3>
             <p>{card.description}</p>
+            {card.href && (
+              <a
+                className="public-card-link"
+                href={card.href}
+                target={card.href.startsWith("http") ? "_blank" : undefined}
+                rel={card.href.startsWith("http") ? "noopener noreferrer" : undefined}
+              >
+                {card.href.startsWith("http") ? "Buka tautan" : "Lihat informasi"}
+                <span aria-hidden="true"> ↗</span>
+              </a>
+            )}
           </article>
         ))}
       </div>

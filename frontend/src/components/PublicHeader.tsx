@@ -6,33 +6,29 @@ import { usePathname } from "next/navigation";
 
 const links = [
   { href: "/", label: "Beranda" },
-  { href: "/tentang", label: "Profil" },
-  { href: "/tentang#program", label: "Program Keahlian" },
+  { href: "/tentang", label: "Program Keahlian" },
   { href: "/kesiswaan", label: "Kesiswaan" },
-  { href: "/informasi", label: "Informasi" },
-  { href: "/ppdb", label: "PPDB" },
+  { href: "/osis", label: "Osis" },
+  { href: "/informasi", label: "Berita & PPDB" },
   { href: "/kontak", label: "Hubungi Kami" }
 ];
 
 export function PublicHeader() {
   const pathname = usePathname();
   return (
-    <header className="site-header">
-      <Link className="brand" href="/" aria-label="SMK Negeri 1 Jakarta, beranda">
-        <Image className="brand-logo" src="/logo.png" alt="Logo SMK Negeri 1 Jakarta" width={42} height={46} />
-        <span className="brand-name">SMK NEGERI 1 JAKARTA<small>PROFIL SEKOLAH · JAKARTA</small></span>
-      </Link>
-      <nav className="main-nav" aria-label="Navigasi utama">
-        {links.map((l) => (
-          <Link
-            key={l.href}
-            href={l.href}
-            aria-current={!l.href.includes("#") && pathname === l.href ? "page" : undefined}
-          >
-            {l.label}
-          </Link>
-        ))}
-      </nav>
+    <header className="site-header site-header-reference">
+      <div className="brand-row">
+        <Link className="brand" href="/" aria-label="SMK Negeri 1 Jakarta, beranda">
+          <Image className="brand-logo" src="/logo-sekolah.png" alt="Logo SMK Negeri 1 Jakarta" width={42} height={46} />
+          <span className="brand-name">SMK NEGERI 1 JAKARTA</span>
+        </Link>
+        <button className="header-chat-button" type="button" onClick={() => window.dispatchEvent(new Event("open-school-chat"))}><span aria-hidden="true">◉</span> TANYA Wilhel</button>
+      </div>
+      <div className="nav-shell">
+        <nav className="main-nav" aria-label="Navigasi utama">
+          {links.map((l) => <Link key={l.href} href={l.href} aria-current={!l.href.includes("#") && pathname === l.href ? "page" : undefined}>{l.label}</Link>)}
+        </nav>
+      </div>
     </header>
   );
 }

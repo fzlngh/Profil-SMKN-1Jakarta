@@ -7,8 +7,8 @@ const serif = Source_Serif_4({ subsets: ["latin"], weight: ["400", "600", "700"]
 const mono = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "600"], display: "swap", variable: "--font-mono", preload: false });
 
 export const metadata: Metadata = {
-  title: "SMK Negeri 1 Jakarta — Belajar, Berkarya, Berdampak",
-  description: "Profil SMK Negeri 1 Jakarta, informasi program pembelajaran, kegiatan sekolah, dan kabar terbaru."
+  title: "SMK Negeri 1 Jakarta — Profil Sekolah",
+  description: "Profil resmi SMK Negeri 1 Jakarta: identitas sekolah, sejarah, visi dan misi, arsip kompetensi keahlian, berita, prestasi, dan kontak."
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
