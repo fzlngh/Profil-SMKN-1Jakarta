@@ -31,7 +31,7 @@ type SpeechWindow = Window & {
 const preferencesKey = "smkn1-public-accessibility";
 
 const welcomeMessage =
-  "Halo Sobat Vokasi! 👋 Saya Wilhel, asisten Virtual SMKN 1 Jakarta (Budi Utomo). Ada yang bisa saya bantu seputar PPDB 2025/2026, Program Keahlian, Jadwal Loket PTSP, atau Legalisir Ijazah?";
+  "Halo! Saya asisten informasi SMK Negeri 1 Jakarta. Saya menjawab berdasarkan konten publik yang telah diterbitkan di situs. Jika informasinya tidak ditemukan, saya akan mengatakannya dengan jelas.";
 
 const quickQuestions = [
   "Apa saja program keahliannya?",
@@ -174,16 +174,45 @@ export function PublicTools() {
     setQuestion("");
     setMessages((current) => [...current, { role: "user", content: normalized }]);
     setPending(true);
-    const text = normalized.toLocaleLowerCase("id-ID");
-    const reply = text.includes("program") || text.includes("keahlian")
-      ? "Informasi program keahlian dapat dilihat pada halaman Program Keahlian. Data di situs ini bersifat pratinjau dan tidak mengambil data layanan sekolah."
-      : text.includes("prestasi") || text.includes("kegiatan")
-        ? "Silakan lihat halaman Kesiswaan untuk informasi kegiatan dan prestasi yang tercantum pada desain situs."
-        : text.includes("kontak") || text.includes("hubung")
-          ? "Kanal kontak sekolah dan formulir pratinjau tersedia pada halaman Hubungi Kami. Formulir tidak mengirim atau menyimpan data."
-          : "Asisten ini sedang dalam mode pratinjau dan belum terhubung ke layanan sekolah. Silakan gunakan tautan halaman atau kontak yang tersedia di situs.";
-    setMessages((current) => [...current, { role: "assistant", content: reply }]);
-    setPending(false);
+    try {
+      const response = await fetch("/api/public/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: normalized }),
+        cache: "no-store",
+        signal: AbortSignal.timeout(30_000)
+      });
+      const result: unknown = await response.json();
+      if (!response.ok) {
+        const code = typeof result === "object" && result !== null && "error" in result
+          && typeof result.error === "object" && result.error !== null && "code" in result.error
+          ? result.error.code
+          : "";
+        const messages: Record<string, string> = {
+          CHAT_NOT_CONFIGURED: "Asisten belum dikonfigurasi oleh pengelola situs.",
+          CHAT_TIMEOUT: "Asisten belum merespons. Silakan coba lagi.",
+          CHAT_PROVIDER_RATE_LIMITED: "Layanan AI sedang mencapai batas penggunaan. Silakan coba lagi nanti.",
+          CHAT_UNAVAILABLE: "Layanan AI sementara tidak tersedia. Silakan coba lagi nanti.",
+          RATE_LIMITED: "Batas pertanyaan tercapai. Silakan tunggu beberapa saat sebelum mencoba lagi."
+        };
+        setError(messages[typeof code === "string" ? code : ""] || "Pertanyaan belum dapat diproses. Silakan coba lagi.");
+        return;
+      }
+      const reply = typeof result === "object" && result !== null && "data" in result
+        && typeof result.data === "object" && result.data !== null && "reply" in result.data
+        && typeof result.data.reply === "string"
+        ? result.data.reply
+        : "";
+      if (!reply) {
+        setError("Asisten mengirim jawaban yang tidak dapat dibaca. Silakan coba lagi.");
+        return;
+      }
+      setMessages((current) => [...current, { role: "assistant", content: reply }]);
+    } catch {
+      setError("Asisten sekolah sementara tidak dapat dijangkau. Silakan coba lagi.");
+    } finally {
+      setPending(false);
+    }
   }
 
   function submitQuestion(event: FormEvent<HTMLFormElement>) {
@@ -257,16 +286,16 @@ export function PublicTools() {
         <section className="chat-panel" id="school-chat" aria-labelledby="chat-title" hidden={!chatOpen} onKeyDown={onChatKeyDown}>
           <div className="chat-brand-row">
             <span className="chat-avatar" aria-hidden="true">♧</span>
-            <div className="chat-brand-copy"><div className="chat-brand-name"><strong>Wilhel</strong><span>AI VOKASI</span></div><span>Asisten Virtual SMKN 1 Jakarta</span><small>Jakarta <b>● Online • Siap membantu 24/7</b></small></div>
+            <div className="chat-brand-copy"><div className="chat-brand-name"><strong>Asisten Sekolah</strong><span>AI</span></div><span>Informasi SMKN 1 Jakarta</span><small><b>Berbasis konten publik terbit</b></small></div>
             <div className="chat-header-actions"><button type="button" aria-label="Percakapan baru" title="Percakapan baru" onClick={clearConversation}>⟳</button><button type="button" aria-label="Minimalkan chatbot" title="Minimalkan" onClick={closeChat}>−</button><button type="button" aria-label="Tutup chatbot" title="Tutup" onClick={closeChat}>×</button></div>
           </div>
-          <h2 className="sr-only" id="chat-title">Chat dengan Wilhel, Asisten Virtual SMKN 1 Jakarta</h2>
+          <h2 className="sr-only" id="chat-title">Chat dengan Asisten Informasi SMKN 1 Jakarta</h2>
           <div className="chat-messages" role="log" aria-live="polite" aria-relevant="additions">
             {messages.map((message, index) => (
               <div className={`chat-message chat-message-${message.role}`} key={`${message.role}-${index}`}>
                 <p>{message.content}</p>
                 {message.role === "assistant" && <button className="chat-read-aloud" type="button" onClick={() => speak(message.content)}>Bacakan jawaban</button>}
-                {message.role === "assistant" && /belum tersedia|belum terverifikasi|tidak dapat membantu/i.test(message.content) && (
+                {message.role === "assistant" && /belum tersedia|belum terverifikasi|tidak dapat membantu|tidak menemukan informasi/i.test(message.content) && (
                   <a className="chat-contact-link" href="/kontak#faq">Lihat FAQ &amp; kontak sekolah</a>
                 )}
               </div>
@@ -278,7 +307,6 @@ export function PublicTools() {
             <form onSubmit={submitQuestion}>
               <label className="sr-only" htmlFor="chat-question">Tulis pertanyaan Anda di sini</label>
               <div className="chat-form-row">
-                <label className="chat-attachment" aria-label="Lampirkan file" title="Lampirkan file"><input type="file" accept="image/*,.pdf" onChange={(event) => { if (event.target.files?.[0]) setChatSpeechStatus(`Lampiran dipilih: ${event.target.files[0].name}`); }} /><span aria-hidden="true">♧</span></label>
                 <input
                   id="chat-question"
                   ref={questionInputRef}
@@ -298,7 +326,7 @@ export function PublicTools() {
               </div>
             </form>
             <p className="speech-status chat-speech-status" role="status" aria-live="polite">{chatSpeechStatus}</p>
-            <div className="chat-footer"><span>◉ Didukung oleh AI Vokasi • Terintegrasi TPS SMKN 1 Jakarta</span><button type="button" onClick={clearConversation}>Bersihkan Percakapan</button></div>
+            <div className="chat-footer"><span>Jawaban berdasarkan konten publik terbit. Pesan diproses oleh penyedia AI; jangan sertakan data pribadi.</span><button type="button" onClick={clearConversation}>Bersihkan Percakapan</button></div>
           </div>
         </section>
       </div>

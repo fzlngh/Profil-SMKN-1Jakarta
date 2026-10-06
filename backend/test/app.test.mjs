@@ -10,7 +10,11 @@ const USER_IDS = {
 };
 const ITEM_ID = "44444444-4444-4444-8444-444444444444";
 
-function makeApp({ env = {}, fetchImpl = async () => { throw new Error("unexpected fetch"); } } = {}) {
+function makeApp({
+  env = {},
+  fetchImpl = async () => { throw new Error("unexpected fetch"); },
+  publishedChatContent = []
+} = {}) {
   const calls = [];
   const roles = {
     [USER_IDS.editor]: "editor_guru_staf",
@@ -19,6 +23,7 @@ function makeApp({ env = {}, fetchImpl = async () => { throw new Error("unexpect
   };
   const service = {
     getRole: async (id) => roles[id] ?? null,
+    getPublishedChatContent: async () => publishedChatContent,
     getChatAnalytics: async () => ({
       days: 30,
       total: 2,
@@ -157,7 +162,16 @@ test("chat uses the second free model as fallback and records no prompt text", a
     OPENROUTER_MODEL_2: "test/two:free",
     OPENROUTER_MODEL_3: "test/three:free"
   };
-  const { app, calls } = makeApp({ env, fetchImpl });
+  const { app, calls } = makeApp({
+    env,
+    fetchImpl,
+    publishedChatContent: [{
+      resource: "academic-agenda",
+      title: "Agenda sekolah hari Jumat",
+      description: "Agenda kegiatan sekolah berlangsung hari Jumat.",
+      starts_at: "2026-11-06T08:00:00.000Z"
+    }]
+  });
   const privateQuestion = "Agenda sekolah untuk hari Jumat?";
   const response = await request(app).post("/api/public/chat").send({ message: privateQuestion }).expect(200);
   assert.equal(response.body.data.reply, "Silakan lihat agenda.");
@@ -165,6 +179,29 @@ test("chat uses the second free model as fallback and records no prompt text", a
   const analytics = calls.find((call) => call.op === "analytics").row;
   assert.deepEqual(analytics, { category: "academic_agenda", outcome: "fallback", model: "test/two:free" });
   assert.equal(JSON.stringify(analytics).includes(privateQuestion), false);
+});
+
+test("chat answers honestly without calling the provider when no published content matches", async () => {
+  const env = {
+    OPENROUTER_API_KEY: "test-key",
+    OPENROUTER_BASE_URL: "https://provider.example/v1",
+    OPENROUTER_MODEL_1: "test/one:free",
+    OPENROUTER_MODEL_2: "test/two:free",
+    OPENROUTER_MODEL_3: "test/three:free"
+  };
+  const { app, calls } = makeApp({
+    env,
+    fetchImpl: async () => { throw new Error("provider must not be called without relevant content"); }
+  });
+  const response = await request(app).post("/api/public/chat")
+    .send({ message: "Apa program keahlian sekolah?" }).expect(200);
+  assert.match(response.body.data.reply, /tidak menemukan informasi yang relevan/);
+  assert.equal(response.body.data.model, null);
+  assert.deepEqual(calls.find((call) => call.op === "analytics").row, {
+    category: "academic_program",
+    outcome: "unavailable",
+    model: null
+  });
 });
 
 test("chat rejects extra properties and is compatible with the public error contract", async () => {

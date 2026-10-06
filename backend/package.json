@@ -10,7 +10,7 @@
     "start": "node server.mjs",
     "dev": "node --watch server.mjs",
     "test": "node --test",
-    "check": "node --check server.mjs && node --check src/app.mjs && node --check src/service.mjs"
+    "check": "node --check server.mjs && node --check src/app.mjs && node --check src/chat.mjs && node --check src/service.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.0",

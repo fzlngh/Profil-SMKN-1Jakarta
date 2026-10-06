@@ -2205,17 +2205,14 @@ body:has(.site-header-reference) { background: #f5f5ff; color: #0a1d3a; }
 .chat-composer { flex:0 0 auto; padding:5px 8px 0; border-top:1px solid #eef0f4; background:#fff; }
 .chat-panel form { margin-top:0; }
 .chat-form-row { display:flex; min-height:32px; align-items:center; gap:2px; padding:2px; border:1px solid #e2e6ed; border-radius:7px; background:#fff; }
-.chat-attachment { position:relative; display:grid; width:22px; height:26px; flex:0 0 22px; place-items:center; color:#536174; cursor:pointer; }
-.chat-attachment input { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
-.chat-attachment span { font-size:14px; }
 .chat-form-row input { min-width:0; height:27px; flex:1; padding:0 3px; border:0; outline:0; background:transparent; color:#24344a; font:9px var(--font-inter),Arial,sans-serif; }
 .chat-form-row input::placeholder { color:#a0a7b2; }
 .chat-form-row > button { display:grid; width:27px; height:27px; flex:0 0 27px; place-items:center; padding:0; border:0; border-radius:6px; background:#235be5; color:#fff; font-size:14px; cursor:pointer; }
 .chat-form-row > button:disabled { opacity:.5; cursor:not-allowed; }
 .chat-form-row > .speech-toggle { width:23px; flex-basis:23px; border-radius:4px; background:#fff; color:#536174; font-size:13px; }
 .chat-speech-status { min-height:0; margin:2px 0; color:#60718a; font-size:7px; }
-.chat-footer { display:flex; min-height:29px; align-items:center; justify-content:space-between; gap:4px; border-top:1px solid #edf0f5; color:#788397; font-size:6px; line-height:1.35; }
-.chat-footer button { flex:0 0 auto; padding:2px 0 2px 4px; border:0; background:none; color:#56647a; font:6px var(--font-inter),Arial,sans-serif; cursor:pointer; }
+.chat-footer { display:flex; min-height:29px; align-items:center; justify-content:space-between; gap:4px; border-top:1px solid #edf0f5; color:#788397; font-size:8px; line-height:1.35; }
+.chat-footer button { flex:0 0 auto; padding:2px 0 2px 4px; border:0; background:none; color:#56647a; font:7px var(--font-inter),Arial,sans-serif; cursor:pointer; }
 .chat-error { margin:0 0 4px; color:#b42332; font-size:8px; }
 @media (max-width:620px) {
   .site-header-reference { padding-right:14px; padding-left:14px; }

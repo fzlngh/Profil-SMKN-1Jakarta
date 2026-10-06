@@ -31,3 +31,38 @@ test("chat analytics return bounded category and outcome aggregates without conv
   assert.deepEqual(queryCalls.at(-1), ["limit", 1_000]);
   assert.equal(JSON.stringify(result).includes("prompt"), false);
 });
+
+test("chat retrieval queries only bounded published content through the public client", async () => {
+  const calls = [];
+  const publicClient = {
+    from: (table) => {
+      const query = {
+        select: (columns) => { calls.push({ table, select: columns }); return query; },
+        eq: (...args) => { calls.push({ table, eq: args }); return query; },
+        or: (...args) => { calls.push({ table, or: args }); return query; },
+        order: (...args) => { calls.push({ table, order: args }); return query; },
+        limit: (value) => {
+          calls.push({ table, limit: value });
+          return Promise.resolve({ data: [], error: null });
+        }
+      };
+      return query;
+    }
+  };
+  const service = new CmsService({
+    publicClient,
+    serviceClient: { from: () => { throw new Error("chat must not query the service-role client"); } },
+    clock: () => new Date("2026-06-30T12:00:00.000Z")
+  });
+
+  assert.deepEqual(await service.getPublishedChatContent(), []);
+  assert.deepEqual([...new Set(calls.map((call) => call.table))].sort(), [
+    "cms_academic_agenda", "cms_announcements", "cms_hero_banners", "cms_news"
+  ]);
+  for (const table of ["cms_news", "cms_announcements", "cms_academic_agenda", "cms_hero_banners"]) {
+    assert.ok(calls.some((call) => call.table === table && call.eq?.[0] === "is_published" && call.eq[1] === true));
+    assert.ok(calls.some((call) => call.table === table && call.limit === 10));
+  }
+  assert.ok(calls.some((call) => call.table === "cms_announcements" && call.or?.[0].startsWith("starts_at.is.null")));
+  assert.ok(calls.some((call) => call.table === "cms_academic_agenda" && call.or?.[0].startsWith("ends_at.is.null")));
+});

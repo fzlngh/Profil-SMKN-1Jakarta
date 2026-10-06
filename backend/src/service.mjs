@@ -149,6 +149,49 @@ export class CmsService {
     return { items: data ?? [], total: count ?? 0, limit, offset };
   }
 
+  async getPublishedChatContent() {
+    const now = this.clock().toISOString();
+    const resources = [
+      {
+        resource: "news",
+        columns: "title,slug,excerpt,body,published_at",
+        order: ["published_at", { ascending: false, nullsFirst: false }]
+      },
+      {
+        resource: "announcements",
+        columns: "title,slug,body,severity,starts_at,ends_at,published_at",
+        order: ["published_at", { ascending: false, nullsFirst: false }]
+      },
+      {
+        resource: "academic-agenda",
+        columns: "title,slug,description,starts_at,ends_at,location,published_at",
+        order: ["starts_at", { ascending: true }]
+      },
+      {
+        resource: "hero-banners",
+        columns: "title,subtitle,link_url,published_at",
+        order: ["published_at", { ascending: false, nullsFirst: false }]
+      }
+    ];
+
+    const results = await Promise.all(resources.map(async ({ resource, columns, order }) => {
+      let query = this.publicClient.from(RESOURCE_TABLES[resource]).select(columns)
+        .eq("is_published", true)
+        .or(`published_at.is.null,published_at.lte.${now}`);
+      if (resource === "announcements") {
+        query = query.or(`starts_at.is.null,starts_at.lte.${now}`)
+          .or(`ends_at.is.null,ends_at.gte.${now}`);
+      } else if (resource === "academic-agenda") {
+        query = query.or(`ends_at.is.null,ends_at.gte.${now}`);
+      }
+      const { data, error } = await query.order(order[0], order[1]).limit(10);
+      if (error) throw new Error("DEPENDENCY_ERROR");
+      return (data ?? []).map((item) => ({ resource, ...item }));
+    }));
+
+    return results.flat();
+  }
+
   async getPublished(resource, id) {
     const table = RESOURCE_TABLES[resource];
     if (!table) throw new Error("NOT_FOUND");

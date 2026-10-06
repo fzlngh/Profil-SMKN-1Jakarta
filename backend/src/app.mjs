@@ -32,6 +32,7 @@ function errorStatus(error) {
     case "CONFLICT": return [409, "CONFLICT", "Resource conflicts with an existing item."];
     case "INVALID_INPUT": return [400, "INVALID_INPUT", "Request is invalid."];
     case "CHAT_TIMEOUT": return [504, "CHAT_TIMEOUT", "Assistant did not respond. Please try again."];
+    case "CHAT_PROVIDER_RATE_LIMITED": return [503, "CHAT_PROVIDER_RATE_LIMITED", "AI provider is temporarily at capacity. Please try again later."];
     case "CHAT_UNAVAILABLE": return [502, "CHAT_UNAVAILABLE", "Assistant is temporarily unavailable."];
     default: return [503, "SERVICE_UNAVAILABLE", "Service is temporarily unavailable."];
   }

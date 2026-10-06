@@ -20,6 +20,6 @@ The application is split into a Next.js public website and an Express CMS/chat A
 3. Apply `backend/migrations/001_school_profile_cms.sql` to that Supabase project and assign the first trusted administrator as documented in the backend guide.
 4. Add the OpenRouter-compatible provider key and model settings to `backend/.env` to enable the chatbot, then start the API with `npm run dev`.
 
-The frontend's `/api/public/chat` route proxies to Express. Provider secrets stay exclusively in the backend environment. Express also serves published news, announcements, academic agenda, and hero banners to the public site; `/admin` manages drafts, publication, roles, and privacy-safe chatbot analytics.
+The frontend's `/api/public/chat` route proxies to Express. Provider secrets stay exclusively in the backend environment. Express retrieves only currently published news, announcements, academic agenda, and hero-banner content for chatbot answers; if none is relevant, the chatbot says so without generating an unsupported answer. Questions and selected published excerpts are sent to the configured AI provider, so visitors are advised not to enter personal information. Express also serves published content to the public site; `/admin` manages drafts, publication, roles, and privacy-safe chatbot analytics.
 
 Profile content and school facts remain provisional until confirmed by the school. The CMS uses a separate Supabase project and `cms_*` schema; its migration is additive and does not restore or modify SIM-PKL application data.

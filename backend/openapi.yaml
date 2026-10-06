@@ -49,7 +49,7 @@ paths:
     post:
       tags: [Chat]
       operationId: schoolProfileChat
-      description: OpenAI-compatible chatbot endpoint. Logs category, outcome, model, and timestamp only; no question, IP, or conversation is persisted.
+      description: Chat endpoint retrieves only currently published CMS content. The visitor question and selected excerpts are sent to the configured AI provider; analytics persist category, outcome, model, and timestamp only, not question, reply, IP, or conversation.
       requestBody:
         required: true
         content:
@@ -76,7 +76,9 @@ paths:
                     required: [reply, model]
                     properties:
                       reply: { type: string }
-                      model: { type: string }
+                      model:
+                        type: [string, "null"]
+                        description: Null when no relevant published content exists and no provider call is made.
         "400":
           $ref: "#/components/responses/InvalidInput"
         "429":
@@ -84,7 +86,7 @@ paths:
         "502":
           description: Chat provider is unavailable.
         "503":
-          description: Chat provider is not configured.
+          description: Chat provider is not configured or all configured provider models are rate-limited.
         "504":
           description: Chat provider timed out.
   /api/admin/{resource}:
