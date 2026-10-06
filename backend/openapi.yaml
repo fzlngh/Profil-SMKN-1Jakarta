@@ -1,426 +1,265 @@
 openapi: 3.1.0
 info:
-  title: SIM-PKL Backend API
+  title: SMKN 1 Jakarta School Profile CMS API
   version: 1.0.0
-  description: >
-    Backend for the SIM-PKL Next.js frontend. Protected requests use the
-    Supabase SSR session cookie; the Next.js server forwards the browser's
-    cookies and propagates refreshed Set-Cookie values. All writes require
-    the exact configured frontend Origin. Writes are not automatically retried.
+  description: Standalone Express API for the public school profile CMS.
 servers:
   - url: http://localhost:4000
-    description: Local backend
-security:
-  - SupabaseSSRSession: []
+security: []
+tags:
+  - name: Public content
+  - name: Chat
+  - name: CMS
 paths:
   /health:
     get:
-      operationId: healthCheck
-      security: []
+      tags: [Public content]
+      operationId: health
       responses:
         "200":
-          description: API process is responding.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HealthResponse"
+          description: Service is responding.
+  /api/public/{resource}:
+    get:
+      tags: [Public content]
+      operationId: listPublishedContent
+      parameters:
+        - $ref: "#/components/parameters/Resource"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: Published, currently visible content.
+        "400":
+          $ref: "#/components/responses/InvalidInput"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+  /api/public/{resource}/{id}:
+    get:
+      tags: [Public content]
+      operationId: getPublishedContent
+      parameters:
+        - $ref: "#/components/parameters/Resource"
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Published item.
+        "404":
+          $ref: "#/components/responses/NotFound"
   /api/public/chat:
     post:
-      operationId: askSchoolProfileChatbot
-      description: >
-        Public, rate-limited chatbot. Sends only the submitted question and a
-        fixed, curated school knowledge base to the configured OpenRouter-compatible
-        provider. Answers must not add facts outside that knowledge base.
-      security: []
+      tags: [Chat]
+      operationId: schoolProfileChat
+      description: OpenAI-compatible chatbot endpoint. Logs category, outcome, model, and timestamp only; no question, IP, or conversation is persisted.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ChatRequest"
+              type: object
+              additionalProperties: false
+              required: [message]
+              properties:
+                message:
+                  type: string
+                  minLength: 1
+                  maxLength: 2000
       responses:
         "200":
-          description: Chatbot answer and the configured model that responded.
+          description: Chat answer.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ChatResponse"
-        "400": { $ref: "#/components/responses/InvalidInput" }
-        "403": { $ref: "#/components/responses/Forbidden" }
-        "429": { $ref: "#/components/responses/RateLimited" }
+                type: object
+                properties:
+                  data:
+                    type: object
+                    required: [reply, model]
+                    properties:
+                      reply: { type: string }
+                      model: { type: string }
+        "400":
+          $ref: "#/components/responses/InvalidInput"
+        "429":
+          $ref: "#/components/responses/RateLimited"
         "502":
-          description: All configured model attempts failed.
-          content:
-            application/json:
-              schema: { $ref: "#/components/schemas/ErrorResponse" }
+          description: Chat provider is unavailable.
         "503":
-          description: Chatbot provider or model configuration is missing or invalid.
-          content:
-            application/json:
-              schema: { $ref: "#/components/schemas/ErrorResponse" }
+          description: Chat provider is not configured.
         "504":
-          description: All configured model attempts timed out.
-          content:
-            application/json:
-              schema: { $ref: "#/components/schemas/ErrorResponse" }
-  /api/auth/login:
-    post:
-      operationId: signIn
-      security: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [email, password]
-              properties:
-                email: { type: string, format: email, maxLength: 254 }
-                password: { type: string, minLength: 1, maxLength: 256 }
-      responses:
-        "200": { $ref: "#/components/responses/Success" }
-        "400": { $ref: "#/components/responses/InvalidInput" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "429": { $ref: "#/components/responses/RateLimited" }
-  /api/auth/logout:
-    post:
-      operationId: signOut
-      security: []
-      responses:
-        "200": { $ref: "#/components/responses/Success" }
-  /api/auth/change-password:
-    post:
-      operationId: changePassword
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [password]
-              properties:
-                password: { type: string, minLength: 4, maxLength: 128 }
-      responses:
-        "200": { $ref: "#/components/responses/Success" }
-        "400": { $ref: "#/components/responses/InvalidInput" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-  /api/me:
+          description: Chat provider timed out.
+  /api/admin/{resource}:
     get:
-      operationId: getMyProfile
+      tags: [CMS]
+      operationId: listAdminContent
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Resource"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
       responses:
-        "200": { $ref: "#/components/responses/Success" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-  /api/me/profile:
+        "200": { description: Draft and published content. }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+    post:
+      tags: [CMS]
+      operationId: createContent
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Resource"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ContentInput" }
+      responses:
+        "201": { description: Content created. }
+        "400": { $ref: "#/components/responses/InvalidInput" }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /api/admin/me:
+    get:
+      tags: [CMS]
+      operationId: getCurrentCmsUser
+      description: Returns the authenticated user's server-verified CMS role.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Authenticated user and assigned CMS role.
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /api/admin/analytics:
+    get:
+      tags: [CMS]
+      operationId: getChatbotAnalytics
+      description: Returns category and outcome aggregates for the last 30 days, plus recent metadata only. No prompts, replies, user identifiers, or IP addresses are returned.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Privacy-safe chatbot analytics.
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /api/admin/{resource}/{id}:
     patch:
-      operationId: updateMyProfile
+      tags: [CMS]
+      operationId: updateContent
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Resource"
+        - $ref: "#/components/parameters/Id"
       requestBody:
         required: true
         content:
           application/json:
-            schema:
-              type: object
-              minProperties: 1
-              properties:
-                noHp: { type: string, maxLength: 30 }
-                signatureUrl: { type: string, format: uri, maxLength: 2000 }
+            schema: { $ref: "#/components/schemas/ContentInput" }
       responses:
-        "200": { $ref: "#/components/responses/Success" }
+        "200": { description: Content updated. }
         "400": { $ref: "#/components/responses/InvalidInput" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-  /api/dashboard/student:
-    get:
-      operationId: getStudentDashboard
-      responses:
-        "200": { $ref: "#/components/responses/Success" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
         "403": { $ref: "#/components/responses/Forbidden" }
-  /api/dashboard/approvals:
-    get:
-      operationId: getApprovalsDashboard
-      responses:
-        "200": { $ref: "#/components/responses/Success" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "403": { $ref: "#/components/responses/Forbidden" }
-  /api/dashboard/admin-summary:
-    get:
-      operationId: getAdminSummary
-      responses:
-        "200": { $ref: "#/components/responses/Success" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "403": { $ref: "#/components/responses/Forbidden" }
-  /api/admin/submissions:
-    get:
-      operationId: listAllSubmissions
-      responses:
-        "200": { $ref: "#/components/responses/Success" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "403": { $ref: "#/components/responses/Forbidden" }
-  /api/admin/users:
-    get:
-      operationId: listUsers
-      responses:
-        "200": { $ref: "#/components/responses/Success" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "403": { $ref: "#/components/responses/Forbidden" }
-    post:
-      operationId: createUser
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/NewUser"
-      responses:
-        "201": { $ref: "#/components/responses/Success" }
-        "400": { $ref: "#/components/responses/InvalidInput" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "403": { $ref: "#/components/responses/Forbidden" }
-  /api/admin/users/{id}:
-    parameters:
-      - $ref: "#/components/parameters/UuidPath"
-    patch:
-      operationId: updateUser
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [nama]
-              properties:
-                nama: { type: string, maxLength: 150 }
-                nis: { type: string, maxLength: 40 }
-                kelas: { type: string, maxLength: 40 }
-                jurusan: { type: string, maxLength: 150 }
-                nip: { type: string, maxLength: 40 }
-                newPassword: { type: string, minLength: 4, maxLength: 128 }
-      responses:
-        "200": { $ref: "#/components/responses/Success" }
-        "400": { $ref: "#/components/responses/InvalidInput" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
     delete:
-      operationId: deleteUser
-      responses:
-        "200": { $ref: "#/components/responses/Success" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "403": { $ref: "#/components/responses/Forbidden" }
-        "409": { $ref: "#/components/responses/Conflict" }
-  /api/students/candidates:
-    get:
-      operationId: searchStudentCandidates
+      tags: [CMS]
+      operationId: deleteContent
+      description: Admin-only hard delete; editors may create and update but cannot delete.
+      security:
+        - bearerAuth: []
       parameters:
-        - name: q
-          in: query
-          schema: { type: string, maxLength: 80 }
-        - name: exclude
-          in: query
-          description: Comma-separated UUIDs to exclude.
-          schema: { type: string, maxLength: 1500 }
+        - $ref: "#/components/parameters/Resource"
+        - $ref: "#/components/parameters/Id"
       responses:
-        "200": { $ref: "#/components/responses/Success" }
-        "400": { $ref: "#/components/responses/InvalidInput" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
+        "204": { description: Content deleted. }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
         "403": { $ref: "#/components/responses/Forbidden" }
-  /api/submissions:
-    post:
-      operationId: createSubmission
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/F01Submission"
-      responses:
-        "200": { $ref: "#/components/responses/Success" }
-        "400": { $ref: "#/components/responses/InvalidInput" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "403": { $ref: "#/components/responses/Forbidden" }
-        "422": { $ref: "#/components/responses/RequestFailed" }
-  /api/submissions/{id}/resubmit:
-    post:
-      operationId: resubmitSubmission
+        "404": { $ref: "#/components/responses/NotFound" }
+  /api/admin/users/{userId}/role:
+    put:
+      tags: [CMS]
+      operationId: assignCmsRole
+      description: Admin-only. The target must already exist in Supabase Auth; client metadata is never used to authorize requests.
+      security:
+        - bearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/UuidPath"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/F01Submission"
-      responses:
-        "200": { $ref: "#/components/responses/Success" }
-        "400": { $ref: "#/components/responses/InvalidInput" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "403": { $ref: "#/components/responses/Forbidden" }
-        "422": { $ref: "#/components/responses/RequestFailed" }
-  /api/submissions/{id}/approve:
-    post:
-      operationId: approveSubmission
-      parameters:
-        - $ref: "#/components/parameters/UuidPath"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                signerId: { type: string, format: uuid, description: Required only for a superadmin acting for a verified stage signer. }
-      responses:
-        "200": { $ref: "#/components/responses/Success" }
-        "400": { $ref: "#/components/responses/InvalidInput" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "403": { $ref: "#/components/responses/Forbidden" }
-        "422": { $ref: "#/components/responses/RequestFailed" }
-  /api/submissions/{id}/reject:
-    post:
-      operationId: rejectSubmission
-      parameters:
-        - $ref: "#/components/parameters/UuidPath"
+        - name: userId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [note]
+              additionalProperties: false
+              required: [role]
               properties:
-                note: { type: string, minLength: 1, maxLength: 1000 }
-                signerId: { type: string, format: uuid, description: Required only for a superadmin acting for a verified stage signer. }
+                role:
+                  type: string
+                  enum: [admin_it, editor_guru_staf]
       responses:
-        "200": { $ref: "#/components/responses/Success" }
-        "400": { $ref: "#/components/responses/InvalidInput" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
+        "204": { description: Role assigned. }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
         "403": { $ref: "#/components/responses/Forbidden" }
-        "422": { $ref: "#/components/responses/RequestFailed" }
+        "409": { description: The acting administrator attempted to change their own role. }
 components:
   securitySchemes:
-    SupabaseSSRSession:
-      type: apiKey
-      in: cookie
-      name: sb-<project-ref>-auth-token
-      description: >
-        Supabase SSR auth cookie; Supabase may chunk this cookie into suffixed
-        cookies. Frontend integration should forward the complete Cookie header.
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: Supabase access token
   parameters:
-    UuidPath:
+    Resource:
+      name: resource
+      in: path
+      required: true
+      schema:
+        type: string
+        enum: [news, announcements, academic-agenda, hero-banners]
+    Id:
       name: id
       in: path
       required: true
       schema: { type: string, format: uuid }
+    Limit:
+      name: limit
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+    Offset:
+      name: offset
+      in: query
+      schema: { type: integer, minimum: 0, maximum: 100000, default: 0 }
   schemas:
-    HealthResponse:
-      type: object
-      properties:
-        data:
-          type: object
-          properties:
-            status: { type: string, const: ok }
-    ChatRequest:
+    ContentInput:
+      description: Resource-specific strict object; see backend/src/service.mjs for exact per-resource field limits.
       type: object
       additionalProperties: false
-      required: [message]
       properties:
-        message: { type: string, minLength: 1, maxLength: 2000 }
-    ChatResponse:
-      type: object
-      required: [data]
-      properties:
-        data:
-          type: object
-          required: [reply, model]
-          properties:
-            reply: { type: string, maxLength: 4000 }
-            model: { type: string, description: The configured free model ID that answered. }
-    NewUser:
-      type: object
-      required: [role, nama, email]
-      properties:
-        role: { type: string, enum: [siswa, guru_bk, wali_kelas, ka_prodi, superadmin] }
-        nama: { type: string, maxLength: 150 }
-        email: { type: string, format: email, maxLength: 254 }
-        nis: { type: string, maxLength: 40 }
-        kelas: { type: string, maxLength: 40 }
-        jurusan: { type: string, maxLength: 150 }
-        nip: { type: string, maxLength: 40 }
-        password: { type: string, minLength: 4, maxLength: 128 }
-    F01Submission:
-      type: object
-      required:
-        - namaPerusahaan
-        - alamatKantor
-        - alamatPkl
-        - kontakNama
-        - kontakJabatan
-        - kontakHp
-        - bulanMulai
-        - bulanSelesai
-        - tahun
-        - anggotaIds
-      properties:
-        namaPerusahaan: { type: string, maxLength: 200 }
-        alamatKantor: { type: string, maxLength: 1000 }
-        alamatPkl: { type: string, maxLength: 1000 }
-        kontakNama: { type: string, maxLength: 150 }
-        kontakJabatan: { type: string, maxLength: 150 }
-        kontakHp: { type: string, maxLength: 40 }
-        bulanMulai: { type: string, maxLength: 40 }
-        bulanSelesai: { type: string, maxLength: 40 }
-        tahun: { type: string, pattern: "^\\d{4}$" }
-        anggotaIds:
-          type: array
-          maxItems: 40
-          uniqueItems: true
-          items: { type: string, format: uuid }
-    ErrorResponse:
-      type: object
-      required: [error]
-      properties:
-        error:
-          type: object
-          required: [code, message]
-          properties:
-            code: { type: string }
-            message: { type: string }
+        title: { type: string, maxLength: 200 }
+        slug: { type: string, maxLength: 160 }
+        body: { type: string, maxLength: 50000 }
+        excerpt: { type: [string, "null"], maxLength: 500 }
+        description: { type: [string, "null"], maxLength: 5000 }
+        image_url: { type: string, format: uri }
+        cover_image_url: { type: [string, "null"], format: uri }
+        link_url: { type: [string, "null"], format: uri }
+        is_published: { type: boolean, default: false }
+        published_at: { type: [string, "null"], format: date-time }
+        starts_at: { type: [string, "null"], format: date-time }
+        ends_at: { type: [string, "null"], format: date-time }
+        severity: { type: string, enum: [info, important, urgent] }
+        display_order: { type: integer, minimum: 0, maximum: 10000 }
   responses:
-    Success:
-      description: Request succeeded.
-      headers:
-        X-Correlation-ID:
-          schema: { type: string }
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data: {}
     InvalidInput:
-      description: Invalid request.
-      content:
-        application/json:
-          schema: { $ref: "#/components/schemas/ErrorResponse" }
-    Unauthorized:
-      description: Missing, invalid, or expired session.
-      content:
-        application/json:
-          schema: { $ref: "#/components/schemas/ErrorResponse" }
+      description: Request did not satisfy validation rules.
+    Unauthenticated:
+      description: A valid Supabase bearer token is required.
     Forbidden:
-      description: Caller role or request origin is not permitted.
-      content:
-        application/json:
-          schema: { $ref: "#/components/schemas/ErrorResponse" }
-    Conflict:
-      description: Operation conflicts with account safety rules.
-      content:
-        application/json:
-          schema: { $ref: "#/components/schemas/ErrorResponse" }
-    RequestFailed:
-      description: Database or domain operation rejected the request.
-      content:
-        application/json:
-          schema: { $ref: "#/components/schemas/ErrorResponse" }
+      description: The verified Supabase user does not have the required CMS role.
+    NotFound:
+      description: Resource not found or not publicly visible.
     RateLimited:
-      description: Too many login attempts.
-      content:
-        application/json:
-          schema: { $ref: "#/components/schemas/ErrorResponse" }
+      description: Request rate limit exceeded.

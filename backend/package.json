@@ -1,21 +1,26 @@
 {
-  "name": "sim-pkl-api",
+  "name": "smkn1jakarta-profile-cms-api",
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "dev": "node --watch server.mjs",
     "start": "node server.mjs",
-    "test": "node --test test/*.test.mjs",
-    "seed": "node seed-superadmin.mjs"
+    "dev": "node --watch server.mjs",
+    "test": "node --test",
+    "check": "node --check server.mjs && node --check src/app.mjs && node --check src/service.mjs"
   },
   "dependencies": {
-    "@supabase/ssr": "^0.5.1",
-    "@supabase/supabase-js": "^2.45.4",
-    "cookie": "^1.1.1",
-    "cors": "^2.8.6",
-    "dotenv": "^16.6.1",
-    "express": "^4.22.3",
-    "express-rate-limit": "^7.5.1"
+    "@supabase/supabase-js": "^2.57.0",
+    "dotenv": "^17.2.0",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "helmet": "^8.1.0",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "supertest": "^7.1.4"
   }
 }
