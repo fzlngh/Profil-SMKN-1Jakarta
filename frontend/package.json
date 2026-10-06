@@ -13,7 +13,13 @@
     "next": "14.2.35",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+<<<<<<< Updated upstream:frontend/package.json
     "server-only": "^0.0.1"
+=======
+    "server-only": "^0.0.1",
+    "set-cookie-parser": "^2.7.2",
+    "sharp": "^0.35.5"
+>>>>>>> Stashed changes:package.json
   },
   "devDependencies": {
     "@types/node": "^20.14.9",
