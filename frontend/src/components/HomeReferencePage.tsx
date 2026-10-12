@@ -1,44 +1,47 @@
-import Image from "next/image";
-import Link from "next/link";
-import { HomeHero } from "@/components/HomeHero";
+"use client";
 
-const timeline = [
-  { year: "1906", label: "KWS DIDIRIKAN", body: "Sekolah didirikan dengan nama Koningin Wilhelmina School (KWS), menurut sejarah yang diterbitkan sekolah." },
-  { year: "1946", label: "SEKOLAH TEKNIK MENENGAH", body: "Setelah Indonesia merdeka, nama sekolah berubah menjadi Sekolah Teknik Menengah (STM)." },
-  { year: "1979", label: "STM NEGERI 1", body: "STM Negeri 1 ditetapkan melalui keputusan yang dicantumkan pada halaman sejarah sekolah." },
-  { year: "1997", label: "SMK NEGERI 1 JAKARTA", body: "Nama SMK Negeri 1 Jakarta digunakan berdasarkan SK Mendikbud No. 0036/O/1997." }
- ] as const;
-const featuredPrograms = [
-  ["Teknik Pemesinan", "TP", "program-toi-photo.png"],
-  ["Desain Gambar Mesin", "DGM", "program-toi-photo.png"],
-  ["Teknik Kendaraan Ringan", "TKR", "program-tkr-photo.png"],
-  ["Teknik Instalasi Tenaga Listrik", "TITL", "program-toi-photo.png"]
- ] as const;
+import Link from "next/link";
+import Image from "next/image";
+import { MegaphoneIcon } from "@/components/MegaphoneIcon";
+
+const programs = [
+  ["Rekayasa Perangkat Lunak", "RPL", "#2864ed", "Belajar membangun aplikasi web, mobile, dan basis data sesuai kebutuhan industri."],
+  ["Teknik Komputer & Jaringan", "TKJ", "#0b9b8d", "Mempelajari instalasi jaringan, administrasi server, dan keamanan siber."],
+  ["Teknik Kendaraan Ringan", "TKR", "#ed4c08", "Praktik perawatan, perbaikan mesin, dan sistem kelistrikan kendaraan modern."],
+  ["Teknik Otomasi Industri", "TOI", "#7734e7", "Merancang dan merawat sistem kontrol otomatis, PLC, dan robotika industri."]
+];
+const news = [
+  ["Prestasi", "Siswa SMKN 1 Jakarta Raih Juara Nasional Lomba Kompetensi Siswa", "Tim kami berhasil membawa pulang medali emas setelah melewati tiga babak seleksi tingkat provinsi dan nasional.", "8 Okt 2026", "#2457c9"],
+  ["Kegiatan", "Kunjungan Industri RPL & TKJ ke Perusahaan Teknologi", "Siswa kelas XI mengamati langsung alur kerja tim pengembang dan infrastruktur jaringan perusahaan.", "5 Okt 2026", "#078f80"],
+  ["Akademik", "Workshop Penguatan Kurikulum untuk Guru Produktif", "Guru berbagi praktik penyusunan modul ajar berbasis proyek yang terhubung dengan kebutuhan industri.", "1 Okt 2026", "#e64b0a"],
+  ["Sekolah", "Siswa Mengikuti Gerakan Jumat Bersih di Lingkungan Sekolah", "Setiap kelas berkolaborasi merawat ruang belajar dan area praktik sebagai bagian dari budaya 5R.", "28 Sep 2026", "#7734e7"],
+  ["Program", "Karya Teaching Factory Dipamerkan pada Hari Kunjungan Kampus", "Pengunjung melihat hasil proyek siswa dari program keahlian dan mencoba beberapa demonstrasi karya.", "24 Sep 2026", "#d28b00"],
+  ["Agenda", "Pekan Kreativitas Siswa Hadirkan Pameran dan Pentas Seni", "Rangkaian kegiatan menampilkan karya, pertunjukan, dan aktivitas kolaboratif dari berbagai organisasi siswa.", "18 Sep 2026", "#d13b52"]
+];
+const announcements = [
+  ["MENDESAK", "Pembaruan Data Peserta Didik Wajib Diselesaikan", "6 Okt 2026"],
+  ["INFO", "Jadwal Penilaian Tengah Semester Ganjil 2026/2027", "9 Okt 2026"],
+  ["PENTING", "Pengumpulan Berkas Beasiswa Prestasi Diperpanjang", "7 Okt 2026"]
+];
+const events = [["15", "OKT", "Penilaian Tengah Semester (PTS) Ganjil", "07.30 – 12.00", "Ruang kelas masing-masing"], ["24", "OKT", "Pembagian Hasil PTS & Rapat Wali Murid", "08.00 – 11.00", "Aula Utama"], ["03", "NOV", "Uji Kompetensi Keahlian (Gelombang 1)", "07.00 – 15.00", "Laboratorium program keahlian"]];
+const partners = ["PT Mitra 01", "PT Mitra 02", "PT Mitra 03", "PT Mitra 04", "PT Mitra 05", "PT Mitra 06", "PT Mitra 07", "PT Mitra 08", "PT Mitra 09", "PT Mitra 10", "PT Mitra 11"];
+const organizations = [["OSIS", "Organisasi Siswa Intra Sekolah", "blue", "osis.smkn1jakarta.sch.id"], ["Pramuka", "Gugus Depan SMKN 1 Jakarta", "green", "pramuka.smkn1jakarta.sch.id"], ["PMR", "Palang Merah Remaja", "red", "pmr.smkn1jakarta.sch.id"], ["Paskibra", "Pasukan Pengibar Bendera", "orange", "paskibra.smkn1jakarta.sch.id"]];
 const Arrow = () => <span aria-hidden="true"> →</span>;
+const ImageMark = ({ label }: { label: string }) => <span className="image-mark"><i aria-hidden="true">⌑</i><small>{label}</small></span>;
 
 export function HomeReferencePage() {
-  return <div className="reference-home">
-    <HomeHero />
-    <section className="reference-history" aria-labelledby="reference-history-title"><div className="reference-wrap">
-      <header className="reference-centered-heading"><h2 id="reference-history-title">SEJARAH <em>BERDIRI</em><br />SMK NEGERI 1 JAKARTA</h2><p>Perjalanan sekolah teknik di Jakarta sejak 1906.</p></header>
-      <div className="reference-history-grid">{timeline.map((item, index) => <article className={`reference-milestone milestone-${index + 1}`} key={item.year}><span>{item.year}</span><small>{item.label}</small><p>{item.body}</p></article>)}</div>
-      <p className="reference-source-note">Sumber: <a href="https://smkn1jakarta.sch.id/sejarah/">Sejarah SMK Negeri 1 Jakarta</a>. Sekolah menyebut gedungnya pernah digunakan BKR Bagian Laut pada 1945 dan termasuk aset cagar budaya daerah.</p>
-    </div></section>
-    <section className="reference-strengths" aria-labelledby="strengths-title"><div className="reference-wrap">
-      <header className="reference-section-heading"><div><h2 id="strengths-title">INFORMASI<span>.</span></h2><p>Informasi dasar sekolah dan tautan ke kanal resminya.</p></div><Link href="/tentang">LIHAT PROFIL SEKOLAH <Arrow /></Link></header>
-      <div className="reference-strength-grid">
-        <article className="reference-strength-card"><span className="reference-icon reference-icon-1">01</span><h3>Profil Sekolah</h3><p>NPSN 20100143 · Negeri · Akreditasi A. Jl. Budi Utomo No. 7, Pasar Baru, Jakarta Pusat.</p><Link href="/tentang">SELENGKAPNYA <Arrow /></Link></article>
-        <article className="reference-strength-card"><span className="reference-icon reference-icon-2">02</span><h3>SPMB DKI Jakarta</h3><p>Periksa persyaratan, jadwal, kompetensi, dan pengumuman tahun ajaran berjalan pada portal resmi.</p><Link href="https://spmb.jakarta.go.id/040401/pagu" target="_blank" rel="noreferrer">PORTAL SPMB <Arrow /></Link></article>
-        <article className="reference-strength-card"><span className="reference-icon reference-icon-3">03</span><h3>Hubungi Sekolah</h3><p>Telepon (021) 381-3630 · smkn1jakarta@gmail.com</p><Link href="/kontak">INFORMASI KONTAK <Arrow /></Link></article>
-      </div>
-      <div className="reference-service-grid">
-        <article className="reference-service-card"><small>VISI SMK NEGERI 1 JAKARTA</small><h3>Sekolah pilihan masyarakat dan pilar dunia usaha dan dunia industri</h3><p>“Menjadikan SMK Negeri 1 Jakarta sebagai sekolah pilihan masyarakat dan sebagai pilar bagi dunia usaha dan dunia industri.”</p><Link href="/tentang#visi-misi">Baca visi dan misi <Arrow /></Link></article>
-        <article className="reference-service-card reference-service-warm"><small>BERITA BERTANGGAL DI SITUS RESMI</small><h3>Kiat Untuk Pendidik Berdasarkan Arahan Rasulullah</h3><p>Berita bertanggal 15 Maret 2025. Ditampilkan sebagai arsip, bukan sebagai kabar terbaru 2026.</p><Link href="https://smkn1jakarta.sch.id/kiat-untuk-pendidik-berdasarkan-arahan-rasulullah/" target="_blank" rel="noreferrer">Baca berita <Arrow /></Link></article>
-      </div>
-    </div></section>
-    <section className="reference-programs" aria-labelledby="reference-programs-title"><div className="reference-wrap">
-      <header className="reference-section-heading"><div><small>PROGRAM KEAHLIAN</small><h2 id="reference-programs-title">Pilihan Program Keahlian</h2><p>Gambar pada kartu merupakan ilustrasi. Rincian program menunggu konfirmasi sekolah.</p></div><Link className="reference-dark-button" href="/tentang">Semua 10 Program <Arrow /></Link></header>
-      <div className="reference-program-grid">{featuredPrograms.map(([title, code, photo]) => <article className="reference-program-card" key={code}><div className="reference-program-image"><Image src={`/images/reference/${photo}`} alt={`Ilustrasi pembelajaran ${title}`} fill sizes="(max-width: 700px) 80vw, 25vw" /></div><div className="reference-program-body"><small>{code}</small><h3>{title} ({code})</h3><p>Informasi kompetensi dan kegiatan praktik menunggu konfirmasi.</p><Link href="/tentang">Informasi program <Arrow /></Link></div></article>)}</div>
-    </div></section>
+  return <div className="pixel-home">
+    <section className="pixel-hero"><div className="pixel-hero-inner">
+      <div className="pixel-hero-copy"><span className="pixel-pill"><i/> SMK NEGERI 1 JAKARTA　/　SEKOLAH KEJURUAN TERKEMUKA</span><h1>Mencetak Teknisi Muda yang <em>Siap Berkarya</em></h1><p>Belajar langsung di bengkel dan laboratorium, terhubung dengan puluhan industri mitra, dan siap melangkah ke dunia kerja.</p><div className="pixel-actions"><Link className="pixel-button pixel-gold" href="/tentang">Jelajahi Program Studi <Arrow /></Link><Link className="pixel-button pixel-outline" href="/kontak">Lihat Mitra Industri</Link></div></div>
+      <div className="pixel-campus"><Image src="/images/reference/campus.png" alt="Kampus SMK Negeri 1 Jakarta" fill priority sizes="(max-width: 700px) 90vw, 42vw" className="pixel-campus-photo"/><span className="campus-corner corner-tl"/><span className="campus-corner corner-tr"/><span className="campus-corner corner-bl"/><span className="campus-corner corner-br"/><div className="pixel-accreditation"><small>SMKN 1 Jakarta</small><b><i aria-hidden="true"/>Akreditasi A</b><small>4 Kompetensi Keahlian</small></div><button className="pixel-hero-chat" onClick={() => window.dispatchEvent(new Event("open-school-chat"))}><span>Ada pertanyaan?<b>Tanya Wilhelbot!</b></span><Image src="/mascot.png" alt="Buka chat Wilhelbot" width={48} height={48} unoptimized/></button></div>
+      <div className="pixel-stats"><div><b>04</b><span>KOMPETENSI KEAHLIAN</span></div><div><b>120+</b><span>MITRA INDUSTRI</span></div><div><b>2.800+</b><span>PESERTA DIDIK</span></div><div><b>A</b><span>AKREDITASI</span></div></div>
+    </div><svg className="pixel-circuit" viewBox="0 0 394 174" preserveAspectRatio="none" aria-hidden="true"><path d="M223 0v47l27 27h144"/><path d="M0 132h118l26-26h100l20-20h130"/><path d="M80 174v-33l26-26h50"/><circle cx="392" cy="74" r="2.5"/><circle cx="392" cy="86" r="2.5"/><circle cx="156" cy="115" r="2.5"/></svg></section>
+    <section className="pixel-section pixel-programs" id="program-studi"><div className="pixel-wrap"><header className="pixel-heading"><div><small>[ 01 ]　PROGRAM KEAHLIAN</small><h2>Pilih jalur kompetensimu</h2><p>Empat program keahlian dengan kurikulum selaras kebutuhan industri.</p></div><Link href="/tentang">Lihat semua program <Arrow /></Link></header><div className="pixel-program-grid">{programs.map(([title, code, color, body])=><article className="pixel-program-card" key={code} style={{"--accent":color} as React.CSSProperties}><div><span></span><i/></div><h3>{title}</h3><p>{body}</p><Link href="/tentang">Lihat program <Arrow /></Link></article>)}</div></div></section>
+    <section className="pixel-section pixel-industry"><div className="pixel-wrap"><header className="pixel-heading"><div><small>[ 02 ]　MITRA INDUSTRI</small><h2>Dipercaya dunia usaha dan industri</h2><p>Siswa menjalani praktik kerja lapangan dan terhubung ke peluang kerja bersama perusahaan mitra kami.</p></div><aside><b>120+</b><small>Perusahaan mitra</small><b>1.000+</b><small>Siswa PKL / tahun</small></aside></header><div className="pixel-partners">{partners.map((partner, i)=><article key={partner}><ImageMark label="LOGO PT"/><b>{partner}</b><small>{["TEKNOLOGI", "OTOMOTIF", "MANUFAKTUR", "TELEKOMUNIKASI"][i % 4]}</small></article>)}<Link href="/kontak" className="pixel-partner-cta"><b>Jadi mitra industri</b><small>Hubungi Humas <Arrow /></small></Link></div><div className="pixel-industry-tags"><small>KERJA SAMA:</small><span>Praktik Kerja Lapangan</span><span>Teaching Factory</span><span>Rekrutmen Lulusan</span><span>Guru Tamu Industri</span></div></div></section>
+    <section className="pixel-section pixel-news" id="berita"><div className="pixel-wrap"><header className="pixel-heading"><div><small>[ 03 ]　BERITA TERBARU</small><h2>Kabar dari SMKN 1 Jakarta</h2></div><Link href="/informasi">Semua berita <Arrow /></Link></header><div className="pixel-news-grid">{news.map(([tag,title,summary,date,color])=><article key={title}><div className="pixel-news-image" style={{background:color}}><ImageMark label="Foto berita"/></div><section><small>{tag}</small><h3>{title}</h3><p>{summary}</p><footer>▣ &nbsp;{date}<Link href="/informasi">Baca <Arrow /></Link></footer></section></article>)}</div></div></section>
+    <section className="pixel-section pixel-schedule" id="pengumuman"><div className="pixel-wrap pixel-schedule-grid"><div><header className="pixel-heading"><div><small>[ 04 ]　PENGUMUMAN</small><h2>Info penting</h2></div></header>{announcements.map(([kind,item,date],i)=><Link className={`pixel-announcement tone-${i}`} href="/pengumuman" key={item}><span className="pixel-ann-icon"><MegaphoneIcon /></span><span><small>{kind}　•　{date}</small><b>{item}</b></span><Arrow /></Link>)}</div><div id="agenda"><header className="pixel-heading"><div><small>[ 05 ]　AGENDA AKADEMIK</small><h2>Jadwal terdekat</h2></div></header>{events.map(([day,month,title,time,place])=><article className="pixel-event" key={day}><b><strong>{day}</strong><small>{month}</small></b><span><strong>{title}</strong><small>◷ {time}　◉ {place}</small></span></article>)}</div></div></section>
+    <section className="pixel-section pixel-org" id="organisasi"><div className="pixel-wrap"><header className="pixel-heading"><div><small>[ 06 ]　ORGANISASI</small><h2>Wadah berkarya siswa</h2><p>Setiap organisasi punya website sendiri. Klik untuk mengenal lebih dekat.</p></div><Link href="/organisasi">Semua organisasi <Arrow /></Link></header><div className="pixel-org-grid">{organizations.map(([name,desc,tone,website])=><a href={`https://${website}`} target="_blank" rel="noreferrer" key={name}><div className={`org-photo ${tone}`}><ImageMark label="FOTO KEGIATAN"/></div><b>{name}<small>{desc}</small></b><span className="org-link"><small>WEBSITE</small><b>{website}</b><i aria-hidden="true">↗</i></span></a>)}</div></div></section>
+    <section className="pixel-section pixel-gallery" id="galeri"><div className="pixel-wrap"><header className="pixel-heading"><div><small>[ 07 ]　GALERI KAMPUS</small><h2>Sekilas kehidupan di sekolah</h2></div><Link href="/galeri">Buka galeri <Arrow /></Link></header><div className="pixel-gallery-grid">{[["Upacara & kegiatan","blue"],["Praktik bengkel","teal"],["Lomba & prestasi","orange"],["Ekstrakurikuler","violet"]].map(([title,tone])=><article className={tone} key={title}><ImageMark label={title}/></article>)}</div></div></section>
+      <section className="pixel-section pixel-cta-section"><div className="pixel-wrap"><div className="pixel-cta"><div><small>[ TANYA BOT ]</small><h2>Ada pertanyaan seputar sekolah?</h2><p>Wilhelbot, asisten virtual SMKN 1 Jakarta, siap menjawab soal program studi, jadwal, dan pengumuman. Klik ikon bulat di pojok kanan bawah kapan saja.</p><div className="pixel-cta-chips">{["Info program studi", "Jadwal & agenda", "Kontak sekolah"].map(label=><button key={label} onClick={() => window.dispatchEvent(new Event("open-school-chat"))}>{label}</button>)}</div></div><button className="pixel-cta-bot" aria-label="Buka chat Wilhelbot" onClick={() => window.dispatchEvent(new Event("open-school-chat"))}><Image src="/mascot.png" alt="" width={150} height={150} unoptimized/></button></div></div></section>
   </div>;
 }

@@ -10,18 +10,17 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.2",
+    "leaflet": "^1.9.4",
     "next": "14.2.35",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-<<<<<<< Updated upstream:frontend/package.json
-    "server-only": "^0.0.1"
-=======
     "server-only": "^0.0.1",
     "set-cookie-parser": "^2.7.2",
-    "sharp": "^0.35.5"
->>>>>>> Stashed changes:package.json
+    "sharp": "^0.35.5",
+    "swiper": "^14.3.0"
   },
   "devDependencies": {
+    "@types/leaflet": "^1.9.22",
     "@types/node": "^20.14.9",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",

@@ -226,13 +226,6 @@ export function PublicTools() {
     setChatOpen(false);
   }
 
-  function clearConversation() {
-    setMessages([{ role: "assistant", content: welcomeMessage }]);
-    setQuestion("");
-    setError("");
-    setChatSpeechStatus("");
-  }
-
   function onChatKeyDown(event: React.KeyboardEvent<HTMLElement>) {
     if (event.key === "Escape") closeChat();
   }
@@ -283,11 +276,15 @@ export function PublicTools() {
       </div>
 
       <div className="chat-widget">
-        <section className="chat-panel" id="school-chat" aria-labelledby="chat-title" hidden={!chatOpen} onKeyDown={onChatKeyDown}>
+        {!chatOpen && <button className="chat-trigger" type="button" onClick={() => setChatOpen(true)} aria-controls="school-chat" aria-expanded={chatOpen}>
+          <span className="chat-trigger-icon" aria-hidden="true"><img src="/mascot.png" alt="" /></span>
+          <span className="chat-trigger-copy"><strong>Tanya Chatbot</strong><small>Asisten info sekolah</small></span>
+        </button>}
+        <section className="chat-panel" id="school-chat" role="dialog" aria-modal="false" aria-labelledby="chat-title" hidden={!chatOpen} onKeyDown={onChatKeyDown}>
           <div className="chat-brand-row">
-            <span className="chat-avatar" aria-hidden="true">♧</span>
-            <div className="chat-brand-copy"><div className="chat-brand-name"><strong>Asisten Sekolah</strong><span>AI</span></div><span>Informasi SMKN 1 Jakarta</span><small><b>Berbasis konten publik terbit</b></small></div>
-            <div className="chat-header-actions"><button type="button" aria-label="Percakapan baru" title="Percakapan baru" onClick={clearConversation}>⟳</button><button type="button" aria-label="Minimalkan chatbot" title="Minimalkan" onClick={closeChat}>−</button><button type="button" aria-label="Tutup chatbot" title="Tutup" onClick={closeChat}>×</button></div>
+            <span className="chat-avatar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 5.75A2.75 2.75 0 0 1 7.75 3h8.5A2.75 2.75 0 0 1 19 5.75v7.5A2.75 2.75 0 0 1 16.25 16H10l-4.5 4v-4.4A2.74 2.74 0 0 1 5 13.25v-7.5Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/></svg></span>
+            <div className="chat-brand-copy"><div className="chat-brand-name"><strong>Asisten SMKN 1 Jakarta</strong></div><span>Informasi sekolah <i aria-hidden="true" /></span></div>
+            <div className="chat-header-actions"><button type="button" aria-label="Tutup chatbot" title="Tutup" onClick={closeChat}>×</button></div>
           </div>
           <h2 className="sr-only" id="chat-title">Chat dengan Asisten Informasi SMKN 1 Jakarta</h2>
           <div className="chat-messages" role="log" aria-live="polite" aria-relevant="additions">
@@ -300,6 +297,7 @@ export function PublicTools() {
                 )}
               </div>
             ))}
+            {messages.length === 1 && <div className="chat-suggestions"><small>Pertanyaan populer</small>{quickQuestions.map((item) => <button key={item} type="button" disabled={pending} onClick={() => void ask(item)}>{item}</button>)}</div>}
             {pending && <p className="chat-loading" role="status">Asisten sedang menyiapkan jawaban…</p>}
           </div>
           <div className="chat-composer">
@@ -318,7 +316,7 @@ export function PublicTools() {
                   placeholder="Tulis pertanyaan Anda di sini..."
                 />
                 <button className="speech-toggle" type="button" aria-label={listening ? "Hentikan dikte suara" : "Dikte suara"} title={listening ? "Hentikan dikte suara" : "Dikte suara"} aria-pressed={listening} onClick={toggleSpeechInput}>
-                  {listening ? "■" : "♩"}
+                  {listening ? <span aria-hidden="true">■</span> : <svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" stroke="currentColor" strokeWidth="1.8"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4m-3 0h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>}
                 </button>
                 <button type="submit" disabled={pending || !question.trim()} aria-label="Kirim pertanyaan">
                   {pending ? "…" : "➤"}
@@ -326,7 +324,7 @@ export function PublicTools() {
               </div>
             </form>
             <p className="speech-status chat-speech-status" role="status" aria-live="polite">{chatSpeechStatus}</p>
-            <div className="chat-footer"><span>Jawaban berdasarkan konten publik terbit. Pesan diproses oleh penyedia AI; jangan sertakan data pribadi.</span><button type="button" onClick={clearConversation}>Bersihkan Percakapan</button></div>
+            <div className="chat-footer"><span>Jawaban berdasarkan konten publik terbit. Pesan diproses oleh penyedia AI; jangan sertakan data pribadi.</span></div>
           </div>
         </section>
       </div>

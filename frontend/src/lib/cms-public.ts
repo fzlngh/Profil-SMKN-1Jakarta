@@ -10,7 +10,10 @@ export type CmsPublicItem = {
   cover_image_url?: string;
   link_url?: string;
   author_label?: string;
+  category?: string;
   severity?: string;
+  published_at?: string;
+  created_at?: string;
   starts_at?: string;
   ends_at?: string;
   location?: string;
@@ -47,7 +50,10 @@ function parseItems(value: unknown): CmsPublicItem[] | null {
       cover_image_url: optionalString(item.cover_image_url),
       link_url: optionalString(item.link_url),
       author_label: optionalString(item.author_label),
+      category: optionalString(item.category),
       severity: optionalString(item.severity),
+      published_at: optionalString(item.published_at),
+      created_at: optionalString(item.created_at),
       starts_at: optionalString(item.starts_at),
       ends_at: optionalString(item.ends_at),
       location: optionalString(item.location)

@@ -2,14 +2,15 @@ import { publicSections } from "@/lib/public-sections";
 
 export const PUBLIC_NAVIGATION = [
   { href: "/", label: "Beranda" },
-  { href: "/tentang", label: "Program Keahlian" },
-  { href: "/kesiswaan", label: "Kesiswaan" },
-  { href: "/osis", label: "OSIS" },
-  { href: "/informasi", label: "Berita & PPDB" },
-  { href: "/kontak", label: "Hubungi Kami" }
+  { href: "/tentang", label: "Program Studi" },
+  { href: "/informasi", label: "Berita" },
+  { href: "/pengumuman", label: "Pengumuman" },
+  { href: "/agenda", label: "Agenda" },
+  { href: "/organisasi", label: "Organisasi" },
+  { href: "/galeri", label: "Galeri" }
 ] as const;
 
-export const PUBLIC_KNOWLEDGE_ROUTES = [
+export const PUBLIC_KNOWLEDGE_ROUTES: { path: string; title: string; section?: keyof typeof publicSections; summary?: string }[] = [
   { path: "/", title: "Beranda", summary: "Profil, sejarah, program keahlian, PPDB, dan kontak SMK Negeri 1 Jakarta." },
   { path: "/tentang", title: "Profil dan program keahlian", section: "tentang" },
   { path: "/kegiatan", title: "Kegiatan dan prestasi", section: "kegiatan" },
