@@ -9,6 +9,8 @@ export const RESOURCE_TABLES = {
   "hero-banners": "cms_hero_banners"
 };
 
+const NLP_RESULT_TTL_MS = 24 * 60 * 60 * 1_000;
+
 const uuidSchema = z.string().uuid();
 const slugSchema = z.string().trim().min(1).max(160).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 const shortText = (max) => z.string().trim().min(1).max(max);
@@ -250,6 +252,42 @@ export class CmsService {
       role,
       updated_at: this.clock().toISOString()
     }, { onConflict: "user_id" });
+    if (error) throw new Error("DEPENDENCY_ERROR");
+  }
+
+  // Tahap NLP -> database: simpan output NLP dan kembalikan id-nya.
+  async saveNlpResult(result) {
+    const expiresAt = new Date(this.clock().getTime() + NLP_RESULT_TTL_MS).toISOString();
+    const { data, error } = await this.serviceClient.from("cms_chatbot_nlp_results").insert({
+      intent: result.intent,
+      confidence: result.confidence,
+      keywords: result.keywords,
+      entities: result.entities,
+      matched_refs: result.matched_refs,
+      context: result.context,
+      nlp_version: result.nlp_version,
+      expires_at: expiresAt
+    }).select("id").single();
+    if (error || !data?.id) throw new Error("DEPENDENCY_ERROR");
+    return data.id;
+  }
+
+  // Tahap LLM: ambil kembali output NLP dari database berdasarkan id.
+  async getNlpResult(id) {
+    const now = this.clock().toISOString();
+    const { data, error } = await this.serviceClient.from("cms_chatbot_nlp_results")
+      .select("id,intent,confidence,keywords,entities,matched_refs,context,nlp_version")
+      .eq("id", id)
+      .gt("expires_at", now)
+      .maybeSingle();
+    if (error || !data) throw new Error("DEPENDENCY_ERROR");
+    return data;
+  }
+
+  async purgeExpiredNlpResults() {
+    const { error } = await this.serviceClient.from("cms_chatbot_nlp_results")
+      .delete()
+      .lt("expires_at", this.clock().toISOString());
     if (error) throw new Error("DEPENDENCY_ERROR");
   }
 

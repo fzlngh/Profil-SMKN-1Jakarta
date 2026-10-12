@@ -51,9 +51,19 @@ All success responses except `204` use `{ "data": ... }`; errors use `{ "error":
 - `GET /api/public/academic-agenda[?limit=20&offset=0]`
 - `GET /api/public/hero-banners[?limit=20&offset=0]`
 - `GET /api/public/{resource}/{uuid}` returns only a currently published item.
-- `POST /api/public/chat` accepts exactly `{ "message": "..." }` (max 2,000 characters) and returns `{ "data": { "reply": "...", "model": "..." } }`.
+- `POST /api/public/chat` accepts exactly `{ "message": "..." }` (max 2,000 characters) and returns `{ "data": { "bot": "Wilhel", "reply": "...", "model": "...", "intent": "..." } }`.
 
 The Next.js route at `POST /api/public/chat` validates and proxies chat requests to this Express API. Configure `NEXT_PUBLIC_CMS_API_URL` in the frontend to the Express API origin. The provider key, model configuration, rate limiting, and privacy-minimizing analytics are handled by this backend.
+
+### Wilhel: alur NLP → database → LLM
+
+Chatbot bernama **Wilhel** memproses setiap pertanyaan dalam tiga tahap:
+
+1. **NLP** (`src/nlp.mjs`, lokal tanpa panggilan jaringan): tokenisasi, klasifikasi intent berbobot, ekstraksi entitas (program TKJ/RPL/TKR/TOI, hari, bulan, tanggal, waktu relatif), keyword, dan ranking konten publik terbit.
+2. **Simpan ke database**: output NLP ditulis ke `cms_chatbot_nlp_results` (migrasi `migrations/002_wilhel_nlp_results.sql`). Teks mentah pertanyaan tidak disimpan; baris kedaluwarsa setelah 24 jam dan dibersihkan otomatis oleh API.
+3. **LLM**: API membaca kembali hasil NLP dari database berdasarkan id-nya (intent, entitas, keyword, kutipan konten), lalu memasukkannya ke prompt LLM. Jika penyimpanan atau pembacaan dari database gagal, API mengembalikan `503` dan tidak memanggil LLM.
+
+Jalankan `migrations/002_wilhel_nlp_results.sql` di Supabase SQL Editor setelah migrasi 001. Tabel ini hanya dapat diakses `service_role`.
 
 The chatbot retrieves up to 10 currently eligible, published records per CMS content type through the public Supabase client (news, announcements, academic agenda, and hero banners), ranks them against the current question, and sends only up to five relevant, bounded excerpts to the configured OpenRouter-compatible provider. Drafts and admin endpoints are never queried. If no published record is relevant, it returns a direct “not found in published content” answer without calling the AI provider. Content and visitor questions are treated as untrusted input; the model is instructed to answer only from the retrieved excerpts.
 
@@ -98,5 +108,6 @@ Unknown fields and server-managed IDs/timestamps are rejected. URLs must be HTTP
 - `cms_hero_banners`
 - `cms_user_roles` (role source of truth; references `auth.users`)
 - `cms_chatbot_analytics` (no prompt, reply, user, or network identifier columns)
+- `cms_chatbot_nlp_results` (output tahap NLP Wilhel; tanpa teks pertanyaan, balasan, user, atau IP; kedaluwarsa 24 jam)
 
 RLS permits public reads only for published, currently eligible records. Editors/admins can insert/update; only admins can delete. `cms_user_roles` is not client-writable, and chatbot analytics have no anon/authenticated grants. The Express API uses service-role access only after its own Supabase identity and database-role checks.

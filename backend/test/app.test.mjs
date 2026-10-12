@@ -13,9 +13,11 @@ const ITEM_ID = "44444444-4444-4444-8444-444444444444";
 function makeApp({
   env = {},
   fetchImpl = async () => { throw new Error("unexpected fetch"); },
-  publishedChatContent = []
+  publishedChatContent = [],
+  nlpReadFails = false
 } = {}) {
   const calls = [];
+  const nlpRows = new Map();
   const roles = {
     [USER_IDS.editor]: "editor_guru_staf",
     [USER_IDS.admin]: "admin_it",
@@ -42,7 +44,20 @@ function makeApp({
     updateContent: async (resource, id, payload) => ({ id, resource, ...payload }),
     deleteContent: async (resource, id) => { calls.push({ op: "delete", resource, id }); },
     setUserRole: async (userId, role) => { calls.push({ op: "set-role", userId, role }); },
-    recordChatAnalytics: async (row) => { calls.push({ op: "analytics", row }); }
+    recordChatAnalytics: async (row) => { calls.push({ op: "analytics", row }); },
+    // Penyimpanan NLP in-memory yang meniru tabel cms_chatbot_nlp_results.
+    saveNlpResult: async (result) => {
+      const id = `nlp-${nlpRows.size + 1}`;
+      nlpRows.set(id, { id, ...structuredClone(result) });
+      calls.push({ op: "nlp-save", id });
+      return id;
+    },
+    getNlpResult: async (id) => {
+      calls.push({ op: "nlp-get", id });
+      if (nlpReadFails || !nlpRows.has(id)) throw new Error("DEPENDENCY_ERROR");
+      return nlpRows.get(id);
+    },
+    purgeExpiredNlpResults: async () => {}
   };
   const publicClient = {
     auth: {
@@ -59,7 +74,7 @@ function makeApp({
     fetchImpl,
     env: { FRONTEND_ORIGINS: "http://localhost:3000", ...env }
   });
-  return { app, calls };
+  return { app, calls, nlpRows };
 }
 
 test("health and published content are public with pagination", async () => {
@@ -162,7 +177,7 @@ test("chat uses the second free model as fallback and records no prompt text", a
     OPENROUTER_MODEL_2: "test/two:free",
     OPENROUTER_MODEL_3: "test/three:free"
   };
-  const { app, calls } = makeApp({
+  const { app, calls, nlpRows } = makeApp({
     env,
     fetchImpl,
     publishedChatContent: [{
@@ -179,6 +194,74 @@ test("chat uses the second free model as fallback and records no prompt text", a
   const analytics = calls.find((call) => call.op === "analytics").row;
   assert.deepEqual(analytics, { category: "academic_agenda", outcome: "fallback", model: "test/two:free" });
   assert.equal(JSON.stringify(analytics).includes(privateQuestion), false);
+  assert.equal(response.body.data.bot, "Wilhel");
+  assert.equal(response.body.data.intent, "academic_agenda");
+  assert.equal(JSON.stringify([...nlpRows.values()]).includes(privateQuestion), false);
+});
+
+test("Wilhel flow: NLP output is saved to the database, then the LLM reads it back from the database", async () => {
+  const prompts = [];
+  const fetchImpl = async (_url, options) => {
+    prompts.push(JSON.parse(options.body).messages[0].content);
+    return { ok: true, json: async () => ({ choices: [{ message: { content: "Asesmen hari Jumat." } }] }) };
+  };
+  const { app, calls, nlpRows } = makeApp({
+    env: {
+      OPENROUTER_API_KEY: "test-key",
+      OPENROUTER_BASE_URL: "https://provider.example/v1",
+      OPENROUTER_MODEL_1: "test/one:free",
+      OPENROUTER_MODEL_2: "test/two:free",
+      OPENROUTER_MODEL_3: "test/three:free"
+    },
+    fetchImpl,
+    publishedChatContent: [{
+      resource: "academic-agenda",
+      slug: "asesmen-sekolah",
+      title: "Jadwal Asesmen Sekolah",
+      description: "Asesmen berlangsung pada hari Jumat di aula.",
+      starts_at: "2026-11-06T08:00:00.000Z"
+    }]
+  });
+  const response = await request(app).post("/api/public/chat")
+    .send({ message: "Kapan jadwal asesmen hari Jumat?" }).expect(200);
+
+  // Urutan: simpan NLP -> baca NLP dari DB -> panggil LLM.
+  const ops = calls.map((call) => call.op).filter((op) => op.startsWith("nlp-"));
+  assert.deepEqual(ops, ["nlp-save", "nlp-get"]);
+  assert.equal(nlpRows.size, 1);
+  const stored = [...nlpRows.values()][0];
+  assert.equal(stored.intent, "academic_agenda");
+  assert.deepEqual(stored.entities.weekdays, ["jumat"]);
+  assert.equal(stored.matched_refs[0].slug, "asesmen-sekolah");
+  assert.equal("question" in stored || "message" in stored, false);
+
+  // Prompt LLM memuat hasil NLP yang diambil dari DB dan memperkenalkan Wilhel.
+  assert.equal(prompts.length, 1);
+  assert.match(prompts[0], /Wilhel/);
+  assert.match(prompts[0], /HASIL ANALISIS NLP/);
+  assert.match(prompts[0], /intent: academic_agenda/);
+  assert.match(prompts[0], /weekdays=jumat/);
+  assert.match(prompts[0], /Jadwal Asesmen Sekolah/);
+  assert.equal(response.body.data.bot, "Wilhel");
+});
+
+test("Wilhel fails closed when the NLP result cannot be read back from the database", async () => {
+  const { app, calls } = makeApp({
+    env: {
+      OPENROUTER_API_KEY: "test-key",
+      OPENROUTER_BASE_URL: "https://provider.example/v1",
+      OPENROUTER_MODEL_1: "test/one:free",
+      OPENROUTER_MODEL_2: "test/two:free",
+      OPENROUTER_MODEL_3: "test/three:free"
+    },
+    fetchImpl: async () => { throw new Error("provider must not be called without a stored NLP result"); },
+    publishedChatContent: [{ resource: "news", title: "Prestasi Siswa", body: "Tim sekolah juara." }],
+    nlpReadFails: true
+  });
+  const response = await request(app).post("/api/public/chat")
+    .send({ message: "Apa prestasi siswa?" }).expect(503);
+  assert.equal(response.body.error.code, "SERVICE_UNAVAILABLE");
+  assert.equal(calls.find((call) => call.op === "analytics").row.outcome, "unavailable");
 });
 
 test("chat answers honestly without calling the provider when no published content matches", async () => {

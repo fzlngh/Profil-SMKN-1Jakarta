@@ -49,7 +49,7 @@ paths:
     post:
       tags: [Chat]
       operationId: schoolProfileChat
-      description: Chat endpoint retrieves only currently published CMS content. The visitor question and selected excerpts are sent to the configured AI provider; analytics persist category, outcome, model, and timestamp only, not question, reply, IP, or conversation.
+      description: Wilhel chat endpoint. Pipeline - (1) a local NLP stage analyses the question (intent, entities, keywords, ranked published content) and its output is saved to cms_chatbot_nlp_results; (2) the LLM stage reads that NLP result back from the database and answers from it. Only currently published CMS content is used. The visitor question and selected excerpts are sent to the configured AI provider; analytics persist category, outcome, model, and timestamp only, not question, reply, IP, or conversation.
       requestBody:
         required: true
         content:
@@ -73,8 +73,13 @@ paths:
                 properties:
                   data:
                     type: object
-                    required: [reply, model]
+                    required: [bot, reply, model, intent]
                     properties:
+                      bot: { type: string, example: Wilhel }
+                      intent:
+                        type: string
+                        enum: [academic_agenda, announcement, news, academic_program, school_profile, other]
+                        description: Intent produced by the NLP stage and stored in cms_chatbot_nlp_results.
                       reply: { type: string }
                       model:
                         type: [string, "null"]
