@@ -1,25 +1,59 @@
-"use client";
-import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import { getCmsPublicFeed, type CmsPublicItem } from "@/lib/cms-public";
 
-const categories=["Semua","PPDB 2025/2026","Prestasi Siswa","Kegiatan & P5","Info Magang / BKK"];
-const newsItems=[
-  { tag:"PPDB 2025",category:"PPDB 2025/2026",date:"18 Mei 2025",title:"Panduan Pengajuan Akun & Verifikasi KK Calon Peserta Didik",body:"Simak tahapan verifikasi berkas daring melalui sistem SIDANIRA Disdik DKI Jakarta.",image:"/images/reference/program-rpl-photo.png" },
-  { tag:"PRESTASI EMAS",category:"Prestasi Siswa",date:"14 Mei 2025",title:"Taruna SMKN 1 Sabet Medali Emas LKS Tingkat Nasional",body:"Raihan impresif M. Fikri Pratama usai mengungguli 34 perwakilan nasional.",image:"/images/reference/program-tkj-photo.png" },
-  { tag:"PROJEK P5",category:"Kegiatan & P5",date:"10 Mei 2025",title:"Gelar Karya Inovasi Energi Baru Terbarukan Siswa Kelas XI",body:"Pameran P5 menghasilkan 12 prototipe alat ramah lingkungan siap guna.",image:"/images/reference/program-toi-photo.png" },
-  { tag:"MAGANG JEPANG",category:"Info Magang / BKK",date:"05 Mei 2025",title:"Seleksi Program Praktik Kerja Industri Batch 4",body:"Kesempatan magang teknis industri bersubsidi selama 12 bulan untuk siswa.",image:"/images/reference/program-tkr-photo.png" }
-];
-const honors=["LKS Nasional Bidang Cyber Security & Cloud Computing","Olimpiade Vokasi Jakarta 2024","Kejuaraan Pencak Silat Pelajar 2024","Robotics & IoT Competition"];
-export function InformationDesignedPage(){
-  const [filter,setFilter]=useState(categories[0]);
-  const [honorStart,setHonorStart]=useState(0);
-  const cards=newsItems.filter((item)=>filter===categories[0]||item.category===filter);
-  const visibleHonors=[0,1,2].map((offset)=>(honorStart+offset)%honors.length);
-  return <div className="reference-subpage news-design-page">
-    <section className="news-feature reference-wrap"><article><small>PENGUMUMAN RESMI PPDB　 T.A. 2025/2026　 ◷ 15 Mei 2025</small><h1>Informasi Penerimaan Peserta Didik Baru</h1><p>Alur seleksi, jadwal, persyaratan, dan kuota PPDB SMKN 1 Jakarta.</p><div><Link href="/ppdb">Pelajari Alur &amp; Juknis →</Link><Link href="/kontak">☏ Helpdesk PPDB</Link></div><footer><b>648 Kuota<small>Total Siswa Baru 18 Rombel</small></b><b>4 Jalur Seleksi<small>Prestasi, Afirmasi, Zonasi, Mutasi</small></b><b>100% Gratis<small>Bebas Pungutan &amp; Uang Gedung</small></b></footer></article><aside><small>● PENGUMUMAN PALING DICARI</small>{["Rekrutmen Kampus PT Astra Daihatsu Motor bagi Lulusan Teknik Otomotif","Jadwal Uji Sertifikasi Kompetensi (USK) Lembaga Sertifikasi Profesi","Pemberkasan Lanjutan Kartu Jakarta Pintar Plus Tahap 1 Gelombang"].map((item,i)=><div key={item}><span>{["INFO BKK","AKADEMIK","BEASISWA"][i]}　•　{["12 Mei 2025","09 Mei 2025","02 Mei 2025"][i]}</span><h2>{item}</h2></div>)}<Link href="/ppdb">Semua Arsip Berita　›</Link></aside></section>
-    <section className="news-latest"><div className="reference-wrap"><header><small>▤ WARTA AKTUAL</small><h2>Kabar &amp; Warta Sekolah Terkini</h2><p>Transparansi kegiatan, rekrutmen industri, dan prestasi berkala sivitas akademika.</p></header><div className="news-filters">{categories.map((item)=><button type="button" key={item} aria-pressed={filter===item} onClick={()=>setFilter(item)}>{item}</button>)}</div><div className="news-card-grid">{cards.map((item)=><article key={item.title}><div><Image src={item.image} alt="" fill sizes="(max-width: 700px) 90vw, 25vw" /><small>{item.tag}</small></div><section><small>{item.date} • {item.category}</small><h3>{item.title}</h3><p>{item.body}</p><Link href="/informasi">BACA SELENGKAPNYA　→</Link></section></article>)}</div></div></section>
-    <section className="news-hall"><div className="reference-wrap"><header><div><small>● HALL OF FAME &amp; PRESTASI</small><h2>JUARA &amp; BERKARYA.</h2><p>Bukti nyata dedikasi taruna-taruni SMKN 1 Jakarta menorehkan prestasi gemilang di tingkat provinsi, nasional, dan internasional.</p></div><div aria-label="Navigasi prestasi"><button type="button" aria-label="Prestasi sebelumnya" onClick={()=>setHonorStart((n)=>(n+honors.length-1)%honors.length)}>‹</button><button type="button" aria-label="Prestasi berikutnya" onClick={()=>setHonorStart((n)=>(n+1)%honors.length)}>›</button></div></header><div className="news-honor-grid">{visibleHonors.map((honorIndex,i)=><article key={honors[honorIndex]}><div className="news-honor-image"><Image src={newsItems[honorIndex].image} alt="" fill sizes="30vw" /></div><small>{["JUARA 1 TINGKAT NASIONAL","JUARA UMUM","MEDALI EMAS DKI"][honorIndex%3]}</small><h3>{honors[honorIndex]}</h3><p>{["M. Fikri Pratama • Kelas XII TJKT","Anindya Putri • Kelas XI PPLG","Bagas Tri Wicaksono • Kelas X TKRO"][honorIndex%3]}</p></article>)}</div></div></section>
-    <section className="news-help reference-wrap"><div><small>POSKO KONSULTASI OFFLINE</small><h2>Mengalami Kendala Registrasi Akun PPDB?</h2><p>Kunjungi Sekretariat PPDB SMKN 1 Jakarta di Ruang Multimedia Lt. 1, Jl. Budi Utomo No. 7, Jakarta Pusat. Petugas helpdesk kami siap memandu proses verifikasi berkas secara gratis.</p><span>◷ Senin – Jumat: 08.00 – 15.00 WIB　☎ (021) 3844145 Ext. 102</span></div><a href="https://wa.me/6281290900101" target="_blank" rel="noopener noreferrer">Chat WhatsApp Helpdesk</a><a href="tel:+62213844145">☎ Telepon Posko</a></section>
+function formatDate(value?: string) {
+  if (!value) return "";
+  const date = new Date(value);
+  return Number.isNaN(date.valueOf())
+    ? ""
+    : new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "long", year: "numeric" }).format(date);
+}
+
+function newsHref(item: CmsPublicItem) {
+  return `/informasi/${encodeURIComponent(item.slug || item.id)}`;
+}
+
+function NewsCard({ item, featured = false }: { item: CmsPublicItem; featured?: boolean }) {
+  const excerpt = item.excerpt || item.description || item.body || "Berita resmi SMK Negeri 1 Jakarta.";
+  const dateValue = item.published_at || item.starts_at || item.created_at;
+  const date = formatDate(dateValue);
+  return (
+    <article className={featured ? "news-card news-card-featured" : "news-card"}>
+      <Link className="news-card-image" href={newsHref(item)} aria-label={`Baca ${item.title}`}>
+        {item.cover_image_url || item.image_url
+          ? <img src={item.cover_image_url || item.image_url} alt="" loading="lazy" />
+          : <span aria-hidden="true"><b>▧</b>Foto berita</span>}
+      </Link>
+      <div className="news-card-content">
+        <span className="news-category">{item.category || (featured ? "Berita utama" : "Berita sekolah")}</span>
+        <h2><Link href={newsHref(item)}>{item.title}</Link></h2>
+        <p>{excerpt.length > 230 ? `${excerpt.slice(0, 227).trimEnd()}…` : excerpt}</p>
+        <div className="news-card-meta">{date && <time dateTime={dateValue}>{date}</time>}
+          <Link className="news-read-link" href={newsHref(item)}>{featured ? "Baca selengkapnya" : "Baca"} <span aria-hidden="true">→</span></Link>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+export async function InformationDesignedPage() {
+  const feed = await getCmsPublicFeed("news");
+  const [featured, ...items] = feed.items;
+  return <div className="news-page">
+    <header className="news-page-hero"><div className="news-page-wrap">
+      <p className="news-breadcrumb"><Link href="/">Beranda</Link> / Berita</p>
+      <h1>Berita Sekolah</h1>
+      <p>Kabar terbaru seputar prestasi, kegiatan, dan perkembangan akademik SMK Negeri 1 Jakarta.</p>
+    </div></header>
+    <section className="news-listing news-page-wrap" aria-label="Daftar berita">
+      {featured ? <>
+        <NewsCard item={featured} featured />
+        {items.length > 0 && <div className="news-card-grid">{items.map((item) => <NewsCard key={item.id} item={item} />)}</div>}
+      </> : <div className="news-empty" role="status">
+        <span aria-hidden="true">▤</span>
+        <h2>{feed.configured && !feed.available ? "Berita belum dapat dimuat" : "Belum ada berita terbit"}</h2>
+        <p>{feed.configured && !feed.available ? "Silakan coba beberapa saat lagi." : "Berita akan tampil di halaman ini setelah diterbitkan oleh pengelola sekolah."}</p>
+      </div>}
+    </section>
   </div>;
 }

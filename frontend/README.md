@@ -4,22 +4,15 @@ This repository contains the public school-profile website and its school-inform
 
 ## Local development
 
-The application is split into a Next.js public website and an Express CMS/chat API. Their manifests and lockfiles are separate.
+This folder contains the Next.js frontend. The CMS and AI provider API run separately.
 
-### Frontend
+1. Run `npm ci` in this folder.
+2. Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_CMS_API_URL` to the Express CMS/API origin. The URL is public configuration; do not put API keys in `NEXT_PUBLIC_*` variables.
+3. Set `NEXT_PUBLIC_CMS_SUPABASE_URL` and `NEXT_PUBLIC_CMS_SUPABASE_ANON_KEY` only if you use the `/admin` CMS interface.
+4. Run `npm run dev` and open the local address shown in the terminal. Use `npm run build` for a production build.
 
-1. Run `npm ci` in the repository root.
-2. Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_CMS_API_URL` to the Express API origin.
-3. Set the public Supabase CMS URL and anon key to enable `/admin`.
-4. Run `npm run dev`; use `npm run build` to verify a production build.
+### Chatbot and backend configuration
 
-### Backend
+The browser calls the frontend's `/api/public/chat` route, which forwards the question to `${NEXT_PUBLIC_CMS_API_URL}/api/public/chat`. AI provider credentials and model settings must be configured in the separate Express backend environment (for example, its `OPENROUTER_API_KEY` and model variables); keep them out of this frontend folder and out of every `NEXT_PUBLIC_*` setting. When the API URL or AI service is unavailable, the chat panel remains usable and shows a clear configuration or connection error. The ZIP contains only the frontend, so the chatbot will not return AI answers until the backend is running and configured.
 
-1. Follow [backend/README.md](./backend/README.md) and install dependencies from `backend/`.
-2. Copy `backend/.env.example` to `backend/.env`; configure the dedicated CMS Supabase project and exact frontend origin.
-3. Apply `backend/migrations/001_school_profile_cms.sql` to that Supabase project and assign the first trusted administrator as documented in the backend guide.
-4. Add the OpenRouter-compatible provider key and model settings to `backend/.env` to enable the chatbot, then start the API with `npm run dev`.
-
-The frontend's `/api/public/chat` route proxies to Express. Provider secrets stay exclusively in the backend environment. Express also serves published news, announcements, academic agenda, and hero banners to the public site; `/admin` manages drafts, publication, roles, and privacy-safe chatbot analytics.
-
-Profile content and school facts remain provisional until confirmed by the school. The CMS uses a separate Supabase project and `cms_*` schema; its migration is additive and does not restore or modify SIM-PKL application data.
+The news page reads published entries from the same CMS API. Without a configured and available CMS, it shows an empty or unavailable state rather than displaying invented news.

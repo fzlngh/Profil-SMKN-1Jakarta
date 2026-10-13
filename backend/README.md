@@ -51,11 +51,23 @@ All success responses except `204` use `{ "data": ... }`; errors use `{ "error":
 - `GET /api/public/academic-agenda[?limit=20&offset=0]`
 - `GET /api/public/hero-banners[?limit=20&offset=0]`
 - `GET /api/public/{resource}/{uuid}` returns only a currently published item.
-- `POST /api/public/chat` accepts exactly `{ "message": "..." }` (max 2,000 characters) and returns `{ "data": { "reply": "...", "model": "..." } }`.
+- `POST /api/public/chat` accepts exactly `{ "message": "..." }` (max 2,000 characters) and returns `{ "data": { "bot": "Wilhel", "reply": "...", "model": "...", "intent": "..." } }`.
 
 The Next.js route at `POST /api/public/chat` validates and proxies chat requests to this Express API. Configure `NEXT_PUBLIC_CMS_API_URL` in the frontend to the Express API origin. The provider key, model configuration, rate limiting, and privacy-minimizing analytics are handled by this backend.
 
-The Express chatbot tries the three configured OpenRouter-compatible `:free` model IDs in order, with an 8-second per-model timeout. Chat analytics persist only a coarse category, `resolved` / `fallback` / `unavailable`, selected model where applicable, and database timestamp. Raw prompts, generated replies, user IDs, IP addresses, and conversation history are not stored. The raw question is sent to the configured AI provider to produce an answer; disclose that processing to visitors and advise them not to include personal information. Chat requests have a separate limit of 20 per IP per 15 minutes; other public routes are limited to 120 per IP per 15 minutes. In multi-instance production, use a shared/edge rate limiter.
+### Wilhel: alur NLP → database → LLM
+
+Chatbot bernama **Wilhel** memproses setiap pertanyaan dalam tiga tahap:
+
+1. **NLP** (`src/nlp.mjs`, lokal tanpa panggilan jaringan): tokenisasi, klasifikasi intent berbobot, ekstraksi entitas (program TKJ/RPL/TKR/TOI, hari, bulan, tanggal, waktu relatif), keyword, dan ranking konten publik terbit.
+2. **Simpan ke database**: output NLP ditulis ke `cms_chatbot_nlp_results` (migrasi `migrations/002_wilhel_nlp_results.sql`). Teks mentah pertanyaan tidak disimpan; baris kedaluwarsa setelah 24 jam dan dibersihkan otomatis oleh API.
+3. **LLM**: API membaca kembali hasil NLP dari database berdasarkan id-nya (intent, entitas, keyword, kutipan konten), lalu memasukkannya ke prompt LLM. Jika penyimpanan atau pembacaan dari database gagal, API mengembalikan `503` dan tidak memanggil LLM.
+
+Jalankan `migrations/002_wilhel_nlp_results.sql` di Supabase SQL Editor setelah migrasi 001. Tabel ini hanya dapat diakses `service_role`.
+
+The chatbot retrieves up to 10 currently eligible, published records per CMS content type through the public Supabase client (news, announcements, academic agenda, and hero banners), ranks them against the current question, and sends only up to five relevant, bounded excerpts to the configured OpenRouter-compatible provider. Drafts and admin endpoints are never queried. If no published record is relevant, it returns a direct “not found in published content” answer without calling the AI provider. Content and visitor questions are treated as untrusted input; the model is instructed to answer only from the retrieved excerpts.
+
+The Express chatbot tries the three configured OpenRouter-compatible `:free` model IDs in order, with an 8-second per-model timeout and a 400-token output limit. Configure `OPENROUTER_API_KEY` and three distinct `OPENROUTER_MODEL_n` values in `backend/.env`; the provider key must never be added to the frontend. Free-model capacity and per-account quotas can change: the API tries the next configured model after provider throttling and returns `503 CHAT_PROVIDER_RATE_LIMITED` if all attempts are rate-limited. Chat analytics persist only a coarse category, `resolved` / `fallback` / `unavailable`, selected model where applicable, and database timestamp. Raw prompts, generated replies, user IDs, IP addresses, and conversation history are not stored. The raw question and selected published excerpts are sent to the configured AI provider to produce an answer; disclose that processing to visitors and advise them not to include personal information. Chat requests have a separate limit of 20 per IP per 15 minutes; other public routes are limited to 120 per IP per 15 minutes. In multi-instance production, use a shared/edge rate limiter.
 
 ### Authenticated CMS
 
@@ -85,7 +97,7 @@ Unknown fields and server-managed IDs/timestamps are rejected. URLs must be HTTP
 - Helmet security headers, a 128 KiB JSON request-body cap, strict request schemas, UUID path validation, rate limits, bounded upstream timeouts, and non-sensitive structured request logs are enabled.
 - Responses and logs omit database/provider exception details, tokens, query strings, request bodies, and chat prompts. Logs include request ID, method, path, status, and duration only.
 - Configure TLS at the edge, rotate Supabase service credentials, restrict production network access, and monitor `/health`, 4xx/5xx rates, provider availability, and database health.
-- Chat provider calls receive the question and a fixed minimal school-profile knowledge base; keep API keys backend-only. If unset/misconfigured, the chat endpoint returns `503`.
+- Chat provider calls receive the question and relevant bounded excerpts from currently published CMS content; keep API keys backend-only. If the CMS query fails, the chat endpoint reports a temporary service error instead of inventing an answer. If provider configuration is unset/misconfigured, it returns `503 CHAT_NOT_CONFIGURED`.
 - Chat analytics are append-only to the API's service client and inaccessible to anon/authenticated roles. Apply an operational retention period appropriate to school policy.
 
 ## Schema
@@ -96,5 +108,6 @@ Unknown fields and server-managed IDs/timestamps are rejected. URLs must be HTTP
 - `cms_hero_banners`
 - `cms_user_roles` (role source of truth; references `auth.users`)
 - `cms_chatbot_analytics` (no prompt, reply, user, or network identifier columns)
+- `cms_chatbot_nlp_results` (output tahap NLP Wilhel; tanpa teks pertanyaan, balasan, user, atau IP; kedaluwarsa 24 jam)
 
 RLS permits public reads only for published, currently eligible records. Editors/admins can insert/update; only admins can delete. `cms_user_roles` is not client-writable, and chatbot analytics have no anon/authenticated grants. The Express API uses service-role access only after its own Supabase identity and database-role checks.

@@ -9,6 +9,8 @@ export const RESOURCE_TABLES = {
   "hero-banners": "cms_hero_banners"
 };
 
+const NLP_RESULT_TTL_MS = 24 * 60 * 60 * 1_000;
+
 const uuidSchema = z.string().uuid();
 const slugSchema = z.string().trim().min(1).max(160).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 const shortText = (max) => z.string().trim().min(1).max(max);
@@ -149,6 +151,49 @@ export class CmsService {
     return { items: data ?? [], total: count ?? 0, limit, offset };
   }
 
+  async getPublishedChatContent() {
+    const now = this.clock().toISOString();
+    const resources = [
+      {
+        resource: "news",
+        columns: "title,slug,excerpt,body,published_at",
+        order: ["published_at", { ascending: false, nullsFirst: false }]
+      },
+      {
+        resource: "announcements",
+        columns: "title,slug,body,severity,starts_at,ends_at,published_at",
+        order: ["published_at", { ascending: false, nullsFirst: false }]
+      },
+      {
+        resource: "academic-agenda",
+        columns: "title,slug,description,starts_at,ends_at,location,published_at",
+        order: ["starts_at", { ascending: true }]
+      },
+      {
+        resource: "hero-banners",
+        columns: "title,subtitle,link_url,published_at",
+        order: ["published_at", { ascending: false, nullsFirst: false }]
+      }
+    ];
+
+    const results = await Promise.all(resources.map(async ({ resource, columns, order }) => {
+      let query = this.publicClient.from(RESOURCE_TABLES[resource]).select(columns)
+        .eq("is_published", true)
+        .or(`published_at.is.null,published_at.lte.${now}`);
+      if (resource === "announcements") {
+        query = query.or(`starts_at.is.null,starts_at.lte.${now}`)
+          .or(`ends_at.is.null,ends_at.gte.${now}`);
+      } else if (resource === "academic-agenda") {
+        query = query.or(`ends_at.is.null,ends_at.gte.${now}`);
+      }
+      const { data, error } = await query.order(order[0], order[1]).limit(10);
+      if (error) throw new Error("DEPENDENCY_ERROR");
+      return (data ?? []).map((item) => ({ resource, ...item }));
+    }));
+
+    return results.flat();
+  }
+
   async getPublished(resource, id) {
     const table = RESOURCE_TABLES[resource];
     if (!table) throw new Error("NOT_FOUND");
@@ -207,6 +252,42 @@ export class CmsService {
       role,
       updated_at: this.clock().toISOString()
     }, { onConflict: "user_id" });
+    if (error) throw new Error("DEPENDENCY_ERROR");
+  }
+
+  // Tahap NLP -> database: simpan output NLP dan kembalikan id-nya.
+  async saveNlpResult(result) {
+    const expiresAt = new Date(this.clock().getTime() + NLP_RESULT_TTL_MS).toISOString();
+    const { data, error } = await this.serviceClient.from("cms_chatbot_nlp_results").insert({
+      intent: result.intent,
+      confidence: result.confidence,
+      keywords: result.keywords,
+      entities: result.entities,
+      matched_refs: result.matched_refs,
+      context: result.context,
+      nlp_version: result.nlp_version,
+      expires_at: expiresAt
+    }).select("id").single();
+    if (error || !data?.id) throw new Error("DEPENDENCY_ERROR");
+    return data.id;
+  }
+
+  // Tahap LLM: ambil kembali output NLP dari database berdasarkan id.
+  async getNlpResult(id) {
+    const now = this.clock().toISOString();
+    const { data, error } = await this.serviceClient.from("cms_chatbot_nlp_results")
+      .select("id,intent,confidence,keywords,entities,matched_refs,context,nlp_version")
+      .eq("id", id)
+      .gt("expires_at", now)
+      .maybeSingle();
+    if (error || !data) throw new Error("DEPENDENCY_ERROR");
+    return data;
+  }
+
+  async purgeExpiredNlpResults() {
+    const { error } = await this.serviceClient.from("cms_chatbot_nlp_results")
+      .delete()
+      .lt("expires_at", this.clock().toISOString());
     if (error) throw new Error("DEPENDENCY_ERROR");
   }
 

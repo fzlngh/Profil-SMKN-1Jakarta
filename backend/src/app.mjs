@@ -3,7 +3,7 @@ import express from "express";
 import { rateLimit } from "express-rate-limit";
 import helmet from "helmet";
 import { z } from "zod";
-import { answerChat, getChatConfiguration } from "./chat.mjs";
+import { answerChat, BOT_NAME, getChatConfiguration } from "./chat.mjs";
 import { CmsService, RESOURCE_NAMES, validateContent } from "./service.mjs";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -32,6 +32,7 @@ function errorStatus(error) {
     case "CONFLICT": return [409, "CONFLICT", "Resource conflicts with an existing item."];
     case "INVALID_INPUT": return [400, "INVALID_INPUT", "Request is invalid."];
     case "CHAT_TIMEOUT": return [504, "CHAT_TIMEOUT", "Assistant did not respond. Please try again."];
+    case "CHAT_PROVIDER_RATE_LIMITED": return [503, "CHAT_PROVIDER_RATE_LIMITED", "AI provider is temporarily at capacity. Please try again later."];
     case "CHAT_UNAVAILABLE": return [502, "CHAT_UNAVAILABLE", "Assistant is temporarily unavailable."];
     default: return [503, "SERVICE_UNAVAILABLE", "Service is temporarily unavailable."];
   }
@@ -120,7 +121,7 @@ export function createApp({ publicClient, serviceClient, env = process.env, fetc
         fetchImpl,
         service
       });
-      return res.json({ data: { reply: completion.answer, model: completion.model } });
+      return res.json({ data: { bot: BOT_NAME, reply: completion.answer, model: completion.model, intent: completion.intent } });
     } catch (error) {
       const [status, code, message] = errorStatus(error);
       return sendError(res, status, code, message);
