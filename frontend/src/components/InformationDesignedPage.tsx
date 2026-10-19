@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { getCmsPublicFeed, type CmsPublicItem } from "@/lib/cms-public";
+import { demoNews } from "@/lib/demo-news";
+import { PagedNewsGrid } from "@/components/PagedNewsGrid";
 
 function formatDate(value?: string) {
   if (!value) return "";
@@ -36,24 +38,29 @@ function NewsCard({ item, featured = false }: { item: CmsPublicItem; featured?: 
   );
 }
 
-export async function InformationDesignedPage() {
+export async function InformationDesignedPage({ searchParams }: { searchParams?: { page?: string } } = {}) {
   const feed = await getCmsPublicFeed("news");
-  const [featured, ...items] = feed.items;
+  const items = feed.items.length ? feed.items : demoNews;
+  const preferredFeature = items.findIndex((item) => /juara nasional lomba kompetensi siswa/i.test(item.title));
+  const featuredIndex = preferredFeature >= 0 ? preferredFeature : 0;
+  const featured = items[featuredIndex];
+  const allItems = items.filter((_, index) => index !== featuredIndex);
+  const requestedPage = Number.parseInt(searchParams?.page || "1", 10);
+  const page = Number.isFinite(requestedPage) ? Math.max(requestedPage, 1) : 1;
   return <div className="news-page">
     <header className="news-page-hero"><div className="news-page-wrap">
       <p className="news-breadcrumb"><Link href="/">Beranda</Link> / Berita</p>
       <h1>Berita Sekolah</h1>
-      <p>Kabar terbaru seputar prestasi, kegiatan, dan perkembangan akademik SMK Negeri 1 Jakarta.</p>
+      <p>Kabar terbaru seputar prestasi, kegiatan, dan akademik.</p>
     </div></header>
     <section className="news-listing news-page-wrap" aria-label="Daftar berita">
+      <div className="news-tools"><nav className="news-filter" aria-label="Kategori berita">
+        {["Semua", "Prestasi", "Kegiatan", "Akademik", "Alumni"].map((category) => <Link key={category} href={category === "Semua" ? "/informasi" : `/berita?kategori=${encodeURIComponent(category)}`} className={category === "Semua" ? "active" : ""}>{category}</Link>)}
+      </nav><form className="news-search" action="/berita"><span aria-hidden="true">⌕</span><input name="q" placeholder="Cari berita..." aria-label="Cari berita"/><button type="submit">Cari</button></form></div>
       {featured ? <>
         <NewsCard item={featured} featured />
-        {items.length > 0 && <div className="news-card-grid">{items.map((item) => <NewsCard key={item.id} item={item} />)}</div>}
-      </> : <div className="news-empty" role="status">
-        <span aria-hidden="true">▤</span>
-        <h2>{feed.configured && !feed.available ? "Berita belum dapat dimuat" : "Belum ada berita terbit"}</h2>
-        <p>{feed.configured && !feed.available ? "Silakan coba beberapa saat lagi." : "Berita akan tampil di halaman ini setelah diterbitkan oleh pengelola sekolah."}</p>
-      </div>}
+        {allItems.length > 0 && <PagedNewsGrid items={allItems} currentPage={page} desktopPageSize={6} mobilePageSize={5} pagePath="/informasi" detailPath="/informasi" />}
+      </> : <div className="news-empty" role="status"><span aria-hidden="true">▤</span><h2>Belum ada berita terbit</h2><p>Berita akan tampil di halaman ini setelah diterbitkan oleh pengelola sekolah.</p></div>}
     </section>
   </div>;
 }

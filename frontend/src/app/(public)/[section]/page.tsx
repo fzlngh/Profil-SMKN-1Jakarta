@@ -14,7 +14,7 @@ import { publicSections } from "@/lib/public-sections";
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return [...Object.keys(publicSections).map((section) => ({ section })), ...["osis", "agenda", "pengumuman", "galeri", "organisasi"].map((section) => ({ section }))];
+  return [...Object.keys(publicSections).map((section) => ({ section })), ...["osis", "agenda", "pengumuman", "pelaksanaan", "galeri", "organisasi"].map((section) => ({ section }))];
 }
 
 export function generateMetadata({ params }: { params: { section: string } }): Metadata {
@@ -23,23 +23,25 @@ export function generateMetadata({ params }: { params: { section: string } }): M
   if (params.section === "osis") return { title: "Organisasi Siswa — SMK Negeri 1 Jakarta", description: "Informasi organisasi siswa." };
   if (params.section === "agenda") return { title: "Agenda Akademik — SMK Negeri 1 Jakarta", description: "Kalender kegiatan sekolah." };
   if (params.section === "pengumuman") return { title: "Pengumuman — SMK Negeri 1 Jakarta", description: "Informasi resmi sekolah." };
+  if (params.section === "pelaksanaan") return { title: "Pelaksanaan — SMK Negeri 1 Jakarta", description: "Daftar pelaksanaan dan informasi resmi sekolah." };
   if (params.section === "galeri") return { title: "Galeri Kampus — SMK Negeri 1 Jakarta", description: "Dokumentasi kegiatan siswa." };
   if (params.section === "organisasi") return { title: "Organisasi Siswa — SMK Negeri 1 Jakarta", description: "Wadah pengembangan minat dan kepemimpinan siswa." };
   return data ? { title: `${data.title} — SMK Negeri 1 Jakarta`, description: data.intro } : {};
 }
 
-export default async function InfoPage({ params }: { params: { section: string } }) {
+export default async function InfoPage({ params, searchParams }: { params: { section: string }; searchParams?: { page?: string } }) {
   const data = publicSections[params.section];
-  if (!data && !["osis", "agenda", "pengumuman", "galeri", "organisasi"].includes(params.section)) notFound();
+  if (!data && !["osis", "agenda", "pengumuman", "pelaksanaan", "galeri", "organisasi"].includes(params.section)) notFound();
   if (params.section === "osis") return <OrganizationDesignedPage />;
   if (params.section === "agenda") return <AgendaPage />;
   if (params.section === "pengumuman") return <AnnouncementPage />;
+  if (params.section === "pelaksanaan") return <AnnouncementPage title="Pelaksanaan" />;
   if (params.section === "galeri") return <GalleryPage />;
   if (params.section === "organisasi") return <OrganizationOverviewPage />;
   if (params.section === "kontak") return <ContactServiceDesk />;
   if (params.section === "tentang") return <ProgramDesignedPage />;
   if (params.section === "kesiswaan") return <StudentLifeDesignedPage />;
   if (params.section === "ppdb") return <PpdbReferencePage />;
-  if (params.section === "informasi") return <InformationDesignedPage />;
+  if (params.section === "informasi") return <InformationDesignedPage searchParams={searchParams} />;
   return <PublicSection data={data!} />;
 }

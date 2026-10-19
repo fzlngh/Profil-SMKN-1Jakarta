@@ -8,6 +8,6 @@ export const metadata: Metadata = {
   description: "Kabar terbaru seputar prestasi, kegiatan, dan perkembangan akademik SMK Negeri 1 Jakarta."
 };
 
-export default function NewsPage() {
-  return <InformationDesignedPage />;
+export default function NewsPage({ searchParams }: { searchParams?: { page?: string } }) {
+  return <InformationDesignedPage searchParams={searchParams} />;
 }

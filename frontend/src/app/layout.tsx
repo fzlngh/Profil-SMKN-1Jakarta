@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Chakra_Petch, Inter, Source_Serif_4, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import "./pixel-home.css";
+import "./mobile-reference.css";
+import "./desktop-reference.css";
 
 const chakra = Chakra_Petch({ subsets: ["latin"], weight: ["400", "500", "600", "700"], display: "swap", variable: "--font-chakra" });
 const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"], display: "swap", variable: "--font-inter" });

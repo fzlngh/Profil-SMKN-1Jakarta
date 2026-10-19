@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCmsPublicFeed } from "@/lib/cms-public";
+import { demoNews } from "@/lib/demo-news";
 
 type Props = { params: { slug: string } };
 
@@ -13,7 +14,7 @@ function formatDate(value?: string) {
 
 async function findNews(slug: string) {
   const feed = await getCmsPublicFeed("news");
-  return feed.items.find((item) => item.slug === slug || item.id === slug);
+  return (feed.items.length ? feed.items : demoNews).find((item) => item.slug === slug || item.id === slug);
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -24,13 +25,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function NewsDetailPage({ params }: Props) {
   const slug = decodeURIComponent(params.slug);
   const feed = await getCmsPublicFeed("news");
-  const item = feed.items.find((news) => news.slug === slug || news.id === slug);
+  const sourceItems = feed.items.length ? feed.items : demoNews;
+  const item = sourceItems.find((news) => news.slug === slug || news.id === slug);
   if (!item) notFound();
   const dateValue = item.published_at || item.starts_at || item.created_at;
   const date = formatDate(dateValue);
   const paragraphs = (item.body || item.description || item.excerpt || "Informasi lengkap belum ditambahkan oleh pengelola sekolah.")
     .split(/\r?\n\s*\r?\n/).map((paragraph) => paragraph.trim()).filter(Boolean);
-  const related = feed.items.filter((news) => news.id !== item.id).slice(0, 3);
+  const related = sourceItems.filter((news) => news.id !== item.id).slice(0, 3);
 
   return <article className="news-detail news-page-wrap">
     <nav className="news-detail-breadcrumb" aria-label="Breadcrumb"><Link href="/">Beranda</Link><span aria-hidden="true">›</span><Link href="/informasi">Berita</Link><span aria-hidden="true">›</span><span aria-current="page">{item.title}</span></nav>

@@ -1,6 +1,8 @@
 "use client";
 
 import { FormEvent, useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 type ChatMessage = {
   role: "assistant" | "user";
@@ -31,21 +33,25 @@ type SpeechWindow = Window & {
 const preferencesKey = "smkn1-public-accessibility";
 
 const welcomeMessage =
-  "Halo! Saya asisten informasi SMK Negeri 1 Jakarta. Saya menjawab berdasarkan konten publik yang telah diterbitkan di situs. Jika informasinya tidak ditemukan, saya akan mengatakannya dengan jelas.";
+  "Halo! Aku Wilhelmina, asisten virtual SMKN 1 Jakarta. Mau tahu soal apa hari ini?";
 
 const quickQuestions = [
-  "Apa saja program keahliannya?",
-  "Di mana saya bisa melihat informasi prestasi?",
-  "Bagaimana cara menghubungi sekolah?"
+  ["Info program studi", "▤"],
+  ["Jadwal & agenda", "◷"],
+  ["Mitra industri & PKL", "⌁"],
+  ["Kontak & lokasi", "⌖"]
 ];
 
 export function PublicTools() {
+  const pathname = usePathname();
+  const faqHref = pathname === "/" ? "#faq" : "/#faq";
   const [largeText, setLargeText] = useState(0);
   const [contrast, setContrast] = useState(false);
   const [dyslexiaFont, setDyslexiaFont] = useState(false);
   const [preferencesLoaded, setPreferencesLoaded] = useState(false);
   const [accessOpen, setAccessOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
+  const [greetingVisible, setGreetingVisible] = useState(true);
   const [question, setQuestion] = useState("");
   const [readAloudStatus, setReadAloudStatus] = useState("");
   const [chatSpeechStatus, setChatSpeechStatus] = useState("");
@@ -276,32 +282,41 @@ export function PublicTools() {
       </div>
 
       <div className="chat-widget">
-        {!chatOpen && <button className="chat-trigger" type="button" onClick={() => setChatOpen(true)} aria-controls="school-chat" aria-expanded={chatOpen}>
+        {!chatOpen && <>
+          {greetingVisible && <div className="chat-greeting" role="note" aria-label="Sapaan Wilhelmina">
+            <button className="chat-greeting-open" type="button" onClick={() => setChatOpen(true)} aria-controls="school-chat">
+              <span>Halo, saya Wilhelmina!<strong>Tanya apa saja soal SMKN 1 Jakarta.</strong></span>
+            </button>
+            <button className="chat-greeting-dismiss" type="button" aria-label="Tutup sapaan" onClick={() => setGreetingVisible(false)}>×</button>
+            <i aria-hidden="true" />
+          </div>}
+          <button className="chat-trigger" type="button" onClick={() => setChatOpen(true)} aria-label="Buka chat Wilhelbot" aria-controls="school-chat" aria-expanded={chatOpen}>
           <span className="chat-trigger-icon" aria-hidden="true"><img src="/mascot.png" alt="" /></span>
           <span className="chat-trigger-copy"><strong>Tanya Chatbot</strong><small>Asisten info sekolah</small></span>
-        </button>}
+          </button>
+        </>}
         <section className="chat-panel" id="school-chat" role="dialog" aria-modal="false" aria-labelledby="chat-title" hidden={!chatOpen} onKeyDown={onChatKeyDown}>
           <div className="chat-brand-row">
+            <div className="chat-header-actions"><button type="button" aria-label="Kembali dan tutup chatbot" title="Kembali" onClick={closeChat}>←</button></div>
             <span className="chat-avatar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 5.75A2.75 2.75 0 0 1 7.75 3h8.5A2.75 2.75 0 0 1 19 5.75v7.5A2.75 2.75 0 0 1 16.25 16H10l-4.5 4v-4.4A2.74 2.74 0 0 1 5 13.25v-7.5Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/></svg></span>
-            <div className="chat-brand-copy"><div className="chat-brand-name"><strong>Asisten SMKN 1 Jakarta</strong></div><span>Informasi sekolah <i aria-hidden="true" /></span></div>
-            <div className="chat-header-actions"><button type="button" aria-label="Tutup chatbot" title="Tutup" onClick={closeChat}>×</button></div>
+            <div className="chat-brand-copy"><div className="chat-brand-name"><strong>WilhelBot <i className="chat-ai-badge">AI</i></strong></div><span>Online - Asisten SMKN 1 Jakarta <i aria-hidden="true" /></span></div>
           </div>
-          <h2 className="sr-only" id="chat-title">Chat dengan Asisten Informasi SMKN 1 Jakarta</h2>
+          <h2 className="sr-only" id="chat-title">Chat WilhelBot, asisten SMKN 1 Jakarta</h2>
           <div className="chat-messages" role="log" aria-live="polite" aria-relevant="additions">
             {messages.map((message, index) => (
               <div className={`chat-message chat-message-${message.role}`} key={`${message.role}-${index}`}>
                 <p>{message.content}</p>
                 {message.role === "assistant" && <button className="chat-read-aloud" type="button" onClick={() => speak(message.content)}>Bacakan jawaban</button>}
                 {message.role === "assistant" && /belum tersedia|belum terverifikasi|tidak dapat membantu|tidak menemukan informasi/i.test(message.content) && (
-                  <a className="chat-contact-link" href="/kontak#faq">Lihat FAQ &amp; kontak sekolah</a>
+                  <Link className="chat-contact-link" href={faqHref}>Lihat FAQ sekolah</Link>
                 )}
               </div>
             ))}
-            {messages.length === 1 && <div className="chat-suggestions"><small>Pertanyaan populer</small>{quickQuestions.map((item) => <button key={item} type="button" disabled={pending} onClick={() => void ask(item)}>{item}</button>)}</div>}
+            {messages.length === 1 && <div className="chat-suggestions"><small>PILIH TOPIK</small>{quickQuestions.map(([item, icon]) => <button key={item} type="button" disabled={pending} onClick={() => void ask(item)}><span aria-hidden="true">{icon}</span>{item}</button>)}</div>}
             {pending && <p className="chat-loading" role="status">Asisten sedang menyiapkan jawaban…</p>}
           </div>
           <div className="chat-composer">
-            {error && <p className="chat-error" role="alert">{error} <a href="/kontak#faq">Lihat FAQ &amp; kontak sekolah</a></p>}
+            {error && <p className="chat-error" role="alert">{error} <Link href={faqHref}>Lihat FAQ sekolah</Link></p>}
             <form onSubmit={submitQuestion}>
               <label className="sr-only" htmlFor="chat-question">Tulis pertanyaan Anda di sini</label>
               <div className="chat-form-row">

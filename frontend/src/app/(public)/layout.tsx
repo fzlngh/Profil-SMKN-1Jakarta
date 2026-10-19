@@ -8,12 +8,13 @@ import { schoolAddress, schoolMapUrl } from "@/lib/school-location";
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <a className="skip-link" href="#main-content">Lewati ke konten utama</a>
-      <div className="notice-bar"><span className="notice-message"><b>INFO</b> PTS Ganjil 2026/2027 dimulai 15 Okt · Cek jadwal lengkap di halaman Agenda</span><span className="notice-contact"><Link href="/tentang">KOMPETENSI</Link><Link href="/kegiatan">BERKARIER</Link><Link href="/ppdb">SPMB</Link></span></div>
-      <PublicHeader />
-      <main id="main-content">{children}</main>
-      <ScrollReveal />
-      <footer className="site-footer">
+      <div className="public-site-shell">
+        <a className="skip-link" href="#main-content">Lewati ke konten utama</a>
+        <PublicHeader />
+        <div className="notice-bar"><span className="notice-message"><b>INFO</b> PTS Ganjil dimulai 15 Okt · lihat agenda</span><span className="notice-slogan">KOMPETEN / BERKARAKTER / SIAP KERJA</span><span className="notice-arrow" aria-hidden="true">→</span></div>
+        <main id="main-content">{children}</main>
+        <ScrollReveal />
+        <footer className="site-footer">
         <div className="section-wrap footer-main footer-reference-layout">
           <div className="footer-school">
             <Link className="brand footer-brand" href="/"><SchoolMark /><span className="brand-name">SMK Negeri 1 Jakarta<small>Sekolah Menengah Kejuruan</small></span></Link>
@@ -27,7 +28,8 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
           </div>
         </div>
         <div className="section-wrap footer-bottom"><span>© {new Date().getFullYear()} SMK Negeri 1 Jakarta. Hak cipta dilindungi.</span><span>Dibangun oleh tim JOSJIS SMK Negeri 1 Jakarta</span></div>
-      </footer>
+        </footer>
+      </div>
       <PublicToolsLazy />
     </>
   );
