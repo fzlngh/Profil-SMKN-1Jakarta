@@ -4,8 +4,8 @@ import { CmsService } from "../src/service.mjs";
 
 test("chat analytics return bounded category and outcome aggregates without conversation data", async () => {
   const rows = [
-    { category: "academic_agenda", outcome: "resolved", model: "model/one:free", created_at: "2026-06-01T10:00:00.000Z" },
-    { category: "news", outcome: "fallback", model: "model/two:free", created_at: "2026-06-01T09:00:00.000Z" },
+    { category: "academic_agenda", outcome: "resolved", model: "llama-3.3-70b-versatile", created_at: "2026-06-01T10:00:00.000Z" },
+    { category: "news", outcome: "fallback", model: "llama-3.1-8b-instant", created_at: "2026-06-01T09:00:00.000Z" },
     { category: "academic_agenda", outcome: "unavailable", model: null, created_at: "2026-06-01T08:00:00.000Z" }
   ];
   const queryCalls = [];

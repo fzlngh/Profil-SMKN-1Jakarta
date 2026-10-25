@@ -26,10 +26,15 @@ function formatNlpHints(nlp) {
   ].join("\n");
 }
 
+const GROQ_MODEL_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:/~-]{0,127}$/;
+
 export function getChatConfiguration(env) {
-  const apiKey = env.OPENROUTER_API_KEY?.trim();
-  const baseUrl = env.OPENROUTER_BASE_URL || "https://openrouter.ai/api/v1";
-  const models = [env.OPENROUTER_MODEL_1, env.OPENROUTER_MODEL_2, env.OPENROUTER_MODEL_3];
+  const apiKey = env.GROQ_API_KEY?.trim();
+  const baseUrl = env.GROQ_BASE_URL || "https://api.groq.com/openai/v1";
+  // GROQ_MODEL is the single-model shorthand; GROQ_MODEL_1/2/3 enable fallbacks.
+  const models = [env.GROQ_MODEL_1 || env.GROQ_MODEL, env.GROQ_MODEL_2, env.GROQ_MODEL_3]
+    .filter((model) => typeof model === "string" && model.trim())
+    .map((model) => model.trim());
   let parsed;
   try {
     parsed = new URL(baseUrl);
@@ -41,9 +46,9 @@ export function getChatConfiguration(env) {
     !["https:", "http:"].includes(parsed.protocol) ||
     (parsed.protocol !== "https:" && !["localhost", "127.0.0.1"].includes(parsed.hostname)) ||
     parsed.username || parsed.password || parsed.search || parsed.hash ||
-    models.some((model) => typeof model !== "string" ||
-      !/^[A-Za-z0-9][A-Za-z0-9._-]*\/[A-Za-z0-9][A-Za-z0-9._:-]*:free$/.test(model)) ||
-    new Set(models).size !== 3
+    models.length === 0 ||
+    models.some((model) => !GROQ_MODEL_PATTERN.test(model)) ||
+    new Set(models).size !== models.length
   ) return null;
   return {
     apiKey,

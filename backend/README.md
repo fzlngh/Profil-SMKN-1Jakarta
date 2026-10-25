@@ -16,6 +16,14 @@ npm start
 
 Run `migrations/001_school_profile_cms.sql` once in the intended Supabase project's SQL editor/deployment pipeline. The migration is additive and creates only `cms_*` tables/indexes/policies and CMS-prefixed helper functions. It contains no `DROP`, truncate, schema reset, or SIM-PKL data operations. Review the target project and take the normal database backup before deployment.
 
+After migrations, seed the published school content the chatbot answers from:
+
+```sh
+npm run seed
+```
+
+The seed script reads `seed/public-content.json` and upserts news/announcements by `slug` (idempotent) through the service-role key. Without published rows, Wilhel correctly replies that no relevant published information was found. Edit the JSON to match verified school data before running it in production.
+
 Set up the first `admin_it` with a trusted operator session after creating that person in Supabase Auth:
 
 ```sql
@@ -65,9 +73,9 @@ Chatbot bernama **Wilhel** memproses setiap pertanyaan dalam tiga tahap:
 
 Jalankan `migrations/002_wilhel_nlp_results.sql` di Supabase SQL Editor setelah migrasi 001. Tabel ini hanya dapat diakses `service_role`.
 
-The chatbot retrieves up to 10 currently eligible, published records per CMS content type through the public Supabase client (news, announcements, academic agenda, and hero banners), ranks them against the current question, and sends only up to five relevant, bounded excerpts to the configured OpenRouter-compatible provider. Drafts and admin endpoints are never queried. If no published record is relevant, it returns a direct “not found in published content” answer without calling the AI provider. Content and visitor questions are treated as untrusted input; the model is instructed to answer only from the retrieved excerpts.
+The chatbot retrieves up to 10 currently eligible, published records per CMS content type through the public Supabase client (news, announcements, academic agenda, and hero banners), ranks them against the current question, and sends only up to five relevant, bounded excerpts to the configured Groq (OpenAI-compatible) provider. Drafts and admin endpoints are never queried. If no published record is relevant, it returns a direct “not found in published content” answer without calling the AI provider. Content and visitor questions are treated as untrusted input; the model is instructed to answer only from the retrieved excerpts.
 
-The Express chatbot tries the three configured OpenRouter-compatible `:free` model IDs in order, with an 8-second per-model timeout and a 400-token output limit. Configure `OPENROUTER_API_KEY` and three distinct `OPENROUTER_MODEL_n` values in `backend/.env`; the provider key must never be added to the frontend. Free-model capacity and per-account quotas can change: the API tries the next configured model after provider throttling and returns `503 CHAT_PROVIDER_RATE_LIMITED` if all attempts are rate-limited. Chat analytics persist only a coarse category, `resolved` / `fallback` / `unavailable`, selected model where applicable, and database timestamp. Raw prompts, generated replies, user IDs, IP addresses, and conversation history are not stored. The raw question and selected published excerpts are sent to the configured AI provider to produce an answer; disclose that processing to visitors and advise them not to include personal information. Chat requests have a separate limit of 20 per IP per 15 minutes; other public routes are limited to 120 per IP per 15 minutes. In multi-instance production, use a shared/edge rate limiter.
+The Express chatbot tries the configured Groq model IDs in order, with an 8-second per-model timeout and a 400-token output limit. Configure `GROQ_API_KEY` and either `GROQ_MODEL` (primary only) or `GROQ_MODEL_1` / `GROQ_MODEL_2` / `GROQ_MODEL_3` (primary plus fallbacks) in `backend/.env`; the provider key must never be added to the frontend. Provider capacity and per-account quotas can change: the API tries the next configured model after provider throttling and returns `503 CHAT_PROVIDER_RATE_LIMITED` if all attempts are rate-limited. Chat analytics persist only a coarse category, `resolved` / `fallback` / `unavailable`, selected model where applicable, and database timestamp. Raw prompts, generated replies, user IDs, IP addresses, and conversation history are not stored. The raw question and selected published excerpts are sent to the configured AI provider to produce an answer; disclose that processing to visitors and advise them not to include personal information. Chat requests have a separate limit of 20 per IP per 15 minutes; other public routes are limited to 120 per IP per 15 minutes. In multi-instance production, use a shared/edge rate limiter.
 
 ### Authenticated CMS
 

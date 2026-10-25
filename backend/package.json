@@ -10,6 +10,7 @@
     "start": "node server.mjs",
     "dev": "node --watch server.mjs",
     "test": "node --test",
+    "seed": "node scripts/seed-content.mjs",
     "check": "node --check server.mjs && node --check src/app.mjs && node --check src/chat.mjs && node --check src/nlp.mjs && node --check src/service.mjs"
   },
   "dependencies": {

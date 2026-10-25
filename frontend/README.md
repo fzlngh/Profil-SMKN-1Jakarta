@@ -13,6 +13,6 @@ This folder contains the Next.js frontend. The CMS and AI provider API run separ
 
 ### Chatbot and backend configuration
 
-The browser calls the frontend's `/api/public/chat` route, which forwards the question to `${NEXT_PUBLIC_CMS_API_URL}/api/public/chat`. AI provider credentials and model settings must be configured in the separate Express backend environment (for example, its `OPENROUTER_API_KEY` and model variables); keep them out of this frontend folder and out of every `NEXT_PUBLIC_*` setting. When the API URL or AI service is unavailable, the chat panel remains usable and shows a clear configuration or connection error. The ZIP contains only the frontend, so the chatbot will not return AI answers until the backend is running and configured.
+The browser calls the frontend's `/api/public/chat` route, which forwards the question to `${NEXT_PUBLIC_CMS_API_URL}/api/public/chat`. AI provider credentials and model settings must be configured in the separate Express backend environment (for example, its `GROQ_API_KEY` and model variables); keep them out of this frontend folder and out of every `NEXT_PUBLIC_*` setting. When the API URL or AI service is unavailable, the chat panel remains usable and shows a clear configuration or connection error. The ZIP contains only the frontend, so the chatbot will not return AI answers until the backend is running and configured.
 
 The news page reads published entries from the same CMS API. Without a configured and available CMS, it shows an empty or unavailable state rather than displaying invented news.

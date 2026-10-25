@@ -32,7 +32,7 @@ function makeApp({
       truncated: false,
       categories: { academic_agenda: 1, news: 1 },
       outcomes: { resolved: 1, fallback: 1 },
-      recent: [{ category: "academic_agenda", outcome: "resolved", model: "test/model:free", created_at: "2026-01-01T00:00:00.000Z" }]
+      recent: [{ category: "academic_agenda", outcome: "resolved", model: "test-model", created_at: "2026-01-01T00:00:00.000Z" }]
     }),
     listPublished: async (resource, options) => ({ items: [{ resource }], total: 1, ...options }),
     getPublished: async (_resource, id) => ({ id, is_published: true }),
@@ -162,20 +162,20 @@ test("admin can delete content and assign roles but cannot demote self", async (
   assert.equal(calls.some((call) => call.op === "set-role"), true);
 });
 
-test("chat uses the second free model as fallback and records no prompt text", async () => {
+test("chat uses the second configured model as fallback and records no prompt text", async () => {
   const modelRequests = [];
   const fetchImpl = async (_url, options) => {
     const body = JSON.parse(options.body);
     modelRequests.push(body.model);
-    if (body.model.endsWith("one:free")) return { ok: false, status: 503 };
+    if (body.model === "test-one") return { ok: false, status: 503 };
     return { ok: true, json: async () => ({ choices: [{ message: { content: "Silakan lihat agenda." } }] }) };
   };
   const env = {
-    OPENROUTER_API_KEY: "test-key",
-    OPENROUTER_BASE_URL: "https://provider.example/v1",
-    OPENROUTER_MODEL_1: "test/one:free",
-    OPENROUTER_MODEL_2: "test/two:free",
-    OPENROUTER_MODEL_3: "test/three:free"
+    GROQ_API_KEY: "test-key",
+    GROQ_BASE_URL: "https://provider.example/v1",
+    GROQ_MODEL_1: "test-one",
+    GROQ_MODEL_2: "test-two",
+    GROQ_MODEL_3: "test-three"
   };
   const { app, calls, nlpRows } = makeApp({
     env,
@@ -190,9 +190,9 @@ test("chat uses the second free model as fallback and records no prompt text", a
   const privateQuestion = "Agenda sekolah untuk hari Jumat?";
   const response = await request(app).post("/api/public/chat").send({ message: privateQuestion }).expect(200);
   assert.equal(response.body.data.reply, "Silakan lihat agenda.");
-  assert.deepEqual(modelRequests, ["test/one:free", "test/two:free"]);
+  assert.deepEqual(modelRequests, ["test-one", "test-two"]);
   const analytics = calls.find((call) => call.op === "analytics").row;
-  assert.deepEqual(analytics, { category: "academic_agenda", outcome: "fallback", model: "test/two:free" });
+  assert.deepEqual(analytics, { category: "academic_agenda", outcome: "fallback", model: "test-two" });
   assert.equal(JSON.stringify(analytics).includes(privateQuestion), false);
   assert.equal(response.body.data.bot, "Wilhel");
   assert.equal(response.body.data.intent, "academic_agenda");
@@ -207,11 +207,11 @@ test("Wilhel flow: NLP output is saved to the database, then the LLM reads it ba
   };
   const { app, calls, nlpRows } = makeApp({
     env: {
-      OPENROUTER_API_KEY: "test-key",
-      OPENROUTER_BASE_URL: "https://provider.example/v1",
-      OPENROUTER_MODEL_1: "test/one:free",
-      OPENROUTER_MODEL_2: "test/two:free",
-      OPENROUTER_MODEL_3: "test/three:free"
+      GROQ_API_KEY: "test-key",
+      GROQ_BASE_URL: "https://provider.example/v1",
+      GROQ_MODEL_1: "test-one",
+      GROQ_MODEL_2: "test-two",
+      GROQ_MODEL_3: "test-three"
     },
     fetchImpl,
     publishedChatContent: [{
@@ -248,11 +248,11 @@ test("Wilhel flow: NLP output is saved to the database, then the LLM reads it ba
 test("Wilhel fails closed when the NLP result cannot be read back from the database", async () => {
   const { app, calls } = makeApp({
     env: {
-      OPENROUTER_API_KEY: "test-key",
-      OPENROUTER_BASE_URL: "https://provider.example/v1",
-      OPENROUTER_MODEL_1: "test/one:free",
-      OPENROUTER_MODEL_2: "test/two:free",
-      OPENROUTER_MODEL_3: "test/three:free"
+      GROQ_API_KEY: "test-key",
+      GROQ_BASE_URL: "https://provider.example/v1",
+      GROQ_MODEL_1: "test-one",
+      GROQ_MODEL_2: "test-two",
+      GROQ_MODEL_3: "test-three"
     },
     fetchImpl: async () => { throw new Error("provider must not be called without a stored NLP result"); },
     publishedChatContent: [{ resource: "news", title: "Prestasi Siswa", body: "Tim sekolah juara." }],
@@ -266,11 +266,11 @@ test("Wilhel fails closed when the NLP result cannot be read back from the datab
 
 test("chat answers honestly without calling the provider when no published content matches", async () => {
   const env = {
-    OPENROUTER_API_KEY: "test-key",
-    OPENROUTER_BASE_URL: "https://provider.example/v1",
-    OPENROUTER_MODEL_1: "test/one:free",
-    OPENROUTER_MODEL_2: "test/two:free",
-    OPENROUTER_MODEL_3: "test/three:free"
+    GROQ_API_KEY: "test-key",
+    GROQ_BASE_URL: "https://provider.example/v1",
+    GROQ_MODEL_1: "test-one",
+    GROQ_MODEL_2: "test-two",
+    GROQ_MODEL_3: "test-three"
   };
   const { app, calls } = makeApp({
     env,

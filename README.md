@@ -32,7 +32,7 @@ Aplikasi web profil sekolah dan chatbot informasi sekolah untuk SMK Negeri 1 Jak
 
 - **Website Profil Sekolah**: Platform publik untuk menampilkan informasi lengkap tentang SMK Negeri 1 Jakarta, termasuk program studi, berita, pengumuman, dan agenda akademis
 - **CMS Admin Panel**: Dashboard administrasi untuk mengelola konten secara dinamis dengan fitur draft, publikasi, dan manajemen peran pengguna
-- **Chatbot Informasi Sekolah**: Bot AI yang dapat menjawab pertanyaan umum tentang sekolah dengan integrasi OpenRouter API
+- **Chatbot Informasi Sekolah**: Bot AI yang dapat menjawab pertanyaan umum tentang sekolah dengan integrasi Groq API
 - **Analytics Chatbot**: Sistem analitik sederhana dan privacy-friendly untuk melacak penggunaan chatbot
 
 Aplikasi ini menggantikan SIM-PKL (sistem yang lebih lama) dan menggunakan infrastruktur Supabase terpisah untuk menjaga keamanan dan ketenangan.
@@ -146,17 +146,24 @@ git --version
    FRONTEND_ORIGINS=http://localhost:3000
    PORT=4000
    
-   # Optional: Chatbot Configuration
-   OPENROUTER_API_KEY=your-openrouter-key
-   OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
-   OPENROUTER_MODEL_1=qwen/qwen3.8-27b:free
-   OPENROUTER_MODEL_2=google/gemma-4-31b-it:free
-   OPENROUTER_MODEL_3=nvidia/nemotron-3.5-lightning:free
+   # Optional: Chatbot Configuration (Groq)
+   GROQ_API_KEY=your-groq-key
+   GROQ_BASE_URL=https://api.groq.com/openai/v1
+   GROQ_MODEL=qwen/qwen3.8-27b
+   GROQ_MODEL_2=openai/gpt-oss-20b
+   GROQ_MODEL_3=openai/gpt-oss-120b
    ```
 
 5. **Setup Database:**
    - Buka Supabase dashboard → SQL Editor
    - Jalankan script dari `migrations/001_school_profile_cms.sql`
+   - Jalankan `migrations/002_wilhel_nlp_results.sql`
+   - Isi konten publik untuk chatbot (idempotent, aman dijalankan ulang):
+     ```bash
+     cd backend
+     npm run seed
+     ```
+     Sumber data: `backend/seed/public-content.json`
    - Tambahkan admin pertama melalui SQL:
      ```sql
      insert into public.cms_user_roles (user_id, role)
@@ -256,9 +263,9 @@ npm start      # Run production server
 | `FRONTEND_ORIGINS` | ✅ | CORS origins (comma-separated) | `http://localhost:3000` |
 | `PORT` | ❌ | Server port | `4000` |
 | `TRUST_PROXY` | ❌ | Proxy hops (hanya jika di belakang proxy) | `1` |
-| `OPENROUTER_API_KEY` | ❌ | API key untuk chatbot | `sk-or-v1-xxx` |
-| `OPENROUTER_BASE_URL` | ❌ | OpenRouter base URL | `https://openrouter.ai/api/v1` |
-| `OPENROUTER_MODEL_1/2/3` | ❌ | Model IDs untuk chatbot | `qwen/qwen3.8-27b:free` |
+| `GROQ_API_KEY` | ❌ | API key Groq untuk chatbot | `gsk_xxx` |
+| `GROQ_BASE_URL` | ❌ | Groq base URL (OpenAI-compatible) | `https://api.groq.com/openai/v1` |
+| `GROQ_MODEL` / `GROQ_MODEL_2/3` | ❌ | Model IDs untuk chatbot (primary + fallback) | `qwen/qwen3.8-27b` |
 
 ### Frontend Variables (.env.local)
 
@@ -347,7 +354,7 @@ Dokumentasi lengkap tersedia di `backend/openapi.yaml`
 - ✅ User management
 
 ### 3. Chatbot AI
-- ✅ Integrasi OpenRouter untuk multiple models
+- ✅ Integrasi Groq untuk multiple models
 - ✅ Fallback ke model alternative jika timeout
 - ✅ Rate limiting (20 requests per 15 menit per IP)
 - ✅ Privacy-preserving analytics (tanpa simpan prompt/reply)
@@ -538,8 +545,8 @@ npm run lint       # Run linter (ESLint)
 - ✅ Clear browser cache/cookies
 
 ### Chatbot tidak merespon
-- ✅ Pastikan `OPENROUTER_API_KEY` diset di backend `.env`
-- ✅ Check API quota di OpenRouter
+- ✅ Pastikan `GROQ_API_KEY` diset di backend `.env`
+- ✅ Check API quota di Groq
 - ✅ Verify models yang dikonfigurasi available
 - ✅ Check backend logs untuk error details
 
