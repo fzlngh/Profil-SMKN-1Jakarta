@@ -177,7 +177,8 @@ const RESOURCE_LABELS = {
   news: "BERITA",
   announcements: "PENGUMUMAN",
   "academic-agenda": "AGENDA",
-  "hero-banners": "BANNER"
+  "hero-banners": "BANNER",
+  "public-page": "HALAMAN SITUS"
 };
 
 // Meranking konten terbit terhadap keyword dan membangun konteks terbatas + rujukan dokumen.

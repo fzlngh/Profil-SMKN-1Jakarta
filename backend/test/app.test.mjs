@@ -277,11 +277,14 @@ test("chat answers honestly without calling the provider when no published conte
     fetchImpl: async () => { throw new Error("provider must not be called without relevant content"); }
   });
   const response = await request(app).post("/api/public/chat")
-    .send({ message: "Apa program keahlian sekolah?" }).expect(200);
+    // "Program keahlian" is now answerable from the static public-page catalog (see
+    // src/public-knowledge.mjs), so this test uses a topic absent from both the CMS
+    // content and that catalog to exercise the genuine no-match path.
+    .send({ message: "Apa menu kantin hari ini?" }).expect(200);
   assert.match(response.body.data.reply, /tidak menemukan informasi yang relevan/);
   assert.equal(response.body.data.model, null);
   assert.deepEqual(calls.find((call) => call.op === "analytics").row, {
-    category: "academic_program",
+    category: "other",
     outcome: "unavailable",
     model: null
   });
