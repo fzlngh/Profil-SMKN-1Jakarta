@@ -229,3 +229,6 @@ export function createApp({ publicClient, serviceClient, env = process.env, fetc
 
   return app;
 }
+
+const app = createApp();
+export default app;
