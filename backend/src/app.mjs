@@ -42,7 +42,7 @@ function asyncRoute(handler) {
   return (req, res, next) => Promise.resolve(handler(req, res, next)).catch(next);
 }
 
-export default function createApp({ publicClient, serviceClient, env = process.env, fetchImpl = fetch, service: suppliedService } = {}) {
+export function createApp({ publicClient, serviceClient, env = process.env, fetchImpl = fetch, service: suppliedService } = {}) {
   const app = express();
   app.disable("x-powered-by");
 
@@ -229,3 +229,6 @@ export default function createApp({ publicClient, serviceClient, env = process.e
 
   return app;
 }
+
+const app = createApp();
+export default app;
