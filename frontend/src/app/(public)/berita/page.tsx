@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getCmsPublicFeed } from "@/lib/cms-public";
 import { demoNews } from "@/lib/demo-news";
@@ -13,6 +14,8 @@ function dateLabel(value?: string) {
 function keyFor(item: { slug?: string; id: string }) { return encodeURIComponent(item.slug || item.id); }
 
 export default async function NewsIndexPage({ searchParams }: { searchParams?: { q?: string; kategori?: string; page?: string } }) {
+  // Konsistensi: tanpa filter, /berita dialihkan ke halaman utama berita (/informasi).
+  if (!searchParams?.q && !searchParams?.kategori) redirect("/informasi");
   const feed = await getCmsPublicFeed("news");
   const usingDemo = feed.items.length === 0;
   const sourceItems = usingDemo ? demoNews : feed.items;

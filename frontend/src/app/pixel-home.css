@@ -1269,8 +1269,8 @@
   .organization-site-link { min-height:38px; margin-top:7px; padding:6px 9px; }
   .organization-site-link b { font-size:9px; }
 
-  .pixel-program-card>div img { display:none; }
-  .pixel-program-card>div .program-card-glyph { display:grid; width:32px; height:32px; place-items:center; border-radius:9px; background:#edf2ff; color:var(--accent); font-size:18px; font-weight:700; }
+  .pixel-program-card>div img { display:block; width:40px; height:40px; border-radius:10px; object-fit:cover; }
+  .pixel-program-card>div .program-card-glyph { display:none; }
   .pixel-program-card>div i { display:block; width:auto; height:auto; border-radius:0; background:transparent; color:var(--accent); font:700 8px/1 var(--font-mono),monospace; font-style:normal; }
 }
 .program-mobile-news { display:none; }

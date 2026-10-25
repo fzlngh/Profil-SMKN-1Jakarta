@@ -6,6 +6,8 @@
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    width: 100%;
+    box-shadow: 0 2px 14px rgba(14, 39, 83, .10);
     display: block !important;
     width: 100%;
     height: 58px !important;
@@ -22,7 +24,10 @@
     gap: 12px;
   }
   .site-header-reference .brand { min-height: 58px !important; gap: 9px; }
-  .site-header-reference .school-mark { width: 32px; height: 32px; }
+  .site-header-reference .school-mark,
+  .mobile-menu-brand .school-mark { object-fit: contain !important; box-sizing: border-box !important; border-radius: 50% !important; }
+  .site-header-reference .school-mark { width: 32px !important; height: 32px !important; padding: 4px !important; overflow: hidden; background: #17459d !important; }
+  .mobile-menu-brand .school-mark { width: 40px !important; height: 40px !important; padding: 6px !important; background: #ffa500 !important; }
   .site-header-reference .brand-name { color: #15294d; font-size: 12px; font-weight: 700; }
   .site-header-reference .brand-name::after { display: none !important; }
   .site-header-reference .header-chat-button,
@@ -173,8 +178,8 @@
     border-radius: 12px;
   }
   .pixel-program-card > div { min-height: 34px; }
-  .pixel-program-card > div img { display: none !important; }
-  .pixel-program-card > div .program-card-glyph { display: grid !important; width: 34px !important; height: 34px !important; border-radius: 9px; background: color-mix(in srgb, var(--accent) 12%, white) !important; color: var(--accent) !important; font-size: 18px !important; }
+  .pixel-program-card > div img { display: block !important; width: 40px !important; height: 40px !important; border-radius: 10px !important; object-fit: cover; }
+  .pixel-program-card > div .program-card-glyph { display: none !important; }
   .pixel-program-card > div i { display: block !important; width: auto; height: auto; background: transparent; color: var(--accent); font: 700 9px/1 var(--font-mono), monospace; }
   .pixel-program-card h3 { margin: 19px 0 10px; font-size: 15px !important; line-height: 1.35; }
   .pixel-program-card p { min-height: 0; margin: 0; color: #738097; font-size: 10px !important; line-height: 1.6; }

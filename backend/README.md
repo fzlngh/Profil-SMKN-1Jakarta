@@ -26,6 +26,10 @@ The seed script reads `seed/public-content.json` and upserts news/announcements 
 
 Run `npm run seed:sync` (or `node scripts/seed-content.mjs --sync`) to make the JSON the single source of truth: after the upsert it deletes published news/announcement/agenda rows and hero banners whose `slug`/`title` is not present in the JSON. Use it in the deployment pipeline (after migrations, before start) and review the `removed:` lines in the logs during rollout.
 
+### Manual content workflow (RSS ingestion removed)
+
+The automatic Google News RSS ingestion (`fetch-news.mjs`) was removed by editorial decision: articles about the school are published manually through the admin CMS, adding each article's own photo as `cover_image_url`. Earlier auto-imported rows remain in the database for editing. The content pipeline stays: admin CMS → `cms_*` (terbit) → `/informasi` (ISR 60s) → Wilhel chatbot.
+
 ## Deploying publicly (grounding checklist)
 
 1. **Supabase**: apply `migrations/001…` and `002…` in the production project, keep RLS on, and never expose the service-role key outside the backend.

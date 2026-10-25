@@ -92,7 +92,8 @@ async function seedHeroBanners(rows) {
 const FULL_SYNC = process.argv.includes("--sync");
 
 async function syncBySlug(table, rows) {
-  if (!FULL_SYNC) return { table, deleted: 0 };
+  const manualOnly = table === "cms_news"; // Berita dikelola manual via CMS — seed:sync tidak boleh menghapusnya.
+  if (!FULL_SYNC || manualOnly) return { table, deleted: 0 };
   const keep = new Set(rows.map((row) => row.slug));
   const { data: existing, error } = await supabase.from(table).select("slug");
   if (error) throw new Error(`${table}: ${error.message}`);

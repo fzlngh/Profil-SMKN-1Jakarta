@@ -360,7 +360,7 @@ export function PublicTools() {
         <section className={chatOpen ? "chat-panel animate__animated animate__fadeInUp" : "chat-panel"} style={chatOpen ? ({ ["--animate-duration" as string]: "240ms" } as React.CSSProperties) : undefined} id="school-chat" role="dialog" aria-modal="false" aria-labelledby="chat-title" hidden={!chatOpen} onKeyDown={onChatKeyDown}>
           <div className="chat-brand-row">
             <div className="chat-header-actions"><button type="button" aria-label="Kembali dan tutup chatbot" title="Kembali" onClick={closeChat}>←</button></div>
-            <span className="chat-avatar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 5.75A2.75 2.75 0 0 1 7.75 3h8.5A2.75 2.75 0 0 1 19 5.75v7.5A2.75 2.75 0 0 1 16.25 16H10l-4.5 4v-4.4A2.74 2.74 0 0 1 5 13.25v-7.5Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/></svg></span>
+            <span className="chat-avatar chat-avatar-mascot" aria-hidden="true"><img src="/mascot.png" alt="" /></span>
             <div className="chat-brand-copy"><div className="chat-brand-name"><strong>WilhelBot <i className="chat-ai-badge">AI</i></strong></div><span>Online - Asisten SMKN 1 Jakarta <i aria-hidden="true" /></span></div>
           </div>
           <h2 className="sr-only" id="chat-title">Chat WilhelBot, asisten SMKN 1 Jakarta</h2>
