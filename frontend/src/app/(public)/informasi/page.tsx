@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { InformationDesignedPage } from "@/components/InformationDesignedPage";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Berita Sekolah — SMK Negeri 1 Jakarta",

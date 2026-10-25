@@ -23,7 +23,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
           </div>
           <div className="footer-navigation">
             <section className="footer-reference-col"><h2>Jelajahi</h2><nav aria-label="Jelajahi"><Link href="/tentang">Program Studi</Link><Link href="/informasi">Berita</Link><Link href="/pengumuman">Pengumuman</Link><Link href="/agenda">Agenda Akademik</Link></nav></section>
-            <section className="footer-reference-col"><h2>Lainnya</h2><nav aria-label="Tautan lainnya"><Link href="/organisasi">Organisasi</Link><Link href="/galeri">Galeri Kampus</Link><ChatbotLink /><Link href="/admin">Masuk Admin</Link></nav></section>
+            <section className="footer-reference-col"><h2>Lainnya</h2><nav aria-label="Tautan lainnya"><Link href="/organisasi">Organisasi</Link><Link href="/galeri">Galeri Sekolah</Link><ChatbotLink /></nav></section>
             <section className="footer-reference-col footer-information"><h2>Jam Layanan</h2><p>Senin – Jumat: 07.00 – 16.00</p><p>Sabtu: 07.00 – 12.00</p><p>Minggu &amp; libur: tutup</p></section>
           </div>
         </div>

@@ -92,7 +92,7 @@
     z-index: 0;
     overflow: hidden;
     border-radius: inherit;
-    background: linear-gradient(180deg, #102b6020, #102b6040), url("/images/reference/campus.png") center / cover no-repeat;
+    background: linear-gradient(180deg, #102b6020, #102b6040), url("/images/reference/campus.jpg") center / cover no-repeat;
   }
   .pixel-campus-placeholder > * { display: none !important; }
   .pixel-campus .campus-corner { width: 28px; height: 28px; }

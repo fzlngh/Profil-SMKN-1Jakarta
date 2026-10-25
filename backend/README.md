@@ -24,6 +24,17 @@ npm run seed
 
 The seed script reads `seed/public-content.json` and upserts news/announcements by `slug` (idempotent) through the service-role key. Without published rows, Wilhel correctly replies that no relevant published information was found. Edit the JSON to match verified school data before running it in production.
 
+Run `npm run seed:sync` (or `node scripts/seed-content.mjs --sync`) to make the JSON the single source of truth: after the upsert it deletes published news/announcement/agenda rows and hero banners whose `slug`/`title` is not present in the JSON. Use it in the deployment pipeline (after migrations, before start) and review the `removed:` lines in the logs during rollout.
+
+## Deploying publicly (grounding checklist)
+
+1. **Supabase**: apply `migrations/001…` and `002…` in the production project, keep RLS on, and never expose the service-role key outside the backend.
+2. **Backend**: host on a persistent runtime (VPS/Railway/Render). Set `CMS_SUPABASE_URL`, `CMS_SUPABASE_ANON_KEY`, `CMS_SUPABASE_SERVICE_ROLE_KEY`, exact `FRONTEND_ORIGINS` (the deployed frontend origin), `GROQ_API_KEY`, `GROQ_MODEL(_2/_3)`. Set `TRUST_PROXY` and secure cookies (`COOKIE_SECURE=true`) behind HTTPS/reverse proxy; use an edge/shared rate limiter for multi-instance deployments. Run `npm run seed:sync` in the release pipeline, then `npm start`.
+3. **Frontend**: deploy the production build (`npm run build`). Point `NEXT_PUBLIC_CMS_API_URL` to the public backend origin and `NEXT_PUBLIC_CMS_SUPABASE_URL` / `NEXT_PUBLIC_CMS_SUPABASE_ANON_KEY` to the production Supabase project. Beware ISR content caches up to 60 seconds after CMS publish.
+4. **Grounding**: the chatbot never reads files or sites; it answers only from published `cms_*` rows — the seeded JSON via the database. The system prompt forbids outside knowledge, retrieval stays behind the API (never in the browser), and when no published content matches, Wilhel honestly answers “not found” without calling the provider. Keep it that way: do not ship provider keys to the frontend and do not widen `getPublishedChatContent` beyond published content.
+5. **Rotasi kredensial**: rotate `GROQ_API_KEY` and Supabase keys if they were ever committed. Keep `.env` on the server only (never in Git), and use separate projects/keys for staging and production.
+
+
 Set up the first `admin_it` with a trusted operator session after creating that person in Supabase Auth:
 
 ```sql

@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import "animate.css";
 
 type ChatMessage = {
   role: "assistant" | "user";
@@ -31,6 +32,47 @@ type SpeechWindow = Window & {
 };
 
 const preferencesKey = "smkn1-public-accessibility";
+
+// Fitur perbesar teks: setiap elemen teks diskalakan tepat satu kali dari
+// ukuran desainnya sendiri (inline style), sehingga tidak ada penggandaan
+// ukuran antar elemen bertingkat maupun penimpaan definisi tipografi di CSS.
+const TEXT_SCALE_FACTORS: Record<number, number> = { 1: 1.1, 2: 1.2 };
+const SCALE_REGIONS = "main, .site-header, .site-footer, .chat-panel, .access-panel";
+const SCALE_TARGET =
+  "h1,h2,h3,h4,h5,p,a,button,label,input,textarea,select,li,blockquote,span,small,strong,b,em,td,th,figcaption,summary";
+
+function queryScaleTargets(): HTMLElement[] {
+  return Array.from(document.querySelectorAll<HTMLElement>(`${SCALE_REGIONS} ${SCALE_TARGET}`));
+}
+
+function applyTextScale(scale: 0 | 1 | 2) {
+  const factor = TEXT_SCALE_FACTORS[scale] ?? 0;
+  const targets = queryScaleTargets();
+
+  // Tahap 1: hapus skala sebelumnya agar ukuran yang terukur kembali ke definisi CSS.
+  for (const element of targets) {
+    if (element.dataset.a11yScaled === "1") {
+      element.style.removeProperty("font-size");
+      element.dataset.a11yScaled = "0";
+    }
+  }
+
+  if (!factor) {
+    for (const element of targets) delete element.dataset.a11yScaled;
+    return;
+  }
+
+  // Tahap 2: ukur ukuran desain tiap elemen, lalu terapkan faktor tepat satu kali.
+  for (const element of targets) {
+    if (element.getAttribute("aria-hidden") === "true") continue;
+    if (element.classList.contains("sr-only")) continue;
+    if (!(element.textContent ?? "").trim()) continue;
+    const designed = Number.parseFloat(window.getComputedStyle(element).fontSize);
+    if (!Number.isFinite(designed) || designed <= 0) continue;
+    element.style.setProperty("font-size", `${(designed * factor).toFixed(1)}px`);
+    element.dataset.a11yScaled = "1";
+  }
+}
 
 const welcomeMessage =
   "Halo! Aku Wilhelmina, asisten virtual SMKN 1 Jakarta. Mau tahu soal apa hari ini?";
@@ -91,6 +133,7 @@ export function PublicTools() {
     root.dataset.textScale = String(largeText);
     root.classList.toggle("high-contrast", contrast);
     root.classList.toggle("dyslexia-font", dyslexiaFont);
+    applyTextScale(largeText as 0 | 1 | 2);
     try {
       window.localStorage.setItem(
         preferencesKey,
@@ -100,6 +143,25 @@ export function PublicTools() {
       // Accessibility controls still work when browser storage is disabled.
     }
   }, [largeText, contrast, dyslexiaFont, preferencesLoaded]);
+
+  // Elemen yang muncul setelah skala aktif (mis. pesan chat baru) ikut disesuaikan.
+  useEffect(() => {
+    if (!preferencesLoaded || largeText === 0) return;
+    let scheduled = 0;
+    const observer = new MutationObserver((mutations) => {
+      if (!mutations.some((mutation) => mutation.addedNodes.length > 0)) return;
+      if (scheduled) return;
+      scheduled = window.setTimeout(() => {
+        scheduled = 0;
+        applyTextScale(largeText as 0 | 1 | 2);
+      }, 60);
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => {
+      observer.disconnect();
+      if (scheduled) window.clearTimeout(scheduled);
+    };
+  }, [largeText, preferencesLoaded]);
 
   useEffect(() => {
     if (chatOpen) questionInputRef.current?.focus();
@@ -251,7 +313,8 @@ export function PublicTools() {
           A−
         </button>
         <section
-          className="access-panel"
+          className={accessOpen ? "access-panel animate__animated animate__fadeInUp" : "access-panel"}
+          style={accessOpen ? ({ ["--animate-duration" as string]: "240ms" } as React.CSSProperties) : undefined}
           id="accessibility-panel"
           aria-labelledby="accessibility-title"
           hidden={!accessOpen}
@@ -295,7 +358,7 @@ export function PublicTools() {
           <span className="chat-trigger-copy"><strong>Tanya Chatbot</strong><small>Asisten info sekolah</small></span>
           </button>
         </>}
-        <section className="chat-panel" id="school-chat" role="dialog" aria-modal="false" aria-labelledby="chat-title" hidden={!chatOpen} onKeyDown={onChatKeyDown}>
+        <section className={chatOpen ? "chat-panel animate__animated animate__fadeInUp" : "chat-panel"} style={chatOpen ? ({ ["--animate-duration" as string]: "240ms" } as React.CSSProperties) : undefined} id="school-chat" role="dialog" aria-modal="false" aria-labelledby="chat-title" hidden={!chatOpen} onKeyDown={onChatKeyDown}>
           <div className="chat-brand-row">
             <div className="chat-header-actions"><button type="button" aria-label="Kembali dan tutup chatbot" title="Kembali" onClick={closeChat}>←</button></div>
             <span className="chat-avatar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 5.75A2.75 2.75 0 0 1 7.75 3h8.5A2.75 2.75 0 0 1 19 5.75v7.5A2.75 2.75 0 0 1 16.25 16H10l-4.5 4v-4.4A2.74 2.74 0 0 1 5 13.25v-7.5Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/></svg></span>

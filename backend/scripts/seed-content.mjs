@@ -87,19 +87,68 @@ async function seedHeroBanners(rows) {
   return count;
 }
 
+// Mode --sync (seed jadi sumber tunggal): setelah upsert, hapus baris terbit
+// yang slug/titel-nya tidak ada di seed/public-content.json.
+const FULL_SYNC = process.argv.includes("--sync");
+
+async function syncBySlug(table, rows) {
+  if (!FULL_SYNC) return { table, deleted: 0 };
+  const keep = new Set(rows.map((row) => row.slug));
+  const { data: existing, error } = await supabase.from(table).select("slug");
+  if (error) throw new Error(`${table}: ${error.message}`);
+  const stale = (existing ?? []).map((row) => row.slug).filter((slug) => !keep.has(slug));
+  if (!stale.length) return { table, deleted: 0 };
+  const { error: deleteError } = await supabase.from(table).delete().in("slug", stale);
+  if (deleteError) throw new Error(`${table}: ${deleteError.message}`);
+  return { table, deleted: stale.length, deletedSlugs: stale };
+}
+
+async function syncHeroBanners(rows) {
+  if (!FULL_SYNC) return { table: "cms_hero_banners", deleted: 0 };
+  const keep = new Set(rows.map((item) => item.title));
+  const { data: existing, error } = await supabase.from("cms_hero_banners").select("id,title");
+  if (error) throw new Error(`cms_hero_banners: ${error.message}`);
+  const staleIds = (existing ?? []).filter((row) => !keep.has(row.title)).map((row) => row.id);
+  if (!staleIds.length) return { table: "cms_hero_banners", deleted: 0 };
+  const { error: deleteError } = await supabase.from("cms_hero_banners").delete().in("id", staleIds);
+  if (deleteError) throw new Error(`cms_hero_banners: ${deleteError.message}`);
+  return { table: "cms_hero_banners", deleted: staleIds.length };
+}
+
 try {
-  const news = await upsertBySlug("cms_news", (seed.news ?? []).map(newsRow));
-  const announcements = await upsertBySlug("cms_announcements", (seed.announcements ?? []).map(announcementRow));
-  const agenda = await upsertBySlug("cms_academic_agenda", (seed.academic_agenda ?? []).map(agendaRow));
-  const hero = await seedHeroBanners(seed.hero_banners ?? []);
+  const newsRows = (seed.news ?? []).map(newsRow);
+  const announcementRows = (seed.announcements ?? []).map(announcementRow);
+  const agendaRows = (seed.academic_agenda ?? []).map(agendaRow);
+  const heroRows = seed.hero_banners ?? [];
+
+  await upsertBySlug("cms_news", newsRows);
+  await upsertBySlug("cms_announcements", announcementRows);
+  await upsertBySlug("cms_academic_agenda", agendaRows);
+  await seedHeroBanners(heroRows);
+
+  const result = await Promise.all([
+    syncBySlug("cms_news", newsRows),
+    syncBySlug("cms_announcements", announcementRows),
+    syncBySlug("cms_academic_agenda", agendaRows),
+    syncHeroBanners(heroRows)
+  ]);
+  const synced = Object.fromEntries(result.map((entry) => [entry.table, entry]));
   console.log(JSON.stringify({
     event: "seed.completed",
     project: url,
-    news,
-    announcements,
-    academic_agenda: agenda,
-    hero_banners: hero
+    fullSync: FULL_SYNC,
+    news: newsRows.length,
+    announcements: announcementRows.length,
+    academic_agenda: agendaRows.length,
+    hero_banners: heroRows.length,
+    removed: result.reduce((total, entry) => total + entry.deleted, 0),
+    removedByName: synced
   }));
+  if (FULL_SYNC) {
+    for (const entry of result) {
+      if (entry.deletedSlugs?.length) console.log(entry.table, "removed:", entry.deletedSlugs.join(", "));
+    }
+  }
 } catch (error) {
   console.error(JSON.stringify({ event: "seed.failed", message: error.message }));
   process.exit(1);

@@ -5,11 +5,11 @@ import Link from "next/link";
 
 const clubs = [
   { name: "Robotika & Cyber IoT Club", category: "Sains & Teknologi Terapan", image: "/images/reference/program-toi-photo.png", detail: "Fokus pada perancangan mikrokontroler, robot cerdas, automasi, dan kompetisi sains.", schedule: "Rabu & Sabtu, 14.30 – 17.30 WIB" },
-  { name: "Paskibra (Satuan Bhakti) 01", category: "Bela Negara & Disiplin", image: "/images/reference/campus.png", detail: "Korp baris-berbaris kehormatan taruna. Menempa kedisiplinan mental, jiwa kepemimpinan, patriotisme, dan formalitas kenegaraan.", schedule: "Selasa & Kamis, 15.00 – 17.00 WIB" },
-  { name: "Futsal Bodoet Knights", category: "Olahraga & Atletik", image: "/images/reference/campus.png", detail: "Klub olahraga kebanggaan dengan pembinaan intensif tiap pekan, latihan taktik, dan kompetisi antar sekolah.", schedule: "Senin & Kamis, 16.00 – 18.00 WIB" },
+  { name: "Paskibra (Satuan Bhakti) 01", category: "Bela Negara & Disiplin", image: "/images/reference/campus.jpg", detail: "Korp baris-berbaris kehormatan taruna. Menempa kedisiplinan mental, jiwa kepemimpinan, patriotisme, dan formalitas kenegaraan.", schedule: "Selasa & Kamis, 15.00 – 17.00 WIB" },
+  { name: "Futsal Bodoet Knights", category: "Olahraga & Atletik", image: "/images/reference/campus.jpg", detail: "Klub olahraga kebanggaan dengan pembinaan intensif tiap pekan, latihan taktik, dan kompetisi antar sekolah.", schedule: "Senin & Kamis, 16.00 – 18.00 WIB" },
   { name: "Web & Interactive Game Dev", category: "Sains & Teknologi Terapan", image: "/images/reference/program-rpl-photo.png", detail: "Inkubator peningkatan kecakapan anak muda dalam full-stack web, gim interaktif, serta budaya open source.", schedule: "Rabu, 14.30 – 17.30 WIB" },
   { name: "Broadcasting & Sinematografi", category: "Seni & Multimedia Kreatif", image: "/images/reference/program-tkj-photo.png", detail: "Memproduksi konten siaran video sekolah dan liputan kegiatan menggunakan peralatan studio.", schedule: "Jumat, 14.30 – 17.00 WIB" },
-  { name: "Pramuka Gudep 01.077 – 01.078", category: "Kerohanian & Karakter", image: "/images/reference/campus.png", detail: "Pendidikan kepanduan untuk pembentukan karakter, kemandirian, serta bakti sosial warga kota.", schedule: "Jumat, 14.00 – 17.00 WIB" }
+  { name: "Pramuka Gudep 01.077 – 01.078", category: "Kerohanian & Karakter", image: "/images/reference/campus.jpg", detail: "Pendidikan kepanduan untuk pembentukan karakter, kemandirian, serta bakti sosial warga kota.", schedule: "Jumat, 14.00 – 17.00 WIB" }
 ];
 const awards = [
   ["JUARA 1", "LKS Nasional Bidang Cyber Security & Cloud Computing", "Perumusan keamanan terenkripsi tingkat nasional."],

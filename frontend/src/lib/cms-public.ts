@@ -68,7 +68,7 @@ export async function getCmsPublicFeed(resource: string): Promise<CmsPublicFeed>
 
   try {
     const response = await fetch(`${baseUrl}/api/public/${resource}?limit=100&offset=0`, {
-      cache: "no-store",
+      next: { revalidate: 60 },
       signal: AbortSignal.timeout(3_500)
     });
     if (!response.ok) return { items: [], configured: true, available: false };

@@ -4,7 +4,7 @@ import Link from "next/link";
 export function HomeHero() {
   return (
     <section className="hero reference-hero" id="beranda" aria-labelledby="hero-title">
-      <div className="hero-photo"><Image src="/images/reference/campus.png" alt="Gedung SMK Negeri 1 Jakarta" fill priority sizes="100vw" /></div>
+      <div className="hero-photo"><Image src="/images/reference/campus.jpg" alt="Gedung SMK Negeri 1 Jakarta" fill priority sizes="100vw" /></div>
       <div className="hero-content section-wrap">
         <div className="hero-glass">
           <div className="eyebrow hero-eyebrow"><span /> SMK NEGERI 1 JAKARTA · DKI JAKARTA</div>

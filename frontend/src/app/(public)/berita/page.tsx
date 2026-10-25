@@ -3,7 +3,7 @@ import { getCmsPublicFeed } from "@/lib/cms-public";
 import { demoNews } from "@/lib/demo-news";
 import { PagedNewsGrid } from "@/components/PagedNewsGrid";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 function dateLabel(value?: string) {
   if (!value) return "";
