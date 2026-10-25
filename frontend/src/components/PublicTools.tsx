@@ -4,7 +4,6 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import "animate.css";
-
 type ChatMessage = {
   role: "assistant" | "user";
   content: string;
@@ -78,10 +77,10 @@ const welcomeMessage =
   "Halo! Aku Wilhelmina, asisten virtual SMKN 1 Jakarta. Mau tahu soal apa hari ini?";
 
 const quickQuestions = [
-  ["Info program studi", "▤"],
-  ["Jadwal & agenda", "◷"],
-  ["Mitra industri & PKL", "⌁"],
-  ["Kontak & lokasi", "⌖"]
+  ["Info program studi"],
+  ["Jadwal & agenda"],
+  ["Mitra industri & PKL"],
+  ["Kontak & lokasi"]
 ];
 
 export function PublicTools() {
@@ -375,7 +374,7 @@ export function PublicTools() {
                 )}
               </div>
             ))}
-            {messages.length === 1 && <div className="chat-suggestions"><small>PILIH TOPIK</small>{quickQuestions.map(([item, icon]) => <button key={item} type="button" disabled={pending} onClick={() => void ask(item)}><span aria-hidden="true">{icon}</span>{item}</button>)}</div>}
+            {messages.length === 1 && <div className="chat-suggestions"><small>PILIH TOPIK</small>{quickQuestions.map(([item]) => <button key={item} type="button" disabled={pending} onClick={() => void ask(item)}>{item}</button>)}</div>}
             {pending && <p className="chat-loading" role="status">Asisten sedang menyiapkan jawaban…</p>}
           </div>
           <div className="chat-composer">

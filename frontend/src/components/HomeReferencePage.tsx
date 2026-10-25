@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useRef, useState } from "react";
-import "animate.css";
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
 import { MegaphoneIcon } from "@/components/MegaphoneIcon";
 
 const programs: [string, string, string, string, string][] = [
@@ -48,6 +48,30 @@ export function HomeReferencePage() {
   const programsRef = useRef<HTMLDivElement>(null);
   const [activeProgram, setActiveProgram] = useState(0);
   const [showAllPartners, setShowAllPartners] = useState(false);
+
+  // Hero entrance (GSAP): copy rises with stagger, campus fades, stats follow.
+  // Skipped entirely for visitors who prefer reduced motion.
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onChange = () => {
+      if (reduced.matches) {
+        gsap.set([".pixel-hero-copy > *", ".pixel-campus", ".pixel-stats div"], { clearProps: "all" });
+      }
+    };
+    const timeline = gsap.timeline({ defaults: { ease: "power3.out", clearProps: "all" } });
+    timeline
+      .from(".pixel-hero-copy > *", { opacity: 0, y: 26, duration: 0.7, stagger: 0.09 })
+      .from(".pixel-campus", { opacity: 0, scale: 0.97, duration: 0.8 }, "-=0.35")
+      .from(".pixel-stats div", { opacity: 0, y: 14, duration: 0.5, stagger: 0.08 }, "-=0.4");
+    reduced.addEventListener?.("change", onChange);
+    return () => {
+      timeline.kill();
+      gsap.set([".pixel-hero-copy > *", ".pixel-campus", ".pixel-stats div"], { clearProps: "all" });
+      reduced.removeEventListener?.("change", onChange);
+    };
+  }, []);
+
   function moveToProgram(index: number) {
     const track = programsRef.current;
     if (!track) return;
@@ -58,8 +82,8 @@ export function HomeReferencePage() {
   }
   return <div className="pixel-home">
     <section className="pixel-hero"><div className="pixel-hero-inner">
-      <div className="pixel-hero-copy animate__animated animate__fadeInUp" style={{ ["--animate-duration" as string]: "650ms" }}><span className="pixel-pill"><i/> SMK NEGERI 1 JAKARTA　/　TEKNIK</span><h1>Mencetak Teknisi Muda yang <em>Siap Berkarya</em></h1><p>Belajar langsung di bengkel dan laboratorium, terhubung dengan industri mitra, dan siap melangkah ke dunia kerja.</p><div className="pixel-actions"><Link className="pixel-button pixel-gold" href="/tentang">Jelajahi Program Studi <Arrow /></Link><Link className="pixel-button pixel-outline" href="/kontak">Lihat Mitra Industri</Link></div></div>
-      <div className="pixel-campus animate__animated animate__fadeIn" style={{ ["--animate-duration" as string]: "800ms" }}><div className="pixel-campus-placeholder" role="img" aria-label="Foto gedung sekolah"><span aria-hidden="true">▧</span><b>FOTO GEDUNG SEKOLAH</b></div><span className="campus-corner corner-tl"/><span className="campus-corner corner-tr"/><span className="campus-corner corner-bl"/><span className="campus-corner corner-br"/><div className="pixel-accreditation"><small>SMKN1-JKT</small><b><i aria-hidden="true"/>Akreditasi A</b></div></div>
+      <div className="pixel-hero-copy"><span className="pixel-pill"><i/> SMK NEGERI 1 JAKARTA　/　TEKNIK</span><h1>Mencetak Teknisi Muda yang <em>Siap Berkarya</em></h1><p>Belajar langsung di bengkel dan laboratorium, terhubung dengan industri mitra, dan siap melangkah ke dunia kerja.</p><div className="pixel-actions"><Link className="pixel-button pixel-gold" href="/tentang">Jelajahi Program Studi <Arrow /></Link><Link className="pixel-button pixel-outline" href="/kontak">Lihat Mitra Industri</Link></div></div>
+      <div className="pixel-campus"><div className="pixel-campus-placeholder" role="img" aria-label="Foto gedung sekolah"><span aria-hidden="true">▧</span><b>FOTO GEDUNG SEKOLAH</b></div><span className="campus-corner corner-tl"/><span className="campus-corner corner-tr"/><span className="campus-corner corner-bl"/><span className="campus-corner corner-br"/><div className="pixel-accreditation"><small>SMKN1-JKT</small><b><i aria-hidden="true"/>Akreditasi A</b></div></div>
       <div className="pixel-stats"><div><b>04</b><span>KOMPETENSI</span></div><div><b>120+</b><span>MITRA INDUSTRI</span></div><div><b>2.800+</b><span>PESERTA DIDIK</span></div><div><b>A</b><span>AKREDITASI</span></div></div>
     </div></section>
     <section className="pixel-section pixel-programs" id="program-studi"><div className="pixel-wrap"><header className="pixel-heading"><div><small>[ 01 ]　PROGRAM KEAHLIAN</small><h2>Pilih jalur kompetensimu</h2><p>Empat program keahlian dengan kurikulum selaras kebutuhan industri.</p></div><Link href="/tentang">Lihat semua program <Arrow /></Link></header><div className="pixel-program-grid" ref={programsRef} onScroll={(event)=>{const card=event.currentTarget.querySelector<HTMLElement>(".pixel-program-card");if(card)setActiveProgram(Math.min(3,Math.round(event.currentTarget.scrollLeft/(card.offsetWidth+14))))}}>{programs.map(([title, code, color, body, photo])=><article className="pixel-program-card" key={code} style={{"--accent":color} as React.CSSProperties}><div><span className="program-card-glyph" aria-hidden="true">〈〉</span><i>{code}</i><Image src={`/images/reference/${photo}`} alt="" width={48} height={48}/></div><h3>{title}</h3><p>{body}</p><Link href="/tentang">Lihat program <Arrow /></Link></article>)}</div><div className="pixel-program-dots" role="group" aria-label="Pilih program keahlian">{programs.map(([,code],index)=><button key={code} type="button" aria-label={`Program ${index+1}`} aria-current={activeProgram===index?"true":undefined} onClick={()=>moveToProgram(index)}/>)}</div></div></section>
