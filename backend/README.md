@@ -133,4 +133,4 @@ Unknown fields and server-managed IDs/timestamps are rejected. URLs must be HTTP
 - `cms_chatbot_analytics` (no prompt, reply, user, or network identifier columns)
 - `cms_chatbot_nlp_results` (output tahap NLP Wilhel; tanpa teks pertanyaan, balasan, user, atau IP; kedaluwarsa 24 jam)
 
-RLS permits public reads only for published, currently eligible records. Editors/admins can insert/update; only admins can delete. `cms_user_roles` is not client-writable, and chatbot analytics have no anon/authenticated grants. The Express API uses service-role access only after its own Supabase identity and database-role checks.
+RLS permits public reads only for published, currently eligible records. Editors/admins can insert/update; only admins can delete. `cms_user_roles` is not client-writable, and chatbot analytics have no anon/authenticated grants. The Express API uses service-role access only after its own Supabase identity and database-role checks
