@@ -1,0 +1,3 @@
+# Dokumen lokal: jangan commit PDF atau materi penjurian
+*.pdf
+/penilaian/

@@ -231,22 +231,37 @@ function buildCatalog() {
     if (!section) continue;
 
     for (const block of section.blocks) {
-      if (block.body) {
-        docs.push({
-          resource: "public-page",
-          slug: route.path,
-          title: `${route.title} · ${block.title}`,
-          body: plainText(block.body)
-        });
-      }
-      for (const card of block.cards ?? []) {
-        docs.push({
-          resource: "public-page",
-          slug: route.path,
-          title: `${route.title} · ${block.title} · ${card.title}`,
-          body: plainText([card.label, card.description, card.category].filter(Boolean).join(" · "))
-        });
-      }
+      // Satu blok = satu dokumen. Daftar program, misi, sejarah, dan kontak
+      // harus masuk konteks secara utuh; memecah tiap kartu membuat jawaban
+      // hanya menyebut sebagian item dan tampak "tidak ditemukan".
+      const seenDescriptions = new Set();
+      const cardText = (block.cards ?? [])
+        .map((card) => {
+          const parts = [plainText(card.title)];
+          for (const value of [card.description, card.label, card.category]) {
+            const text = plainText(value);
+            // Deskripsi/label yang identik di semua kartu (mis. "Arsip 2022/2023")
+            // cukup sekali agar daftar program tetap utuh dalam batas konteks.
+            if (text && !seenDescriptions.has(text)) {
+              seenDescriptions.add(text);
+              parts.push(text);
+            }
+          }
+          return parts.filter(Boolean).join(" — ");
+        })
+        .filter(Boolean);
+      const body = [plainText(block.body), ...cardText].filter(Boolean).join(". ");
+      if (!body) continue;
+      docs.push({
+        resource: "public-page",
+        slug: route.path,
+        title: `${route.title} · ${block.title}`,
+        body,
+        // Blok tematik yang berisi daftar (program, sejarah, kontak) lebih
+        // informatif daripada ringkasan navigasi halaman. Blok tanpa kartu
+        // tidak diberi bobot agar tidak mengalahkan agenda/berita CMS.
+        boost: block.cards?.length ? 2 : 0
+      });
     }
   }
 

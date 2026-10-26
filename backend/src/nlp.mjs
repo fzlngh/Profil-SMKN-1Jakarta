@@ -20,7 +20,10 @@ const STOP_WORDS = new Set([
   "ada", "adalah", "akan", "anda", "apa", "apakah", "bagaimana", "berapa", "di", "dan",
   "dari", "dengan", "hari", "ini", "itu", "jadi", "ke", "kapan", "karena", "mana", "mau",
   "mengenai", "menurut", "oleh", "pada", "untuk", "saya", "sekolah", "siapa", "tentang",
-  "terkait", "yang", "the", "what", "when", "where", "who", "how", "is", "are", "do"
+  "terkait", "yang", "the", "what", "when", "where", "who", "how", "is", "are", "do",
+  // Nama sekolah muncul di hampir semua pertanyaan; jangan dijadikan kata kunci
+  // karena membuat semua dokumen dianggap relevan.
+  "smkn", "smk", "negeri", "jakarta", "jkt"
 ]);
 
 const RELATED_TERMS = [
@@ -149,6 +152,14 @@ function buildExcerpt(item, terms) {
   const metadata = [
     item.title, item.published_at, item.starts_at, item.ends_at, item.location, item.severity
   ].map(plainText).filter(Boolean).join(" · ");
+
+  // Jika isi dokumen muat, kirim utuh. Memotong per kalimat berisiko memotong
+  // alamat ("Jl. Budi Utomo...") atau daftar program menjadi tidak lengkap.
+  const fullBody = plainText(item.body);
+  if (fullBody && fullBody.length <= MAX_DOCUMENT_CHARS - metadata.length - 2) {
+    return [metadata, fullBody].filter(Boolean).join(": ");
+  }
+
   const passages = [item.excerpt, item.description, item.subtitle, item.body]
     .map(plainText).filter(Boolean)
     .flatMap((value) => value.split(/(?<=[.!?])\s+|\n+/).map((text) => text.trim()).filter(Boolean))
@@ -191,7 +202,8 @@ export function rankPublishedContent(question, items, keywords = extractKeywords
     const documentTerms = new Set(tokenize(text));
     const overlap = keywords.reduce((count, term) => count + Number(documentTerms.has(term)), 0);
     const phraseBonus = normalizedText.includes(normalizedQuestion) ? 2 : 0;
-    return { item, score: overlap + phraseBonus };
+    const baseScore = overlap + phraseBonus;
+    return { item, score: baseScore > 0 ? baseScore + (item.boost ?? 0) : 0 };
   }).filter((entry) => entry.score > 0)
     .sort((left, right) => right.score - left.score);
 
