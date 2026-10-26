@@ -882,3 +882,32 @@ html.high-contrast body .mobile-menu .mobile-menu-actions .mobile-menu-chat > sp
   color: var(--hc-secondary) !important;
   -webkit-text-fill-color: var(--hc-secondary) !important;
 }
+
+/* Keep the new news detail sidebar and WilhelBot card legible in high contrast. */
+html.high-contrast body .news-detail-sidebar .news-related {
+  color: var(--hc-text) !important;
+  background: var(--hc-surface) !important;
+  border: 2px solid var(--hc-border) !important;
+}
+
+html.high-contrast body .news-detail-sidebar .news-related :is(h2, strong, time) {
+  color: var(--hc-text) !important;
+}
+
+html.high-contrast body .news-detail-sidebar .news-related > a {
+  border-color: var(--hc-border) !important;
+}
+
+html.high-contrast body .news-detail-sidebar .news-detail-chat,
+html.high-contrast body .news-detail-sidebar .news-detail-chat:hover {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background: var(--hc-navy) !important;
+  border: 2px solid #ffffff !important;
+  text-decoration: none !important;
+}
+
+html.high-contrast body .news-detail-sidebar .news-detail-chat :is(strong, small, span) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}

@@ -2546,7 +2546,9 @@ body:has(.site-header-reference){ background: #f5f5ff; color: #0a1d3a; }
 
 .news-detail-layout{ display:grid; grid-template-columns:minmax(0,1fr) 300px; align-items:start; gap:45px; }
 
-.news-article-body{ color:#39485f; font-size:16px; line-height:1.8; }
+.news-detail-main{ min-width:0; }
+
+.news-article-body{ min-width:0; color:#39485f; font-size:16px; line-height:1.8; overflow-wrap:anywhere; }
 
 .news-article-body p{ margin:0 0 19px; white-space:pre-line; }
 
@@ -3456,4 +3458,30 @@ h1, h2, h3, h4, h5, h6{ font-family: var(--font-chakra), "Chakra Petch", sans-se
   .program-detail-hero-grid { display: flex; flex-direction: column; gap: 0; }
   .program-detail-hero-image { order: -1; width: 100%; max-width: none; height: auto; justify-self: auto; }
   .program-detail-hero-image img { width: 100% !important; height: auto !important; }
+}
+/* Long CMS URLs must wrap inside the article column instead of painting under the sidebar. */
+.news-detail-layout > .news-detail-main,
+.news-detail-layout > :first-child {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.news-detail-main .news-article-body,
+.news-detail-main .news-article-body p,
+.news-detail-layout > :first-child .news-article-body p {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+
+.news-detail-main .news-article-body p,
+.news-detail-layout > :first-child .news-article-body p {
+  white-space: pre-line !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-all !important;
+}
+
+.news-detail-sidebar {
+  min-width: 0;
+  position: relative;
 }
