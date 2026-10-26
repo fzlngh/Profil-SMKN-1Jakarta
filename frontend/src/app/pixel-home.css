@@ -1370,3 +1370,10 @@
   display:block;
   color:#B7C4E0;
 }
+
+/* Keep the organization card surface and its empty photo area uniformly white. */
+.organization-overview .organization-catalog article,
+.organization-overview .organization-catalog .organization-card-photo,
+.organization-overview .organization-catalog .organization-card-content {
+  background-color: #ffffff;
+}

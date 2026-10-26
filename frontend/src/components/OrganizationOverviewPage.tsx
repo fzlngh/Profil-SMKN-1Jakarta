@@ -108,7 +108,7 @@ const groups: OrganizationGroup[] = [
     category: "Ekstrakurikuler Bahasa & Sastra",
     title: "English Club",
     description: "Wadah untuk melatih percakapan, kosakata, dan kepercayaan diri berbahasa Inggris melalui kegiatan bersama.",
-    image: "/images/reference/design-v5/gallery-lecture.jpg"
+    image: "/images/organizations/english-club.jpeg"
   },
   {
     category: "Ekstrakurikuler Seni Pertunjukan",
@@ -131,10 +131,8 @@ export function OrganizationOverviewPage() {
             <small>{group.category}</small>
             <h2>{group.title}</h2>
             <p>{group.description}</p>
-            <span className="organization-open-note"><span aria-hidden="true">♧</span> Terbuka untuk semua program keahlian</span>
-            <span className="organization-site-link">
-              <span><small>EKSTRAKURIKULER</small><b>Kegiatan siswa</b></span><strong aria-hidden="true">♧</strong>
-            </span>
+            <span className="organization-open-note"><svg className="organization-open-icon" width={14} height={14} viewBox="142 445 20 20" fill="none" aria-hidden="true" focusable="false"><path d="M153.334 451.333C153.334 452.622 152.289 453.667 151 453.667C149.712 453.667 148.667 452.622 148.667 451.333C148.667 450.045 149.712 449 151 449C152.289 449 153.334 450.045 153.334 451.333ZM146.333 460V459.333C146.333 458.272 146.754 457.255 147.505 456.505C148.255 455.755 149.272 455.333 150.333 455.333C151.394 455.333 152.411 455.755 153.161 456.505C153.912 457.255 154.333 458.272 154.333 459.333V460M155.666 449C156.285 449 156.879 449.246 157.316 449.683C157.754 450.121 158 450.714 158 451.333C158 451.952 157.754 452.546 157.316 452.983C156.879 453.421 156.285 453.667 155.666 453.667M159.666 460V459.333C159.659 458.513 159.398 457.714 158.921 457.046C158.444 456.378 157.773 455.874 157 455.6" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" /></svg> Wadah untuk semua program keahlian</span>
+
           </section>
         </div>
       </article>)}</div>

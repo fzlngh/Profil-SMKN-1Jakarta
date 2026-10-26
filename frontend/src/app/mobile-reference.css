@@ -69,7 +69,7 @@
   }
   .notice-bar .notice-message b { margin-right: 7px; color: #102b60 !important; font-size: 9px; }
   .notice-bar .notice-slogan { display: none !important; }
-  .notice-bar .notice-arrow { flex: 0 0 auto; color: #ffad18; font-size: 14px; }
+  .notice-bar .notice-arrow { display: none !important; }
 
   .pixel-hero { background-color: #102b60 !important; }
   .pixel-hero-inner {
