@@ -53,9 +53,15 @@ html.high-contrast body .site-header-reference .main-nav {
   border-color: var(--hc-border) !important;
 }
 
-html.high-contrast body .site-header-reference .school-mark,
-html.high-contrast body .site-footer .brand-logo {
-  background-color: var(--hc-brand) !important;
+html.high-contrast body :is(
+  .site-header-reference .school-mark,
+  .site-header-reference .brand-logo,
+  .mobile-menu-brand .school-mark,
+  .site-footer .school-mark,
+  .site-footer .brand-logo,
+  .footer-school .brand-logo
+) {
+  background-color: var(--hc-navy) !important;
 }
 
 html.high-contrast body a,
@@ -261,8 +267,9 @@ html.high-contrast body .site-footer {
   border-top-color: var(--hc-gold) !important;
 }
 
+/* Keep the school-photo hero's decorative backdrop navy in high contrast. */
 html.high-contrast body .pixel-hero::before {
-  background-color: var(--hc-brand) !important;
+  background-color: var(--hc-navy) !important;
 }
 
 /* Fields, validation, statuses, and pressed controls remain distinct without color alone. */
@@ -458,8 +465,8 @@ html.high-contrast body :is(
 }
 html.high-contrast body .osis-principal {
   color: #ffffff !important;
-  background: var(--hc-brand) !important;
-  border-color: var(--hc-brand) !important;
+  background: var(--hc-navy) !important;
+  border-color: var(--hc-navy) !important;
 }
 
 html.high-contrast body .osis-principal :is(b, small, span, p, strong) {
@@ -910,4 +917,36 @@ html.high-contrast body .news-detail-sidebar .news-detail-chat:hover {
 html.high-contrast body .news-detail-sidebar .news-detail-chat :is(strong, small, span) {
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
+}
+
+/* The generic current-link rule is more specific than the earlier menu rule.
+   Reassert the active mobile item by its dialog ID so its white text stays on navy. */
+html.high-contrast body #mobile-navigation nav a[aria-current="page"],
+html.high-contrast body #mobile-navigation nav a[aria-current="page"]:hover,
+html.high-contrast body #mobile-navigation nav a[aria-current="page"]:focus-visible {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background-color: var(--hc-navy) !important;
+  border-left: 4px solid #ffffff !important;
+  box-shadow: none !important;
+  text-decoration: none !important;
+}
+
+html.high-contrast body #mobile-navigation nav a[aria-current="page"] :is(small, span) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background-color: transparent !important;
+}
+
+/* Prevent the global high-contrast link underline from returning inside the mobile menu. */
+html.high-contrast body #mobile-navigation nav a,
+html.high-contrast body #mobile-navigation nav a *,
+html.high-contrast body #mobile-navigation .mobile-menu-actions a,
+html.high-contrast body #mobile-navigation .mobile-menu-actions a * {
+  text-decoration: none !important;
+  text-decoration-line: none !important;
+  text-decoration-color: transparent !important;
+  text-decoration-thickness: 0 !important;
+  text-underline-offset: 0 !important;
+  -webkit-text-decoration-line: none !important;
 }

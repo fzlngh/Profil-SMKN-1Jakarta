@@ -633,3 +633,15 @@
     line-height: 1;
   }
 }
+
+/* Keep every school-logo circle orange outside high-contrast mode. */
+html:not(.high-contrast) body :is(
+  .site-header-reference .school-mark,
+  .site-header-reference .brand-logo,
+  .mobile-menu-brand .school-mark,
+  .site-footer .school-mark,
+  .site-footer .brand-logo,
+  .footer-school .brand-logo
+) {
+  background-color: #ffa500 !important;
+}
