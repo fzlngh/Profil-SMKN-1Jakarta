@@ -15,6 +15,7 @@
     padding: 0 19px !important;
     background: #fff;
   }
+
   .site-header-reference > .brand-row {
     display: flex !important;
     width: 100%;
@@ -110,7 +111,7 @@
     justify-content: center;
     gap: 8px;
     border-radius: inherit;
-    background: #102b60;
+    background: linear-gradient(180deg, #102b6020, #102b6040), url("/images/reference/campus.jpg") center / cover no-repeat;
     color: #a8bde2;
   }
   .pixel-campus-placeholder > span { align-self: center !important; margin: 0 !important; color: #7896cb; font-size: 28px; text-shadow: none; }
@@ -225,6 +226,16 @@
     background-image: linear-gradient(#ffffff0c 1px,transparent 1px),linear-gradient(90deg,#ffffff0c 1px,transparent 1px) !important;
     background-size: 22px 22px !important;
   }
+
+  .reference-detail-hero .page-header-path,
+  .news-page-hero .news-breadcrumb,
+  .program-page-hero .program-page-breadcrumb {
+    margin:0 0 10px !important;
+    color:#B7C4E0 !important;
+  }
+  .reference-detail-hero .page-header-description,
+  .news-page-hero .news-page-description,
+  .program-page-hero .program-page-description { color:#B7C4E0 !important; }
   .news-page-hero .news-page-wrap,
   .reference-detail-hero > div { width: calc(100% - 40px) !important; }
   .news-breadcrumb,

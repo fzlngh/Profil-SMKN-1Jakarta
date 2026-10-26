@@ -4,6 +4,8 @@ import "./globals.css";
 import "./pixel-home.css";
 import "./mobile-reference.css";
 import "./desktop-reference.css";
+import "./program-detail-reference.css";
+import "./high-contrast.css";
 
 const chakra = Chakra_Petch({ subsets: ["latin"], weight: ["400", "500", "600", "700"], display: "swap", variable: "--font-chakra" });
 const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"], display: "swap", variable: "--font-inter" });

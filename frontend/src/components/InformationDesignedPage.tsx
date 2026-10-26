@@ -51,7 +51,7 @@ export async function InformationDesignedPage({ searchParams }: { searchParams?:
     <header className="news-page-hero"><div className="news-page-wrap">
       <p className="news-breadcrumb"><Link href="/">Beranda</Link> / Berita</p>
       <h1>Berita Sekolah</h1>
-      <p>Kabar terbaru seputar prestasi, kegiatan, dan akademik.</p>
+      <p className="news-page-description">Kabar terbaru seputar prestasi, kegiatan, dan akademik.</p>
     </div></header>
     <section className="news-listing news-page-wrap" aria-label="Daftar berita">
       <div className="news-tools"><nav className="news-filter" aria-label="Kategori berita">

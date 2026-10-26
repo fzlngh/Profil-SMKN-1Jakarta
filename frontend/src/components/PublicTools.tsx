@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ChatOpenLink } from "@/components/ChatOpenLink";
 import "animate.css";
 type ChatMessage = {
   role: "assistant" | "user";
@@ -32,47 +33,43 @@ type SpeechWindow = Window & {
 
 const preferencesKey = "smkn1-public-accessibility";
 
-// Fitur perbesar teks: setiap elemen teks diskalakan tepat satu kali dari
-// ukuran desainnya sendiri (inline style), sehingga tidak ada penggandaan
-// ukuran antar elemen bertingkat maupun penimpaan definisi tipografi di CSS.
-const TEXT_SCALE_FACTORS: Record<number, number> = { 1: 1.1, 2: 1.2 };
+// Skala dihitung dari ukuran asli tiap elemen agar teks bertingkat tidak membesar ganda.
+const TEXT_SCALE_FACTORS: Record<number, number> = { 1: 1.2, 2: 1.4 };
 const SCALE_REGIONS = "main, .site-header, .site-footer, .chat-panel, .access-panel";
 const SCALE_TARGET =
   "h1,h2,h3,h4,h5,p,a,button,label,input,textarea,select,li,blockquote,span,small,strong,b,em,td,th,figcaption,summary";
 
 function queryScaleTargets(): HTMLElement[] {
-  return Array.from(document.querySelectorAll<HTMLElement>(`${SCALE_REGIONS} ${SCALE_TARGET}`));
+  return Array.from(document.querySelectorAll<HTMLElement>(":is(" + SCALE_REGIONS + ") :is(" + SCALE_TARGET + ")"));
 }
 
 function applyTextScale(scale: 0 | 1 | 2) {
   const factor = TEXT_SCALE_FACTORS[scale] ?? 0;
   const targets = queryScaleTargets();
 
-  // Tahap 1: hapus skala sebelumnya agar ukuran yang terukur kembali ke definisi CSS.
   for (const element of targets) {
     if (element.dataset.a11yScaled === "1") {
       element.style.removeProperty("font-size");
-      element.dataset.a11yScaled = "0";
+      delete element.dataset.a11yScaled;
     }
   }
 
-  if (!factor) {
-    for (const element of targets) delete element.dataset.a11yScaled;
-    return;
-  }
+  if (!factor) return;
 
-  // Tahap 2: ukur ukuran desain tiap elemen, lalu terapkan faktor tepat satu kali.
-  for (const element of targets) {
-    if (element.getAttribute("aria-hidden") === "true") continue;
-    if (element.classList.contains("sr-only")) continue;
-    if (!(element.textContent ?? "").trim()) continue;
+  // Read every baseline before writing any new sizes so nested elements do not
+  // inherit an already-scaled parent and accidentally scale twice.
+  const measuredTargets = targets.flatMap((element) => {
+    if (element.getAttribute("aria-hidden") === "true" || element.classList.contains("sr-only")) return [];
+    if (!(element.textContent ?? "").trim()) return [];
     const designed = Number.parseFloat(window.getComputedStyle(element).fontSize);
-    if (!Number.isFinite(designed) || designed <= 0) continue;
-    element.style.setProperty("font-size", `${(designed * factor).toFixed(1)}px`);
+    return Number.isFinite(designed) && designed > 0 ? [{ element, designed }] : [];
+  });
+
+  for (const { element, designed } of measuredTargets) {
+    element.style.setProperty("font-size", (designed * factor).toFixed(1) + "px", "important");
     element.dataset.a11yScaled = "1";
   }
 }
-
 const welcomeMessage =
   "Halo! Aku Wilhelmina, asisten virtual SMKN 1 Jakarta. Mau tahu soal apa hari ini?";
 
@@ -92,7 +89,6 @@ export function PublicTools() {
   const [preferencesLoaded, setPreferencesLoaded] = useState(false);
   const [accessOpen, setAccessOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
-  const [greetingVisible, setGreetingVisible] = useState(true);
   const [question, setQuestion] = useState("");
   const [readAloudStatus, setReadAloudStatus] = useState("");
   const [chatSpeechStatus, setChatSpeechStatus] = useState("");
@@ -336,7 +332,7 @@ export function PublicTools() {
           <button type="button" aria-pressed={dyslexiaFont} onClick={() => setDyslexiaFont((enabled) => !enabled)}>
             Tampilan ramah disleksia <span>{dyslexiaFont ? "aktif" : "nonaktif"}</span>
           </button>
-          <p className="accessibility-note">Memakai OpenDyslexic jika tersedia di perangkat, dengan Verdana sebagai alternatif.</p>
+          <p className="accessibility-note">Menggunakan huruf Verdana dengan jarak huruf, kata, dan baris yang lebih lega.</p>
           <button type="button" onClick={() => speak(document.querySelector("main")?.textContent?.trim() || "")}>Bacakan isi halaman</button>
           <button type="button" onClick={stopSpeaking}>Hentikan pembacaan</button>
           <p className="speech-status" role="status" aria-live="polite">{readAloudStatus}</p>
@@ -345,22 +341,19 @@ export function PublicTools() {
 
       <div className="chat-widget">
         {!chatOpen && <>
-          {greetingVisible && <div className="chat-greeting" role="note" aria-label="Sapaan Wilhelmina">
-            <button className="chat-greeting-open" type="button" onClick={() => setChatOpen(true)} aria-controls="school-chat">
-              <span>Halo, saya Wilhelmina!<strong>Tanya apa saja soal SMKN 1 Jakarta.</strong></span>
-            </button>
-            <button className="chat-greeting-dismiss" type="button" aria-label="Tutup sapaan" onClick={() => setGreetingVisible(false)}>×</button>
+          <div className="chat-greeting" role="note" aria-label="Sapaan Wilhelmina">
+            <ChatOpenLink className="chat-greeting-open"><span>Halo, saya Wilhelmina!<strong>Tanyakan apa saja soal SMKN 1 Jakarta.</strong></span></ChatOpenLink>
             <i aria-hidden="true" />
-          </div>}
-          <button className="chat-trigger" type="button" onClick={() => setChatOpen(true)} aria-label="Buka chat Wilhelbot" aria-controls="school-chat" aria-expanded={chatOpen}>
-          <span className="chat-trigger-icon" aria-hidden="true"><img src="/mascot.png" alt="" /></span>
-          <span className="chat-trigger-copy"><strong>Tanya Chatbot</strong><small>Asisten info sekolah</small></span>
-          </button>
+          </div>
+          <ChatOpenLink className="chat-trigger" aria-label="Buka chat Wilhelbot">
+            <span className="chat-trigger-icon" aria-hidden="true"><img src="/mascot.svg" alt="" /></span>
+            <span className="chat-trigger-copy"><strong>Tanya Chatbot</strong><small>Asisten info sekolah</small></span>
+          </ChatOpenLink>
         </>}
         <section className={chatOpen ? "chat-panel animate__animated animate__fadeInUp" : "chat-panel"} style={chatOpen ? ({ ["--animate-duration" as string]: "240ms" } as React.CSSProperties) : undefined} id="school-chat" role="dialog" aria-modal="false" aria-labelledby="chat-title" hidden={!chatOpen} onKeyDown={onChatKeyDown}>
           <div className="chat-brand-row">
             <div className="chat-header-actions"><button type="button" aria-label="Kembali dan tutup chatbot" title="Kembali" onClick={closeChat}>←</button></div>
-            <span className="chat-avatar chat-avatar-mascot" aria-hidden="true"><img src="/mascot.png" alt="" /></span>
+            <span className="chat-avatar chat-avatar-mascot" aria-hidden="true"><img src="/mascot.svg" alt="" /></span>
             <div className="chat-brand-copy"><div className="chat-brand-name"><strong>WilhelBot <i className="chat-ai-badge">AI</i></strong></div><span>Online - Asisten SMKN 1 Jakarta <i aria-hidden="true" /></span></div>
           </div>
           <h2 className="sr-only" id="chat-title">Chat WilhelBot, asisten SMKN 1 Jakarta</h2>

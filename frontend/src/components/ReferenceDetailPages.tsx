@@ -29,10 +29,47 @@ const galleryItems: [string,string,string][] = [
   ["Pentas seni siswa","Kegiatan","gallery-performance.jpg"],
   ["Pelatihan otomotif","Praktik","gallery-training.jpg"],
   ["Kegiatan bersama warga sekolah","Kegiatan","gallery-community.jpg"],
-  ["Praktik di ruang bengkel","Praktik","gallery-workshop.jpg"]
+  ["Praktik di ruang bengkel","Praktik","gallery-workshop.jpg"],
+  ["OSIS — galeri satu","Ekstrakurikuler","/images/organizations/archive/01-OSIS/01-galeri-satu.webp"],
+  ["OSIS — galeri dua","Ekstrakurikuler","/images/organizations/archive/01-OSIS/02-galeri-dua.webp"],
+  ["OSIS — galeri tiga","Ekstrakurikuler","/images/organizations/archive/01-OSIS/03-galeri-tiga.webp"],
+  ["OSIS — galeri empat","Ekstrakurikuler","/images/organizations/archive/01-OSIS/04-galeri-empat.webp"],
+  ["OSIS — galeri lima","Ekstrakurikuler","/images/organizations/archive/01-OSIS/05-galeri-lima.webp"],
+  ["Pramuka — Perjusami","Ekstrakurikuler","/images/organizations/archive/02-Pramuka/01-perjusami-20.jpeg"],
+  ["Pramuka — kegiatan satu","Ekstrakurikuler","/images/organizations/archive/02-Pramuka/02-perjusami-1.jpeg"],
+  ["Pramuka — kegiatan dua","Ekstrakurikuler","/images/organizations/archive/02-Pramuka/03-perjusami-2.jpeg"],
+  ["Pramuka — kegiatan tiga","Ekstrakurikuler","/images/organizations/archive/02-Pramuka/04-perjusami-3.jpeg"],
+  ["Pramuka — kegiatan empat","Ekstrakurikuler","/images/organizations/archive/02-Pramuka/05-perjusami-4.jpeg"],
+  ["Pramuka — LKP 2024, dokumentasi satu","Ekstrakurikuler","/images/organizations/archive/02-Pramuka/06-LKP-2024-01.jpg"],
+  ["Pramuka — LKP 2024, dokumentasi dua","Ekstrakurikuler","/images/organizations/archive/02-Pramuka/07-LKP-2024-02.jpg"],
+  ["Rohis — Isra Mikraj 2024, dokumentasi satu","Ekstrakurikuler","/images/organizations/archive/03-Rohis/01-Isra-Mikraj-2024-IMG0252.jpg"],
+  ["Rohis — Isra Mikraj 2024, dokumentasi dua","Ekstrakurikuler","/images/organizations/archive/03-Rohis/02-Isra-Mikraj-2024-IMG0295.jpg"],
+  ["Rohis — Maulid 2018, dokumentasi satu","Ekstrakurikuler","/images/organizations/archive/03-Rohis/03-Maulid-2018-080551.jpeg"],
+  ["Rohis — Maulid 2018, dokumentasi dua","Ekstrakurikuler","/images/organizations/archive/03-Rohis/04-Maulid-2018-063506.jpeg"],
+  ["Rohis — Maulid 2018, dokumentasi tiga","Ekstrakurikuler","/images/organizations/archive/03-Rohis/05-Maulid-2018-123646.jpeg"],
+  ["Rohis — Maulid 2018, dokumentasi empat","Ekstrakurikuler","/images/organizations/archive/03-Rohis/06-Maulid-2018-123800.jpeg"],
+  ["Rohis — Maulid 2018, dokumentasi lima","Ekstrakurikuler","/images/organizations/archive/03-Rohis/07-Maulid-2018-123634.jpeg"],
+  ["Wilhelmina Cup 2017 — area turnamen","Kegiatan","/images/organizations/archive/04-Futsal-Voli-event/01-Wilhelmina-Cup-venue-2017.jpeg"],
+  ["Wilhelmina Cup 2017 — dokumentasi panitia","Kegiatan","/images/organizations/archive/04-Futsal-Voli-event/02-Wilhelmina-Cup-panitia-2017.jpeg"],
+  ["Basket — dokumentasi DBL satu","Ekstrakurikuler","/images/organizations/archive/05-Basket/01-DBL-article-photo-1.jpg"],
+  ["Basket — dokumentasi DBL dua","Ekstrakurikuler","/images/organizations/archive/05-Basket/02-DBL-article-photo-2.jpg"],
+  ["Silat — Championship V, dokumentasi satu","Ekstrakurikuler","/images/organizations/archive/06-Silat/01-Championship-V-foto-1.jpeg"],
+  ["Silat — Championship V, dokumentasi dua","Ekstrakurikuler","/images/organizations/archive/06-Silat/02-Championship-V-foto-2.jpeg"],
+  ["Silat — Championship V, foto utama","Ekstrakurikuler","/images/organizations/archive/06-Silat/03-Championship-V-featured.jpeg"],
+  ["KIR — dokumentasi satu","Ekstrakurikuler","/images/organizations/archive/07-KIR/01-20240629-WA0006.avif"],
+  ["KIR — dokumentasi dua","Ekstrakurikuler","/images/organizations/archive/07-KIR/02-20240629-WA0007.avif"],
+  ["KIR — dokumentasi tiga","Ekstrakurikuler","/images/organizations/archive/07-KIR/03-20240629-WA0009.avif"],
+  ["KIR — dokumentasi empat","Ekstrakurikuler","/images/organizations/archive/07-KIR/04-20240629-WA0010.avif"],
+  ["KIR — dokumentasi lima","Ekstrakurikuler","/images/organizations/archive/07-KIR/05-20240629-WA0011.avif"],
+  ["KIR — dokumentasi enam","Ekstrakurikuler","/images/organizations/archive/07-KIR/06-20260215-WA0028.avif"],
+  ["KIR — dokumentasi tujuh","Ekstrakurikuler","/images/organizations/archive/07-KIR/07-20251002-WA0055.avif"],
+  ["KIR — dokumentasi delapan","Ekstrakurikuler","/images/organizations/archive/07-KIR/08-20240629-WA0003.avif"],
+  ["KIR — dokumentasi sembilan","Ekstrakurikuler","/images/organizations/archive/07-KIR/09-20240629-WA0004.avif"],
+  ["KIR — Smandu","Ekstrakurikuler","/images/organizations/archive/07-KIR/10-smandu.avif"],
+  ["KIR — Universitas Bakrie","Ekstrakurikuler","/images/organizations/archive/07-KIR/11-ubakrie.avif"]
 ];
 const categories = ["Semua","Kegiatan","Praktik","Prestasi","Ekstrakurikuler"];
-function PageHero({title,description}:{title:string;description:string}) { return <header className="reference-detail-hero"><div><small>Beranda / {title}</small><h1>{title}</h1><p>{description}</p></div></header>; }
+function PageHero({title,description}:{title:string;description:string}) { return <header className="reference-detail-hero"><div><small className="page-header-path">Beranda / {title}</small><h1>{title}</h1><p className="page-header-description">{description}</p></div></header>; }
 
 export function AnnouncementPage({ title = "Pengumuman" }: { title?: string }) {
   const [filter,setFilter]=useState("Semua");
@@ -57,5 +94,6 @@ export function GalleryPage() {
   const [filter,setFilter]=useState("Semua");
   const [showMore,setShowMore]=useState(false);
   const visible=galleryItems.filter(([,kind])=>filter==="Semua"||filter===kind);
-  return <div className="reference-detail-page"><PageHero title="Galeri Sekolah" description="Dokumentasi kegiatan, praktik, dan prestasi siswa."/><section className="detail-gallery detail-wrap"><div className="gallery-filters">{categories.map(item=><button key={item} aria-pressed={filter===item} onClick={()=>{setFilter(item);setShowMore(false)}}>{item}</button>)}</div><div className={`reference-gallery-grid ${filter === "Semua" ? `gallery-all${showMore?" gallery-expanded":""}` : "gallery-filtered"}`}>{visible.map(([item,,photo],index)=><article className={`gallery-tile tile-${index%6}${index>=6&&!showMore?" gallery-mobile-extra":""}`} key={item}><Image src={`/images/reference/design-v5/${photo}`} alt={item} fill sizes="(max-width: 600px) 50vw, 33vw" /></article>)}</div>{visible.length>6&&!showMore&&<button className="gallery-more" onClick={()=>setShowMore(true)}>Muat lebih banyak</button>}</section></div>;
+  const columns=Array.from({length:3},(_,column)=>visible.map((item,index)=>({item,index})).filter(({index})=>index%3===column));
+  return <div className="reference-detail-page"><PageHero title="Galeri Sekolah" description="Dokumentasi kegiatan, praktik, dan prestasi siswa."/><section className="detail-gallery detail-wrap"><div className="gallery-filters">{categories.map(item=><button key={item} aria-pressed={filter===item} onClick={()=>{setFilter(item);setShowMore(false)}}>{item}</button>)}</div><div className={`reference-gallery-grid ${filter === "Semua" ? `gallery-all${showMore?" gallery-expanded":""}` : "gallery-filtered"}`}>{columns.map((column,columnIndex)=><div className={`gallery-column gallery-column-${columnIndex+1}`} key={columnIndex}>{column.map(({item,index})=><article className={`gallery-tile tile-${index+1}${index>=6&&!showMore?" gallery-mobile-extra":""}`} key={item[0]}><Image src={item[2].startsWith("/") ? item[2] : `/images/reference/design-v5/${item[2]}`} alt={item[0]} fill priority={index < 3} sizes="(max-width: 600px) 50vw, 33vw" /></article>)}</div>)}</div>{visible.length>6&&!showMore&&<button className="gallery-more" onClick={()=>setShowMore(true)}>Muat lebih banyak</button>}</section></div>;
 }

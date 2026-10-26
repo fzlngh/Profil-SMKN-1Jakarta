@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { ContactServiceDesk } from "@/components/ContactServiceDesk";
-import { PpdbReferencePage } from "@/components/ReferenceSectionPages";
 import { StudentLifeDesignedPage } from "@/components/StudentLifeDesignedPage";
 import { InformationDesignedPage } from "@/components/InformationDesignedPage";
 import { ProgramDesignedPage } from "@/components/ProgramDesignedPage";
@@ -19,11 +18,12 @@ export function generateStaticParams() {
 
 export function generateMetadata({ params }: { params: { section: string } }): Metadata {
   const data = publicSections[params.section];
-  if (params.section === "tentang") return { title: "Program Studi — SMK Negeri 1 Jakarta", description: "Empat program keahlian dengan kurikulum yang selaras kebutuhan industri dan dunia kerja." };
+  if (params.section === "tentang") return { title: "Program Studi — SMK Negeri 1 Jakarta", description: "Sepuluh program keahlian dengan cakupan kompetensi dan prospek karier yang beragam." };
   if (params.section === "osis") return { title: "Organisasi Siswa — SMK Negeri 1 Jakarta", description: "Informasi organisasi siswa." };
   if (params.section === "agenda") return { title: "Agenda Akademik — SMK Negeri 1 Jakarta", description: "Kalender kegiatan sekolah." };
   if (params.section === "pengumuman") return { title: "Pengumuman — SMK Negeri 1 Jakarta", description: "Informasi resmi sekolah." };
   if (params.section === "pelaksanaan") return { title: "Pelaksanaan — SMK Negeri 1 Jakarta", description: "Daftar pelaksanaan dan informasi resmi sekolah." };
+  if (params.section === "ppdb") return { title: "Pengumuman — SMK Negeri 1 Jakarta", description: "Informasi resmi sekolah." };
   if (params.section === "galeri") return { title: "Galeri Sekolah — SMK Negeri 1 Jakarta", description: "Dokumentasi kegiatan siswa." };
   if (params.section === "organisasi") return { title: "Organisasi Siswa — SMK Negeri 1 Jakarta", description: "Wadah pengembangan minat dan kepemimpinan siswa." };
   return data ? { title: `${data.title} — SMK Negeri 1 Jakarta`, description: data.intro } : {};
@@ -36,12 +36,12 @@ export default async function InfoPage({ params, searchParams }: { params: { sec
   if (params.section === "agenda") return <AgendaPage />;
   if (params.section === "pengumuman") return <AnnouncementPage />;
   if (params.section === "pelaksanaan") return <AnnouncementPage title="Pelaksanaan" />;
+  if (params.section === "ppdb") redirect("/pelaksanaan");
   if (params.section === "galeri") return <GalleryPage />;
   if (params.section === "organisasi") return <OrganizationOverviewPage />;
   if (params.section === "kontak") return <ContactServiceDesk />;
   if (params.section === "tentang") return <ProgramDesignedPage />;
   if (params.section === "kesiswaan") return <StudentLifeDesignedPage />;
-  if (params.section === "ppdb") return <PpdbReferencePage />;
   if (params.section === "informasi") return <InformationDesignedPage searchParams={searchParams} />;
   return <PublicSection data={data!} />;
 }

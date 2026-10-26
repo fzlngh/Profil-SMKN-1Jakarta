@@ -502,7 +502,7 @@ h1, h2, h3, h4{ @apply font-serif font-semibold tracking-tight; }
 .access-panel, .chat-panel{ max-height: min(78vh, 620px); overflow-y: auto; transform-origin: bottom right; }
 
 .access-panel{
-  display: grid; gap: 13px; max-height: min(75vh, 560px); overflow-y: auto;
+  display: grid; gap: 13px; max-height: min(55vh, calc(100vh - 280px), 560px); overflow-y: auto;
   border: 1px solid #e3e7f0; border-radius: 14px; padding: 16px 16px 14px; box-shadow: 0 18px 46px rgba(16,31,45,.16);
 }
 
@@ -558,41 +558,11 @@ h1, h2, h3, h4{ @apply font-serif font-semibold tracking-tight; }
 
 html.dyslexia-font body,
 html.dyslexia-font body *{
-  font-family: "OpenDyslexic", Verdana, Arial, sans-serif !important;
-  letter-spacing: .025em;
-  word-spacing: .08em;
-  line-height: 1.7;
+  font-family: Verdana, Arial, sans-serif !important;
+  letter-spacing: .035em;
+  word-spacing: .12em;
+  line-height: 1.75;
 }
-
-html.high-contrast body{ background: #fff; color: #000; }
-
-
-html.high-contrast :is(.site-header, .site-footer){ border-color: #000 !important; }
-
-
-
-html.high-contrast :is(a, .main-nav a, .site-footer nav a){ color: #0000ee !important; text-decoration: underline; }
-
-html.high-contrast .hero{ background: #000; }
-
-
-html.high-contrast .hero :is(h1, p, a, span, .eyebrow){ color: #fff !important; }
-
-html.high-contrast .hero h1 em{ color: #ffeb00 !important; }
-
-html.high-contrast :is(.chat-panel, .access-panel, .chat-composer, .chat-brand-row, .chat-message, .chat-form-row){
-  background: #fff !important; color: #000 !important; border-color: #000 !important;
-}
-
-html.high-contrast :is(.chat-panel, .access-panel) :is(h2, p, span, strong, label, input, button){ color: #000 !important; }
-
-
-
-html.high-contrast .utility-trigger{ background: #fff; color: #000; border: 2px solid #000; }
-
-html.high-contrast :is(button, input, textarea, select, a):focus-visible{ outline: 4px solid #ffbf00 !important; outline-offset: 3px; }
-
-html.high-contrast .chat-form-row .speech-toggle{ background: #fff !important; color: #000 !important; border: 2px solid #000 !important; }
 
 @media (max-width: 900px){
   .site-header{ height: auto; min-height: 76px; flex-wrap: wrap; padding: 12px 5%; gap: 10px; }
@@ -3457,3 +3427,33 @@ h1, h2, h3, h4, h5, h6{ font-family: var(--font-chakra), "Chakra Petch", sans-se
 @media (max-height:560px){
   .chat-widget .chat-panel{ height:calc(100dvh - 176px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); max-height:calc(100dvh - 176px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }}
 
+.chatbot-page-intro{display:grid;min-height:210px;place-items:center;padding:36px 24px;background:linear-gradient(135deg,#0b2344,#17459d);color:#fff;text-align:center}
+.chatbot-page-intro p{margin:0 0 10px;color:#b9d0f3;font-size:11px;font-weight:700;letter-spacing:.16em}
+.chatbot-page-intro h1{margin:0;font-size:clamp(28px,4vw,42px)}
+.chatbot-page-intro span{display:block;margin-top:10px;color:#dce7fb;font-size:15px}
+.chat-widget-page{position:fixed;inset:0;z-index:2000;display:grid;place-items:center;padding:18px;background:rgba(6,23,52,.7);backdrop-filter:blur(5px)}
+.chat-widget-page .chat-panel{position:relative;inset:auto;width:min(820px,100%);height:min(760px,calc(100dvh - 36px));max-height:calc(100dvh - 36px);border-radius:22px}
+.chat-widget-page .chat-brand-row{min-height:82px;flex-basis:82px}
+.pixel-campus-bot span{width:max-content;max-width:min(220px,calc(100vw - 110px));padding:9px 12px;font-size:12px;line-height:1.35}
+.pixel-campus-bot img,.chat-trigger-icon img{object-fit:contain}
+.chat-trigger-icon img{width:100%;height:100%}
+.chat-greeting-open{color:inherit;text-decoration:none}
+.chat-greeting-open:hover span{text-decoration:underline;text-decoration-color:#b9c8e0;text-underline-offset:3px}
+.pixel-cta-start{display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+.pixel-cta-mascot-link{position:absolute;top:50%;right:30px;z-index:2;display:block;width:185px;height:185px;transform:translateY(-50%)}
+.pixel-cta-mascot-link .pixel-cta-mascot{position:static!important;width:100%!important;height:100%!important;transform:none!important}
+@media(max-width:620px){.chat-widget-page{padding:max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))}.chat-widget-page .chat-panel{width:100%;height:100%;max-height:100%;border-radius:18px}.chatbot-page-intro{min-height:175px;padding:26px 16px}.pixel-campus-bot span{font-size:10px}.pixel-cta-mascot-link{position:relative;top:auto;right:auto;width:76px;height:76px;flex:0 0 76px;margin:0 auto;transform:none}.pixel-cta-mascot-link .pixel-cta-mascot{display:block;width:100%;height:100%;margin:0;object-fit:contain}}
+
+/* Keep the accessibility menu below the site header at every text scale. */
+.access-panel { max-height: min(55vh, calc(100vh - 280px), 560px); overflow-y: auto; overscroll-behavior: contain; }
+.program-detail-hero-grid { grid-template-columns: minmax(0, 1fr) minmax(260px, 38%); }
+.program-detail-hero-image { width: 100%; max-width: 420px; height: auto; justify-self: end; overflow: hidden; }
+.program-detail-hero-image img { position: static !important; display: block; width: 100% !important; height: auto !important; object-fit: contain; }
+@media (max-width: 900px) {
+  .program-detail-hero-grid { grid-template-columns: minmax(0, 1fr) minmax(220px, 38%); }
+}
+@media (max-width: 700px) {
+  .program-detail-hero-grid { display: flex; flex-direction: column; gap: 0; }
+  .program-detail-hero-image { order: -1; width: 100%; max-width: none; height: auto; justify-self: auto; }
+  .program-detail-hero-image img { width: 100% !important; height: auto !important; }
+}

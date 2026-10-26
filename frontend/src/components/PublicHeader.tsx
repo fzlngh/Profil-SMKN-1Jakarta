@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
 import { PUBLIC_NAVIGATION } from "@/lib/public-knowledge";
+import { ChatOpenLink } from "@/components/ChatOpenLink";
 
 export function SchoolMark() {
   return <Image className="school-mark" src="/logo-sekolah-transparent.png" alt="" aria-hidden="true" width={44} height={44} unoptimized />;
@@ -47,15 +48,7 @@ export function PublicHeader() {
       </div>
       <div className="nav-shell">
         <nav className="main-nav" aria-label="Navigasi utama">
-          {PUBLIC_NAVIGATION.map((l) => l.label === "Pengumuman" ? (
-            <details className="nav-dropdown" key={l.href}>
-              <summary aria-label="Buka submenu Pengumuman" aria-current={pathname === "/pelaksanaan" || pathname === "/ppdb" ? "page" : undefined}>{l.label}<span aria-hidden="true" /></summary>
-              <div className="nav-dropdown-menu">
-                <Link href="/pelaksanaan" aria-current={pathname === "/pelaksanaan" ? "page" : undefined}>Pelaksanaan</Link>
-                <Link href="/ppdb" aria-current={pathname === "/ppdb" ? "page" : undefined}>SPMB</Link>
-              </div>
-            </details>
-          ) : <Link key={l.href} href={l.href} aria-current={!l.href.includes("#") && pathname === l.href ? "page" : undefined}>{l.label}</Link>)}
+          {PUBLIC_NAVIGATION.map((l) => <Link key={l.href} href={l.href} aria-current={!l.href.includes("#") && pathname === l.href ? "page" : undefined}>{l.label}</Link>)}
         </nav>
       </div>
     </header>
@@ -67,7 +60,7 @@ export function PublicHeader() {
           {PUBLIC_NAVIGATION.map((item, index) => <Link key={item.href} href={item.href} aria-current={pathname === item.href ? "page" : undefined} onClick={closeMenu}><small>{String(index + 1).padStart(2, "0")}</small><span>{item.label}</span><b aria-hidden="true">→</b></Link>)}
         </nav>
         <div className="mobile-menu-actions">
-          <Link className="mobile-menu-chat" href="/kontak" onClick={closeMenu}><span>Tanya WilhelBot<small>Asisten virtual · online 24/7</small></span><b aria-hidden="true">›</b></Link>
+          <ChatOpenLink className="mobile-menu-chat" onClick={closeMenu}><span>Tanya WilhelBot<small>Asisten virtual · online 24/7</small></span><b aria-hidden="true">›</b></ChatOpenLink>
           <Link className="mobile-menu-contact" href="/kontak" onClick={closeMenu}>Hubungi Kami　☎</Link>
           <small className="mobile-menu-contact-details">(021) 381-3630　/　SMKN1JAKARTA@GMAIL.COM</small>
         </div>

@@ -1,0 +1,814 @@
+/* High contrast is isolated to the saved accessibility preference on <html>. */
+html.high-contrast {
+  color-scheme: light;
+  --hc-surface: #ffffff;
+  --hc-text: #111111;
+  --hc-secondary: #333333;
+  --hc-link: #003f8c;
+  --hc-border: #333333;
+  --hc-focus: #003f8c;
+  --hc-brand: #8b1e2d;
+  --hc-navy: #15344f;
+  --hc-gold: #6b4e00;
+  background-color: var(--hc-surface) !important;
+}
+
+html.high-contrast body {
+  color: var(--hc-text) !important;
+  background-color: var(--hc-surface) !important;
+}
+
+html.high-contrast body main,
+html.high-contrast body main section:not(.reference-hero):not(.notice-bar):not(.pixel-hero):not(.pixel-cta):not(.program-page-hero):not(.reference-detail-hero):not(.news-page-hero):not(.contact-page-hero):not(.student-design-hero):not(.reference-student-hero):not(.reference-program-hero):not(.reference-news-hero):not(.reference-osis-hero):not(.subpage-hero):not(.osis-design-hero):not(.desktop-program-hero):not(.reference-contact-cta):not(.program-mobile-help):not(.chatbot-page-intro):not(.osis-president),
+html.high-contrast body .pixel-home,
+html.high-contrast body .program-detail-page {
+  color: var(--hc-text) !important;
+  background-color: var(--hc-surface) !important;
+}
+
+/* Strong text colors replace the low-contrast grays used by light-mode themes. */
+html.high-contrast body :is(
+  h1, h2, h3, h4, h5, h6, p, li, dt, dd, span, small, strong, b, em,
+  label, legend, summary, blockquote, figcaption, time, output, address,
+  cite, caption, th, td
+) {
+  color: var(--hc-text) !important;
+}
+
+html.high-contrast body :is(
+  small, .muted, .text-muted, .page-description, .hero-description,
+  .program-detail-partner-note, .news-card-meta, .contact-map-address,
+  .accessibility-note, .speech-status, .chat-loading, .chat-footer
+) {
+  color: var(--hc-secondary) !important;
+}
+
+/* Header and navigation remain light; active and keyboard states have clear markers. */
+html.high-contrast body .site-header,
+html.high-contrast body .site-header-reference,
+html.high-contrast body .site-header-reference .nav-shell,
+html.high-contrast body .site-header-reference .main-nav {
+  color: var(--hc-text) !important;
+  background-color: var(--hc-surface) !important;
+  border-color: var(--hc-border) !important;
+}
+
+html.high-contrast body .site-header-reference .school-mark,
+html.high-contrast body .site-footer .brand-logo {
+  background-color: var(--hc-brand) !important;
+}
+
+html.high-contrast body a,
+html.high-contrast body a:visited,
+html.high-contrast body a:link {
+  color: var(--hc-link) !important;
+  text-decoration: underline !important;
+  text-decoration-thickness: 0.1em;
+  text-underline-offset: 0.16em;
+}
+
+html.high-contrast body a:hover {
+  color: var(--hc-link) !important;
+  text-decoration-thickness: 0.16em;
+  text-underline-offset: 0.2em;
+}
+
+html.high-contrast body :is(
+  .site-header-reference .main-nav a[aria-current="page"],
+  .site-header-reference .main-nav a[aria-current="page"]:visited,
+  .site-header-reference .nav-dropdown summary[aria-expanded="true"],
+  .mobile-menu nav a[aria-current="page"]
+) {
+  color: var(--hc-link) !important;
+  background-color: var(--hc-surface) !important;
+  box-shadow: inset 0 -3px var(--hc-focus) !important;
+  font-weight: 700 !important;
+}
+
+html.high-contrast body .site-header-reference .main-nav a[aria-current="page"]::after {
+  background-color: var(--hc-focus) !important;
+}
+
+html.high-contrast body :is(
+  .pixel-heading > div > small,
+  .reference-section-heading > div > small,
+  .program-detail-section-heading > span,
+  .eyebrow,
+  .eyebrow > span
+)::before,
+html.high-contrast body .eyebrow > span {
+  background-color: var(--hc-brand) !important;
+}
+
+html.high-contrast body :is(
+  .pixel-heading > div > small,
+  .reference-section-heading > div > small,
+  .program-detail-section-heading > span,
+  .eyebrow,
+  .news-page-hero .news-breadcrumb
+) {
+  color: var(--hc-brand) !important;
+}
+
+/* Page surfaces and named cards use white with a visible boundary. */
+html.high-contrast body :is(
+  .public-card, .pixel-program-card, .pixel-news-grid > article, .pixel-org-grid > a,
+  .pixel-partners article, .reference-program-card, .reference-program-body,
+  .program-detail-module, .program-detail-career, .program-detail-partner,
+  .contact-channel-card, .contact-detail-card, .contact-form-panel, .inquiry-form,
+  .osis-forms form, .student-claim form, .news-card, .news-card-grid article,
+  .news-feature > aside, .news-empty, .agenda-empty, .program-mobile-feature,
+  .program-mobile-related, .achievement-card, .reference-news-hero > aside,
+  .access-panel, .chat-panel, .chat-greeting
+) {
+  color: var(--hc-text) !important;
+  background-color: var(--hc-surface) !important;
+  border-color: var(--hc-border) !important;
+}
+
+html.high-contrast body :is(
+  .public-card, .pixel-program-card, .pixel-news-grid > article, .pixel-org-grid > a,
+  .reference-program-card, .program-detail-module, .program-detail-career,
+  .program-detail-partner, .contact-channel-card, .contact-detail-card,
+  .contact-form-panel, .inquiry-form, .osis-forms form, .student-claim form,
+  .news-card, .news-card-grid article, .agenda-empty, .program-mobile-feature,
+  .program-mobile-related, .achievement-card
+) {
+  border-style: solid !important;
+  border-width: 1px !important;
+}
+
+/* Readable badges retain their wording and are distinguished by a border. */
+html.high-contrast body :is(
+  .pixel-pill, .pixel-accreditation, .program-detail-badges span,
+  .program-detail-tags span, .pixel-industry-tags span, .reference-count-pill,
+  .news-category, .public-card-label, .calendar-event-tag,
+  .pixel-partners article > small
+) {
+  color: var(--hc-text) !important;
+  background-color: var(--hc-surface) !important;
+  border: 1px solid var(--hc-border) !important;
+  box-shadow: none !important;
+}
+
+html.high-contrast body :is(.pixel-gold, .pixel-heading small, .eyebrow > span) {
+  color: var(--hc-gold) !important;
+}
+
+/* Navy regions preserve their component identity and use white foregrounds. */
+html.high-contrast body :is(
+  .notice-bar, .pixel-hero, .pixel-cta, .program-page-hero, .reference-detail-hero,
+  .news-page-hero, .contact-page-hero, .student-design-hero, .reference-student-hero,
+  .reference-program-hero, .reference-news-hero > article, .reference-osis-hero, .reference-ppdb-top > article,
+  .subpage-hero, .osis-design-hero, .desktop-program-hero, .site-footer,
+  .reference-contact-cta, .osis-president,
+  .mobile-menu, .program-mobile-help, .chatbot-page-intro,
+  .news-feature > article, .news-feature > article footer,
+  .chat-widget .chat-brand-row
+) {
+  color: #ffffff !important;
+  background-color: var(--hc-navy) !important;
+  border-color: var(--hc-navy) !important;
+}
+
+html.high-contrast body :is(
+  .reference-news-hero > article, .news-feature > article,
+  .chatbot-page-intro, .chat-widget .chat-brand-row
+) {
+  background-image: none !important;
+}
+
+html.high-contrast body :is(
+  .notice-bar, .pixel-hero, .pixel-cta, .program-page-hero, .reference-detail-hero,
+  .news-page-hero, .contact-page-hero, .student-design-hero, .reference-student-hero,
+  .reference-program-hero, .reference-news-hero > article, .reference-osis-hero, .reference-ppdb-top > article,
+  .subpage-hero, .osis-design-hero, .desktop-program-hero, .site-footer,
+  .reference-contact-cta, .osis-president,
+  .mobile-menu, .program-mobile-help, .chatbot-page-intro,
+  .news-feature > article, .news-feature > article footer,
+  .chat-widget .chat-brand-row
+) :is(
+  h1, h2, h3, h4, p, li, small, span, strong, b, address, nav, a
+) {
+  color: #ffffff !important;
+}
+
+html.high-contrast body :is(
+  .site-footer a, .site-footer a:visited,
+  .mobile-menu a, .mobile-menu a:visited,
+  .notice-bar a, .notice-bar a:visited,
+  .pixel-hero a:not(.pixel-gold), .pixel-hero a:not(.pixel-gold):visited,
+  .pixel-cta a, .pixel-cta a:visited,
+  .program-page-hero a, .program-page-hero a:visited,
+  .reference-detail-hero a, .reference-detail-hero a:visited,
+  .news-page-hero a, .news-page-hero a:visited,
+  .contact-page-hero a, .contact-page-hero a:visited,
+  .student-design-hero a, .student-design-hero a:visited,
+  .reference-student-hero a, .reference-student-hero a:visited,
+  .reference-program-hero a, .reference-program-hero a:visited,
+  .reference-news-hero > article a, .reference-news-hero > article a:visited,
+  .reference-osis-hero a, .reference-osis-hero a:visited,
+  .osis-design-hero a, .osis-design-hero a:visited,
+  .desktop-program-hero a, .desktop-program-hero a:visited,
+  .news-feature > article a, .news-feature > article a:visited,
+  .chat-widget .chat-brand-row a, .chat-widget .chat-brand-row a:visited
+) {
+  color: #ffffff !important;
+  text-decoration: underline !important;
+}
+
+html.high-contrast body .pixel-gold,
+html.high-contrast body .contact-hero-action,
+html.high-contrast body .pixel-button:not(.pixel-outline) {
+  color: var(--hc-gold) !important;
+  background-color: var(--hc-surface) !important;
+  border: 2px solid var(--hc-gold) !important;
+}
+
+html.high-contrast body :is(
+  .program-detail-hero h1 span,
+  .pixel-heading > div > small, .reference-section-heading > div > small
+) {
+  color: var(--hc-brand) !important;
+}
+
+/* Preserve photographs and artwork; strengthen only the existing photo overlay. */
+html.high-contrast body .reference-hero::after {
+  background: linear-gradient(90deg, rgba(4, 20, 42, 0.78), rgba(4, 20, 42, 0.35) 72%) !important;
+}
+
+html.high-contrast body .reference-hero .hero-glass {
+  color: var(--hc-text) !important;
+  background-color: rgba(255, 255, 255, 0.97) !important;
+  border-color: var(--hc-border) !important;
+  backdrop-filter: none;
+}
+
+html.high-contrast body .pixel-campus-placeholder {
+  background-image: linear-gradient(180deg, rgba(4, 20, 42, 0.58), rgba(4, 20, 42, 0.42)), url("/images/reference/campus.jpg") !important;
+}
+
+html.high-contrast body :is(.pixel-gallery-grid article, .gallery-tile, .news-card-image, .pixel-news-image, .program-art-placeholder) {
+  color: #ffffff !important;
+}
+
+html.high-contrast body :is(.pixel-gallery-grid article, .gallery-tile, .news-card-image, .pixel-news-image, .program-art-placeholder) :is(span, small, strong, b) {
+  color: #ffffff !important;
+}
+
+html.high-contrast body .site-footer {
+  border-image: none !important;
+  border-top-color: var(--hc-gold) !important;
+}
+
+html.high-contrast body .pixel-hero::before {
+  background-color: var(--hc-brand) !important;
+}
+
+/* Fields, validation, statuses, and pressed controls remain distinct without color alone. */
+html.high-contrast body :is(input, textarea, select, option) {
+  color: var(--hc-text) !important;
+  background-color: var(--hc-surface) !important;
+  border: 1px solid var(--hc-border) !important;
+  accent-color: var(--hc-link);
+}
+
+html.high-contrast body :is(input, textarea, select)::placeholder {
+  color: var(--hc-secondary) !important;
+  opacity: 1 !important;
+}
+
+html.high-contrast body :is(input, textarea, select):is(:user-invalid, [aria-invalid="true"]) {
+  border: 2px solid var(--hc-brand) !important;
+}
+
+html.high-contrast body :is(
+  input, textarea, select, button, summary, [role="button"], [role="tab"], a
+):focus-visible {
+  outline: 3px solid var(--hc-focus) !important;
+  outline-offset: 3px !important;
+}
+
+html.high-contrast body a:hover {
+  color: var(--hc-link) !important;
+  text-decoration-thickness: 0.16em !important;
+}
+
+html.high-contrast body :is(button, [role="button"], [role="tab"]):hover:not(:disabled) {
+  color: var(--hc-link) !important;
+  background-color: #eef4fb !important;
+  border-color: var(--hc-focus) !important;
+}
+
+html.high-contrast body :is(button, [role="button"], [role="tab"], input, textarea, select):disabled,
+html.high-contrast body :is(button, [role="button"], [role="tab"])[aria-disabled="true"] {
+  color: var(--hc-secondary) !important;
+  background-color: var(--hc-surface) !important;
+  border: 1px solid #666666 !important;
+  opacity: 1 !important;
+  cursor: not-allowed;
+}
+
+html.high-contrast body :is(button, [role="button"], [role="tab"])[aria-pressed="true"],
+html.high-contrast body [role="tab"][aria-selected="true"] {
+  color: var(--hc-link) !important;
+  background-color: var(--hc-surface) !important;
+  border: 2px solid var(--hc-focus) !important;
+  box-shadow: inset 4px 0 var(--hc-focus) !important;
+  font-weight: 700 !important;
+}
+
+html.high-contrast body :is(a, button, [role="button"], [role="tab"])[aria-current="page"] {
+  color: var(--hc-link) !important;
+  background-color: var(--hc-surface) !important;
+  box-shadow: inset 0 -3px var(--hc-focus) !important;
+  font-weight: 700 !important;
+}
+
+html.high-contrast body :is(.form-status, .cms-feed-status, [role="status"]) {
+  color: var(--hc-text) !important;
+  background-color: var(--hc-surface) !important;
+  border-color: var(--hc-navy) !important;
+}
+
+html.high-contrast body :is(
+  .cms-inline-error, .cms-alert-error, .chat-error, .field-error, .form-error,
+  [role="alert"]
+) {
+  color: var(--hc-brand) !important;
+  background-color: var(--hc-surface) !important;
+  border-color: var(--hc-brand) !important;
+}
+
+html.high-contrast body :is(.access-panel, .chat-panel) {
+  color: var(--hc-text) !important;
+  background-color: var(--hc-surface) !important;
+  border: 2px solid var(--hc-border) !important;
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 5px var(--hc-border) !important;
+}
+
+html.high-contrast body .access-panel :is(h2, span, p, button),
+html.high-contrast body .chat-panel :is(h2, h3, p, label, small, span, button) {
+  color: var(--hc-text) !important;
+}
+
+html.high-contrast body .chat-widget .chat-brand-row :is(h2, h3, p, span, small, strong, button) {
+  color: #ffffff !important;
+}
+
+html.high-contrast body .chat-widget .chat-message,
+html.high-contrast body .chat-widget .chat-message-assistant {
+  color: var(--hc-text) !important;
+  background-color: var(--hc-surface) !important;
+  border: 1px solid var(--hc-border) !important;
+}
+
+html.high-contrast body .chat-widget .chat-message-user {
+  color: #ffffff !important;
+  background-color: var(--hc-navy) !important;
+  border-color: var(--hc-navy) !important;
+}
+
+html.high-contrast body .chat-widget .chat-message-user :is(p, span, small, a) {
+  color: #ffffff !important;
+}
+
+html.high-contrast body .chat-widget .chat-suggestions button,
+html.high-contrast body .chat-widget .chat-form-row .speech-toggle {
+  color: var(--hc-link) !important;
+  background-color: var(--hc-surface) !important;
+  border: 1px solid var(--hc-border) !important;
+}
+
+html.high-contrast body .chat-widget .chat-form-row > button:not(.speech-toggle) {
+  color: #ffffff !important;
+  background-color: var(--hc-navy) !important;
+  border: 1px solid var(--hc-navy) !important;
+}
+
+html.high-contrast ::selection {
+  color: #ffffff;
+  background-color: var(--hc-link);
+}
+/* Explicit control defaults keep inactive buttons readable too. */
+html.high-contrast body :is(button, [role="button"], [role="tab"]) {
+  color: var(--hc-text) !important;
+  background-color: var(--hc-surface) !important;
+  background-image: none !important;
+  border: 1px solid var(--hc-border) !important;
+}
+
+html.high-contrast body :is(
+  a.button, a[class*="button"], .pixel-button, .chat-trigger,
+  .header-chat-button, .mobile-menu-chat, .mobile-menu-contact,
+  .contact-hero-action, .news-feature > article a
+) {
+  color: var(--hc-link) !important;
+  background-color: var(--hc-surface) !important;
+  background-image: none !important;
+  border: 2px solid var(--hc-link) !important;
+  text-decoration: underline !important;
+}
+
+html.high-contrast body :is(
+  button, a, [role="button"], [role="tab"], [role="option"]
+):is(.active, .selected, .is-active, .is-current, [aria-selected="true"]) {
+  color: var(--hc-link) !important;
+  background-color: var(--hc-surface) !important;
+  border: 2px solid var(--hc-focus) !important;
+  box-shadow: inset 4px 0 var(--hc-focus) !important;
+  font-weight: 700 !important;
+}
+
+html.high-contrast body a[aria-disabled="true"] {
+  color: var(--hc-secondary) !important;
+  border-color: #666666 !important;
+  cursor: not-allowed;
+}
+
+html.high-contrast body .pixel-hero .pixel-pill {
+  color: var(--hc-text) !important;
+  background-color: var(--hc-surface) !important;
+  border: 1px solid var(--hc-border) !important;
+}
+
+html.high-contrast body .notice-bar .notice-message b {
+  color: var(--hc-gold) !important;
+  background-color: var(--hc-surface) !important;
+  border: 1px solid var(--hc-gold) !important;
+}
+
+html.high-contrast body .mobile-menu nav a[aria-current="page"] {
+  color: #ffffff !important;
+  background-color: var(--hc-navy) !important;
+  box-shadow: inset 0 -3px #ffffff !important;
+  text-decoration-thickness: 0.16em !important;
+}
+
+html.high-contrast body :is(
+  .mobile-menu .mobile-menu-contact, .mobile-menu .mobile-menu-chat,
+  .pixel-hero .pixel-button.pixel-outline, .pixel-cta .pixel-button,
+  .reference-contact-cta a, .reference-news-hero > article > a,
+  .reference-ppdb-top > article > a
+) {
+  color: var(--hc-link) !important;
+  background-color: var(--hc-surface) !important;
+  border: 2px solid var(--hc-link) !important;
+  text-decoration: underline !important;
+}
+html.high-contrast body .osis-principal {
+  color: #ffffff !important;
+  background: var(--hc-brand) !important;
+  border-color: var(--hc-brand) !important;
+}
+
+html.high-contrast body .osis-principal :is(b, small, span, p, strong) {
+  color: #ffffff !important;
+}
+
+html.high-contrast body .reference-contact-cta :is(h1, h2, h3, h4, p, small, span, strong, a) {
+  color: #ffffff !important;
+}
+
+html.high-contrast body .reference-contact-cta a {
+  color: var(--hc-link) !important;
+}
+
+html.high-contrast body .pixel-hero .pixel-hero-copy h1 em {
+  color: #ffffff !important;
+}
+html.high-contrast body [aria-current="page"] {
+  color: var(--hc-link) !important;
+  font-weight: 700 !important;
+  text-decoration: underline !important;
+  text-decoration-thickness: 0.12em !important;
+  text-underline-offset: 0.16em !important;
+}
+/* Light badges and controls inside navy areas need dark foregrounds. */
+html.high-contrast body .pixel-hero span.pixel-pill {
+  color: var(--hc-text) !important;
+  background-color: var(--hc-surface) !important;
+  border: 1px solid var(--hc-border) !important;
+}
+
+html.high-contrast body .pixel-hero .pixel-accreditation,
+html.high-contrast body .pixel-hero .pixel-accreditation :is(small, b, strong, span) {
+  color: var(--hc-text) !important;
+  background-color: var(--hc-surface) !important;
+  border-color: var(--hc-border) !important;
+}
+
+html.high-contrast body .pixel-hero .pixel-hero-bot,
+html.high-contrast body .pixel-hero .pixel-hero-bot :is(span, small, strong, b) {
+  color: var(--hc-text) !important;
+  background-color: var(--hc-surface) !important;
+  border-color: var(--hc-border) !important;
+}
+
+html.high-contrast body .pixel-hero .pixel-actions > a.pixel-button.pixel-gold {
+  color: var(--hc-gold) !important;
+  background-color: var(--hc-surface) !important;
+  border: 2px solid var(--hc-gold) !important;
+  text-decoration: underline !important;
+}
+
+html.high-contrast body .pixel-hero .pixel-actions > a.pixel-button.pixel-outline {
+  color: var(--hc-link) !important;
+  background-color: var(--hc-surface) !important;
+  border: 2px solid var(--hc-link) !important;
+  text-decoration: underline !important;
+}
+
+html.high-contrast body .reference-program-hero.reference-wrap .reference-hero-actions a {
+  color: var(--hc-link) !important;
+  background-color: var(--hc-surface) !important;
+  border: 2px solid var(--hc-link) !important;
+  text-decoration: underline !important;
+}
+
+html.high-contrast body .osis-design-hero nav a + a {
+  color: var(--hc-link) !important;
+  background-color: var(--hc-surface) !important;
+  border: 2px solid var(--hc-link) !important;
+  text-decoration: underline !important;
+}
+html.high-contrast body .pixel-hero .pixel-accreditation {
+  border: 1px solid var(--hc-border) !important;
+}
+
+html.high-contrast body .osis-design-hero nav a + a:is(:link, :visited) {
+  color: var(--hc-link) !important;
+  background-color: var(--hc-surface) !important;
+  border: 2px solid var(--hc-link) !important;
+  text-decoration: underline !important;
+}
+html.high-contrast body .pixel-cta .pixel-cta-chips a,
+html.high-contrast body .pixel-cta .pixel-cta-chips a :is(span, small, strong, b) {
+  color: var(--hc-link) !important;
+  background-color: var(--hc-surface) !important;
+  border-color: var(--hc-border) !important;
+}
+
+html.high-contrast body .pixel-cta .pixel-cta-start,
+html.high-contrast body .pixel-cta .pixel-cta-start :is(span, small, strong, b) {
+  color: var(--hc-gold) !important;
+  background-color: var(--hc-surface) !important;
+  border: 2px solid var(--hc-gold) !important;
+  text-decoration: underline !important;
+}
+
+html.high-contrast body .mobile-menu .mobile-menu-chat :is(small, b) {
+  color: var(--hc-link) !important;
+}
+html.high-contrast body .pixel-hero .pixel-campus-bot > span {
+  color: var(--hc-link) !important;
+  background-color: var(--hc-surface) !important;
+  border: 1px solid var(--hc-border) !important;
+}
+
+html.high-contrast body .pixel-hero .pixel-campus-bot > span::after {
+  background-color: var(--hc-surface) !important;
+  border-color: var(--hc-border) !important;
+}
+
+html.high-contrast body .pixel-hero .pixel-chat-question,
+html.high-contrast body .pixel-hero .pixel-chat-question :is(span, small, b, strong) {
+  color: var(--hc-link) !important;
+  background-color: var(--hc-surface) !important;
+  border-color: var(--hc-border) !important;
+}
+html.high-contrast body .reference-contact-cta .reference-wrap > a {
+  color: var(--hc-link) !important;
+  background-color: var(--hc-surface) !important;
+  border: 2px solid var(--hc-link) !important;
+  text-decoration: underline !important;
+}
+
+html.high-contrast body .osis-design-hero.reference-wrap nav a + a:is(:link, :visited) {
+  color: var(--hc-link) !important;
+  background-color: var(--hc-surface) !important;
+  border: 2px solid var(--hc-link) !important;
+  text-decoration: underline !important;
+}
+html.high-contrast body .contact-page-hero a.contact-hero-action {
+  color: var(--hc-gold) !important;
+  background-color: var(--hc-surface) !important;
+  border: 2px solid var(--hc-gold) !important;
+  text-decoration: underline !important;
+}
+
+html.high-contrast body .pixel-cta .pixel-cta-content a.pixel-cta-start {
+  color: var(--hc-gold) !important;
+  background-color: var(--hc-surface) !important;
+  border: 2px solid var(--hc-gold) !important;
+  text-decoration: underline !important;
+}
+html.high-contrast body .notice-bar.notice-bar .notice-message b {
+  color: var(--hc-gold) !important;
+  background-color: var(--hc-surface) !important;
+  border: 1px solid var(--hc-gold) !important;
+}
+/* Navbar-only contrast states; page links outside the header keep their underline. */
+html.high-contrast body .site-header-reference {
+  background-color: var(--hc-surface) !important;
+  box-shadow: none !important;
+}
+
+html.high-contrast body .site-header-reference .nav-shell,
+html.high-contrast body .site-header-reference .main-nav {
+  background-color: var(--hc-surface) !important;
+}
+
+html.high-contrast body .site-header-reference a {
+  color: var(--hc-navy) !important;
+  text-decoration: none !important;
+  text-decoration-thickness: auto !important;
+  text-underline-offset: auto !important;
+}
+
+html.high-contrast body .site-header-reference .main-nav > a,
+html.high-contrast body .site-header-reference .main-nav > .nav-dropdown > summary {
+  color: var(--hc-navy) !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+}
+
+html.high-contrast body .site-header-reference .main-nav > a:hover,
+html.high-contrast body .site-header-reference .main-nav > .nav-dropdown > summary:hover,
+html.high-contrast body .site-header-reference .main-nav > .nav-dropdown[open] > summary {
+  color: var(--hc-navy) !important;
+  background-color: #e7eff7 !important;
+  box-shadow: none !important;
+  text-decoration: none !important;
+}
+
+html.high-contrast body .site-header-reference .main-nav a[aria-current="page"],
+html.high-contrast body .site-header-reference .main-nav a[aria-current="page"]:visited,
+html.high-contrast body .site-header-reference .main-nav > .nav-dropdown > summary[aria-expanded="true"] {
+  color: #ffffff !important;
+  background-color: var(--hc-navy) !important;
+  box-shadow: none !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+}
+
+html.high-contrast body .site-header-reference .main-nav a[aria-current="page"]::after {
+  display: none !important;
+  content: none !important;
+}
+
+html.high-contrast body .site-header-reference .main-nav a[aria-current="page"]:hover {
+  color: #ffffff !important;
+  background-color: var(--hc-navy) !important;
+}
+
+html.high-contrast body .site-header-reference :is(a, summary, button):focus-visible {
+  outline: 3px solid var(--hc-focus) !important;
+  outline-offset: 3px !important;
+  text-decoration: none !important;
+}
+
+html.high-contrast body .mobile-menu nav a {
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+
+html.high-contrast body .mobile-menu nav a:hover {
+  color: #ffffff !important;
+  background-color: #244e70 !important;
+  text-decoration: none !important;
+}
+
+html.high-contrast body .mobile-menu nav a[aria-current="page"] {
+  color: #ffffff !important;
+  background-color: var(--hc-navy) !important;
+  border-left: 4px solid #ffffff !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+}
+
+html.high-contrast body .mobile-menu nav a:focus-visible {
+  outline: 3px solid #ffffff !important;
+  outline-offset: 3px !important;
+  text-decoration: none !important;
+}
+html.high-contrast body .site-header-reference .main-nav .nav-dropdown-menu a:hover:not([aria-current="page"]),
+html.high-contrast body .site-header-reference .main-nav .nav-dropdown-menu a:focus-visible:not([aria-current="page"]) {
+  color: var(--hc-navy) !important;
+  background-color: #e7eff7 !important;
+  text-decoration: none !important;
+}
+/* Match the regular navbar treatment: a navy underline, without a filled item. */
+html.high-contrast body .site-header-reference .main-nav > a:hover,
+html.high-contrast body .site-header-reference .main-nav > a:focus-visible,
+html.high-contrast body .site-header-reference .main-nav > .nav-dropdown > summary:hover,
+html.high-contrast body .site-header-reference .main-nav > .nav-dropdown > summary:focus-visible,
+html.high-contrast body .site-header-reference .main-nav > .nav-dropdown[open] > summary {
+  color: var(--hc-navy) !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+}
+
+html.high-contrast body .site-header-reference .main-nav > a[aria-current="page"],
+html.high-contrast body .site-header-reference .main-nav > a[aria-current="page"]:visited,
+html.high-contrast body .site-header-reference .main-nav > a[aria-current="page"]:hover,
+html.high-contrast body .site-header-reference .main-nav > .nav-dropdown > summary[aria-expanded="true"] {
+  color: var(--hc-navy) !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+}
+
+html.high-contrast body .site-header-reference .main-nav > a::after {
+  background-color: var(--hc-navy) !important;
+}
+
+html.high-contrast body .site-header-reference .main-nav > a:hover::after,
+html.high-contrast body .site-header-reference .main-nav > a:focus-visible::after,
+html.high-contrast body .site-header-reference .main-nav > a[aria-current="page"]::after {
+  display: block !important;
+  content: "" !important;
+  background-color: var(--hc-navy) !important;
+  opacity: 1 !important;
+}
+
+html.high-contrast body .site-header-reference .main-nav > .nav-dropdown > summary::after,
+html.high-contrast body .site-header-reference .main-nav > .nav-dropdown > summary:hover::after,
+html.high-contrast body .site-header-reference .main-nav > .nav-dropdown > summary:focus-visible::after,
+html.high-contrast body .site-header-reference .main-nav > .nav-dropdown[open] > summary::after {
+  background-color: var(--hc-navy) !important;
+}
+html.high-contrast body .site-header-reference .main-nav > a,
+html.high-contrast body .site-header-reference .main-nav > .nav-dropdown > summary {
+  font-weight: 500 !important;
+}
+/* Remove the legacy inset active marker so only the navbar underline remains. */
+html.high-contrast body :is(
+  .site-header-reference .main-nav a[aria-current="page"],
+  .site-header-reference .main-nav a[aria-current="page"]:visited
+) {
+  color: var(--hc-navy) !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+}
+/* Footer links stay clean in high contrast; the chatbot action blends into navy. */
+html.high-contrast body .site-footer a,
+html.high-contrast body .site-footer a:link,
+html.high-contrast body .site-footer a:visited,
+html.high-contrast body .site-footer a:hover {
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+
+html.high-contrast body .site-footer .footer-reference-col nav button,
+html.high-contrast body .site-footer .footer-reference-col nav button:hover {
+  color: #ffffff !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  text-decoration: none !important;
+}
+
+/* Keep footer and program-detail breadcrumb links free of decorative underlines. */
+html.high-contrast body footer.site-footer .footer-school a,
+html.high-contrast body footer.site-footer .footer-navigation .footer-reference-col nav a,
+html.high-contrast body footer.site-footer .footer-bottom a,
+html.high-contrast body .program-detail-page .program-detail-breadcrumb a {
+  text-decoration: none !important;
+  text-decoration-line: none !important;
+  text-decoration-color: transparent !important;
+  border-bottom: 0 !important;
+  background-image: none !important;
+}
+
+/* Keep the program-list chatbot prompt readable on its blue panel. */
+html.high-contrast body .program-help.desktop-program-help h2,
+html.high-contrast body .program-help.desktop-program-help p {
+  color: #ffffff !important;
+}
+
+/* High contrast must never add underlines to text anywhere on the site. */
+html.high-contrast,
+html.high-contrast::before,
+html.high-contrast::after,
+html.high-contrast body,
+html.high-contrast body::before,
+html.high-contrast body::after,
+html.high-contrast body *,
+html.high-contrast body *::before,
+html.high-contrast body *::after {
+  text-decoration: none !important;
+  text-decoration-line: none !important;
+  text-decoration-color: transparent !important;
+  text-decoration-thickness: 0 !important;
+  text-underline-offset: 0 !important;
+}

@@ -4,7 +4,7 @@ export const PUBLIC_NAVIGATION = [
   { href: "/", label: "Beranda" },
   { href: "/tentang", label: "Program Studi" },
   { href: "/informasi", label: "Berita" },
-  { href: "/pengumuman", label: "Pengumuman" },
+  { href: "/pelaksanaan", label: "Pengumuman" },
   { href: "/agenda", label: "Agenda" },
   { href: "/organisasi", label: "Organisasi" },
   { href: "/galeri", label: "Galeri" }
@@ -17,7 +17,7 @@ export const PUBLIC_KNOWLEDGE_ROUTES: { path: string; title: string; section?: k
   { path: "/kesiswaan", title: "Kesiswaan", section: "kesiswaan" },
   { path: "/osis", title: "Organisasi siswa", section: "kesiswaan" },
   { path: "/informasi", title: "Berita dan informasi", section: "informasi" },
-  { path: "/ppdb", title: "SPMB / PPDB", section: "ppdb" },
+  { path: "/pelaksanaan", title: "Pengumuman dan pelaksanaan" },
   { path: "/kontak", title: "Kontak dan FAQ", section: "kontak" }
 ] as const;
 

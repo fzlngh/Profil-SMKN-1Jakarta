@@ -276,8 +276,8 @@
   .detail-gallery { padding: 42px 0 64px; }
   .gallery-filters { gap: 8px; margin-bottom: 18px; }
   .reference-gallery-grid { gap: 13px; }
-  .reference-gallery-grid.gallery-all { grid-template-rows: repeat(5, 150px); grid-auto-rows: 150px; gap: 13px; }
-  .reference-gallery-grid.gallery-all .gallery-tile { border-radius: 10px; }
+  .reference-gallery-grid.gallery-all { grid-template-rows: none; grid-auto-rows: auto; gap: 0 20px; }
+  .reference-gallery-grid.gallery-all .gallery-tile { border-radius: 0; }
   .reference-gallery-grid.gallery-filtered { grid-auto-rows: 190px; gap: 13px; }
   .gallery-more { display: block; margin: 22px auto 0; padding: 0 18px; }
 
@@ -343,7 +343,6 @@
     right: 61px !important;
   }
 
-  .program-row-mobile-extra { display: grid !important; }
   .program-help.desktop-program-help { margin-bottom: 64px !important; }
 
   .pixel-industry .pixel-partners-desktop {
@@ -454,4 +453,117 @@
 }
 .chat-widget .chat-loading{
   margin:0 0 0 34px; padding:8px 12px; border-radius:12px; background:#eceff7; color:#5b6b88;
+}
+.chatbot-page-intro{display:grid;min-height:210px;place-items:center;padding:36px 24px;background:linear-gradient(135deg,#0b2344,#17459d);color:#fff;text-align:center}
+.chatbot-page-intro p{margin:0 0 10px;color:#b9d0f3;font-size:11px;font-weight:700;letter-spacing:.16em}
+.chatbot-page-intro h1{margin:0;font-size:clamp(28px,4vw,42px)}
+.chatbot-page-intro span{display:block;margin-top:10px;color:#dce7fb;font-size:15px}
+.chat-widget-page{position:fixed;inset:0;z-index:2000;display:grid;place-items:center;padding:18px;background:rgba(6,23,52,.7);backdrop-filter:blur(5px)}
+.chat-widget-page .chat-panel{position:relative;inset:auto;width:min(820px,100%);height:min(760px,calc(100dvh - 36px));max-height:calc(100dvh - 36px);border-radius:22px}
+.chat-widget-page .chat-brand-row{min-height:82px;flex-basis:82px}
+.pixel-campus-bot span{width:max-content;max-width:min(220px,calc(100vw - 110px));padding:9px 12px;font-size:12px;line-height:1.35}
+.chat-trigger-icon img{width:100%;height:100%;object-fit:contain}
+.chat-greeting-open{color:inherit;text-decoration:none}
+.chat-greeting-open:hover span{text-decoration:underline;text-decoration-color:#b9c8e0;text-underline-offset:3px}
+.pixel-cta-start{display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+.pixel-cta-mascot-link{position:absolute;top:50%;right:30px;z-index:2;display:block;width:185px;height:185px;transform:translateY(-50%)}
+.pixel-cta-mascot-link .pixel-cta-mascot{position:static!important;width:100%!important;height:100%!important;transform:none!important}
+@media(max-width:620px){.chat-widget-page{padding:max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))}.chat-widget-page .chat-panel{width:100%;height:100%;max-height:100%;border-radius:18px}.chatbot-page-intro{min-height:175px;padding:26px 16px}.pixel-campus-bot span{font-size:10px}.pixel-cta-mascot-link{position:relative;top:auto;right:auto;width:76px;height:76px;flex:0 0 76px;margin:0 auto;transform:none}.pixel-cta-mascot-link .pixel-cta-mascot{display:block;width:100%;height:100%;margin:0;object-fit:contain}}
+.pixel-org-grid>article{position:relative;display:flex;overflow:hidden;flex-direction:column;align-items:stretch;gap:0;padding:0 0 12px;border:1px solid #e0e7f0;border-radius:9px;background:#fff;color:#263a5a;box-shadow:0 4px 12px #14294d08}
+.pixel-org-grid>article>b{padding:0 11px;font:700 14px/1.25 var(--font-chakra),var(--font-inter),sans-serif}
+.pixel-org-grid>article>b small{margin-top:4px;color:#7b8798;font:400 9px/1.35 var(--font-inter),Arial,sans-serif}
+@media(max-width:620px){.pixel-org-grid{display:flex!important;gap:10px;overflow-x:auto;padding:0 1px 5px;scroll-snap-type:x mandatory;scrollbar-width:none}.pixel-org-grid>article{flex:0 0 78%;min-width:0;scroll-snap-align:start}.pixel-org-grid>article .org-photo{width:100%;height:100px!important;margin:0 0 8px}.pixel-org-grid>article>b{padding:0 9px}}
+.program-reference-page .program-info .program-tags{display:flex!important;flex-wrap:wrap;align-items:center;gap:7px;width:fit-content;max-width:100%;}
+.program-reference-page .program-info .program-tags>span{flex:0 0 auto;width:max-content!important;min-width:0;max-width:100%;padding:4px 9px;text-align:left;line-height:1.25;white-space:nowrap}
+.program-detail-page .program-detail-tags{display:flex;flex-wrap:wrap;align-items:center;gap:5px}
+.program-detail-page .program-detail-tags>span{flex:0 0 auto;width:max-content;min-width:0;max-width:100%;padding:3px 7px;text-align:left;line-height:1.25;white-space:nowrap}
+@media(max-width:760px){.program-reference-page .program-info .program-tags{gap:5px}.program-reference-page .program-info .program-tags>span{padding:3px 7px;font-size:7px}.program-detail-page .program-detail-tags>span{font-size:6px}}
+
+/* Shift the mobile mascot and its original upper-left bubble slightly right. */
+@media (max-width: 620px) {
+  .pixel-campus-bot { right: -14px !important; }
+}
+
+/* Use a shorter WilhelBot label on mobile only; desktop keeps the original copy. */
+@media (max-width: 620px) {
+  .pixel-campus-bot span { font-size: 0 !important; }
+  .pixel-campus-bot span::before {
+    content: "Tanya WilhelBot";
+    display: inline;
+    font-size: 12px;
+    line-height: 1.2;
+  }
+}
+/* Mobile partner list: six cards first, then reveal the remaining five on demand. */
+.pixel-partners-more { display: none !important; }
+@media (max-width: 620px) {
+  .pixel-partners-more { display: flex !important; }
+  .pixel-partners:not(.is-expanded) > .partner-extra,
+  .pixel-partners:not(.is-expanded) > .pixel-partner-cta { display: none !important; }
+  .pixel-partners.is-expanded > .partner-extra,
+  .pixel-partners.is-expanded > .pixel-partner-cta { display: flex !important; }
+  .pixel-partners.is-expanded > .pixel-partner-cta { grid-column: 1 / -1; }
+}
+/* Keep partner marks fully visible on mobile. */
+@media (max-width: 620px) {
+  .pixel-partners article > img {
+    box-sizing: border-box;
+    padding: 5px;
+    background: #fff;
+    object-fit: contain !important;
+    object-position: center;
+  }
+
+}
+/* Position the accessibility toggle directly above the floating mascot on phones. */
+@media (max-width: 620px) {
+  .access-widget { right: 21px !important; bottom: 86px !important; }
+}
+/* Keep the mobile accessibility popover compact and scrollable. */
+@media (max-width: 620px) {
+  .access-widget .access-panel {
+    width: min(300px, calc(100vw - 32px)) !important;
+    max-height: min(35vh, 260px) !important;
+    gap: 8px !important;
+    padding: 12px !important;
+  }
+}
+/* Standard orange square marker for eyebrow labels across page and section headers. */
+:is(
+  .pixel-heading > div > small,
+  .reference-section-heading > div > small,
+  .reference-detail-hero .page-header-path,
+  .news-page-hero .news-breadcrumb,
+  .program-page-hero .program-page-breadcrumb,
+  .program-detail-breadcrumb .program-detail-breadcrumb-text,
+  .reference-program-hero > div > small,
+  .reference-student-hero .reference-wrap > div:first-child > small,
+  .student-design-hero .reference-wrap > div:first-child > small,
+  .reference-news-hero article > small,
+  .reference-osis-hero > small,
+  .osis-design-hero > small,
+  .reference-student-values > header > small,
+  .reference-organization-chart > header > small,
+  .program-detail-section-heading > span
+)::before {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 12px;
+  background: #f59e0b;
+  content: "";
+  vertical-align: middle;
+}
+.eyebrow > span {
+  width: 9px !important;
+  height: 9px !important;
+  flex: 0 0 9px;
+  background: #f59e0b !important;
+}
+@media (min-width: 621px) {
+  .access-widget { right: 37px !important; bottom: 102px !important; }
+}
+/* Remove the placeholder icon and label over the real campus photo on phones. */
+@media (max-width: 620px) {
+  .pixel-campus-placeholder > * { display: none !important; }
 }
