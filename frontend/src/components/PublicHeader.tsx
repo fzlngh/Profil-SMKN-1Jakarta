@@ -57,7 +57,7 @@ export function PublicHeader() {
       <div className={`mobile-menu${menuOpen ? " is-open" : ""}`} id="mobile-navigation" aria-hidden={!menuOpen} role="dialog" aria-modal={menuOpen || undefined} aria-label="Menu navigasi">
         <div className="mobile-menu-top"><div className="mobile-menu-brand"><SchoolMark /><span>SMK Negeri 1 Jakarta<small>SEKOLAH KEJURUAN</small></span></div><button type="button" aria-label="Tutup menu" onClick={closeMenu}>×</button></div>
         <nav aria-label="Navigasi mobile">
-          {PUBLIC_NAVIGATION.map((item, index) => <Link key={item.href} href={item.href} aria-current={pathname === item.href ? "page" : undefined} onClick={closeMenu}><small>{String(index + 1).padStart(2, "0")}</small><span>{item.label}</span><b aria-hidden="true">→</b></Link>)}
+          {PUBLIC_NAVIGATION.map((item, index) => <Link key={item.href} href={item.href} aria-current={pathname === item.href ? "page" : undefined} onClick={closeMenu}><small>{String(index + 1).padStart(2, "0")}</small><span>{item.label}</span></Link>)}
         </nav>
         <div className="mobile-menu-actions">
           <ChatOpenLink className="mobile-menu-chat" onClick={closeMenu}><span>Tanya WilhelBot<small>Asisten virtual · online 24/7</small></span><b aria-hidden="true">›</b></ChatOpenLink>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCmsPublicFeed } from "@/lib/cms-public";
 import { demoNews } from "@/lib/demo-news";
+import { getNewsImage } from "@/lib/news-images";
 
 type Props = { params: { slug: string } };
 
@@ -41,9 +42,7 @@ export default async function NewsDetailPage({ params }: Props) {
       <h1>{item.title}</h1>
       <div className="news-detail-meta">{item.author_label && <span>{item.author_label}</span>}{date && <time dateTime={dateValue}>{date}</time>}</div>
     </header>
-    {item.cover_image_url || item.image_url
-      ? <img className="news-detail-cover" src={item.cover_image_url || item.image_url} alt={item.title} />
-      : <div className="news-detail-cover news-detail-cover-placeholder" role="img" aria-label={`Gambar ${item.title} belum tersedia`}><span aria-hidden="true">▧</span> Foto berita</div>}
+    <img className="news-detail-cover" src={getNewsImage(item)} alt={item.title} />
     <div className="news-detail-layout">
       <div className="news-article-body">{paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
         {item.link_url && <p><a href={item.link_url} target="_blank" rel="noopener noreferrer">Lihat sumber atau informasi terkait ↗</a></p>}

@@ -812,3 +812,73 @@ html.high-contrast body *::after {
   text-decoration-thickness: 0 !important;
   text-underline-offset: 0 !important;
 }
+
+/* Keep contact email actions readable on white surfaces in high contrast. */
+html.high-contrast body .contact-page-hero a.contact-hero-action,
+html.high-contrast body .contact-channel-card > a[href^="mailto:"] {
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  background-color: #ffffff !important;
+  border: 2px solid var(--hc-gold) !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+}
+/* Keep the mobile menu labels clear in high contrast and remove nav arrows/underlines. */
+html.high-contrast body .mobile-menu nav a,
+html.high-contrast body .mobile-menu nav a:link,
+html.high-contrast body .mobile-menu nav a:visited,
+html.high-contrast body .mobile-menu nav a:hover,
+html.high-contrast body .mobile-menu nav a:focus-visible {
+  text-decoration: none !important;
+  text-decoration-line: none !important;
+}
+
+html.high-contrast body .mobile-menu .mobile-menu-actions .mobile-menu-chat,
+html.high-contrast body .mobile-menu .mobile-menu-actions .mobile-menu-contact {
+  color: var(--hc-link) !important;
+  -webkit-text-fill-color: var(--hc-link) !important;
+  background-color: var(--hc-surface) !important;
+  border: 2px solid var(--hc-link) !important;
+  text-decoration: none !important;
+}
+
+html.high-contrast body .mobile-menu .mobile-menu-actions .mobile-menu-chat :is(span, b) {
+  color: var(--hc-link) !important;
+  -webkit-text-fill-color: var(--hc-link) !important;
+}
+
+html.high-contrast body .mobile-menu .mobile-menu-actions .mobile-menu-chat small {
+  color: var(--hc-secondary) !important;
+  -webkit-text-fill-color: var(--hc-secondary) !important;
+}
+/* Keep mobile navigation text visible when high-contrast rules target nested spans. */
+html.high-contrast body .mobile-menu nav a,
+html.high-contrast body .mobile-menu nav a :is(small, span) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background-color: transparent !important;
+}
+
+/* The universal high-contrast button surface was hiding the white back arrow. */
+html.high-contrast body .chat-widget .chat-brand-row .chat-header-actions button {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background-color: var(--hc-navy) !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: none !important;
+}
+
+html.high-contrast body .mobile-menu .mobile-menu-actions .mobile-menu-chat > span {
+  display: block;
+  color: var(--hc-link) !important;
+  -webkit-text-fill-color: var(--hc-link) !important;
+  background-color: transparent !important;
+  line-height: 1.35;
+}
+
+html.high-contrast body .mobile-menu .mobile-menu-actions .mobile-menu-chat > span small {
+  display: block;
+  margin-top: 4px;
+  color: var(--hc-secondary) !important;
+  -webkit-text-fill-color: var(--hc-secondary) !important;
+}

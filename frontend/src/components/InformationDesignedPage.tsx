@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getCmsPublicFeed, type CmsPublicItem } from "@/lib/cms-public";
 import { demoNews } from "@/lib/demo-news";
+import { getNewsImage } from "@/lib/news-images";
 import { PagedNewsGrid } from "@/components/PagedNewsGrid";
 
 function formatDate(value?: string) {
@@ -22,9 +23,7 @@ function NewsCard({ item, featured = false }: { item: CmsPublicItem; featured?: 
   return (
     <article className={featured ? "news-card news-card-featured" : "news-card"}>
       <Link className="news-card-image" href={newsHref(item)} aria-label={`Baca ${item.title}`}>
-        {item.cover_image_url || item.image_url
-          ? <img src={item.cover_image_url || item.image_url} alt="" loading="lazy" />
-          : <span aria-hidden="true"><b>▧</b>Foto berita</span>}
+        <img src={getNewsImage(item)} alt="" loading="lazy" />
       </Link>
       <div className="news-card-content">
         <span className="news-category">{item.category || (featured ? "Berita utama" : "Berita sekolah")}</span>

@@ -419,7 +419,7 @@
 }
 .chat-widget .chat-message{ max-width:86%; padding:10px 13px; border:1px solid #e4eaf4; border-radius:16px; }
 .chat-widget .chat-message-user{
-  margin-right:2px; border:0; border-bottom-right-radius:5px;
+  align-self:flex-end; margin-right:0; margin-left:auto; border:0; border-bottom-right-radius:5px;
   background:linear-gradient(135deg,#2264d6,#17459d); box-shadow:0 4px 12px rgba(23,69,157,.25);
 }
 .chat-widget .chat-message-user p{ color:#fff; }

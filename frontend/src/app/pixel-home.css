@@ -1080,9 +1080,9 @@
   .site-header-reference .brand-name::after { display:block; font-size:7px!important; }
   .site-header-reference .header-chat-button,.site-header-reference > .nav-shell { display:none!important; }
   .site-header.site-header-reference .mobile-menu-toggle { display:grid; width:36px; height:36px; flex:0 0 36px; place-items:center; padding:0; border:0; border-radius:8px; background:#eef2ff; color:#17459d; font:600 20px/1 var(--font-inter),Arial,sans-serif; cursor:pointer; }
-  .mobile-menu-backdrop { position:fixed; z-index:119; inset:0; display:block; border:0; background:rgba(5,17,39,.52); opacity:0; visibility:hidden; transition:opacity .24s ease,visibility .24s; }
+  .mobile-menu-backdrop { position:fixed; z-index:1999; inset:0; display:block; border:0; background:rgba(5,17,39,.52); opacity:0; visibility:hidden; transition:opacity .24s ease,visibility .24s; }
   .mobile-menu-backdrop.is-open { opacity:1; visibility:visible; }
-  .mobile-menu { position:fixed; z-index:120; inset:0; width:100vw; max-width:none; display:flex; flex-direction:column; box-sizing:border-box; padding:env(safe-area-inset-top) 20px calc(20px + env(safe-area-inset-bottom)); overflow-y:auto; overscroll-behavior:contain; background-color:#102653; background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px); background-size:38px 38px; color:#fff; visibility:hidden; transform:translateX(100%); transition:transform .28s cubic-bezier(.2,.75,.25,1),visibility .28s; }
+  .mobile-menu { position:fixed; z-index:2000; inset:0; width:100vw; max-width:none; display:flex; flex-direction:column; box-sizing:border-box; padding:env(safe-area-inset-top) 20px calc(20px + env(safe-area-inset-bottom)); overflow-y:auto; overscroll-behavior:contain; background-color:#102653; background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px); background-size:38px 38px; color:#fff; visibility:hidden; transform:translateX(100%); transition:transform .28s cubic-bezier(.2,.75,.25,1),visibility .28s; }
   .mobile-menu.is-open { visibility:visible; transform:translateX(0); }
   .mobile-menu-top { display:flex; min-height:74px; align-items:center; justify-content:space-between; gap:14px; }
   .mobile-menu-brand { display:flex; align-items:center; gap:10px; color:#fff; font:600 14px/1.2 var(--font-inter),Arial,sans-serif; }
@@ -1090,7 +1090,7 @@
   .mobile-menu-brand small { display:block; margin-top:4px; color:#b6c6e1; font:500 8px/1 var(--font-mono),monospace; letter-spacing:.13em; }
   .mobile-menu-top>button { width:42px; height:42px; border:0; border-radius:10px; background:#ffffff18; color:#fff; font:400 28px/1 Arial,sans-serif; cursor:pointer; }
   .mobile-menu nav { display:grid; margin-top:18px; }
-  .mobile-menu nav a { display:grid; min-height:63px; grid-template-columns:29px 1fr 20px; align-items:center; gap:0; border-bottom:1px solid #ffffff20; color:#fff; text-decoration:none; }
+  .mobile-menu nav a { display:grid; min-height:63px; grid-template-columns:29px 1fr; align-items:center; gap:0; border-bottom:1px solid #ffffff20; color:#fff; text-decoration:none; }
   .mobile-menu nav a small { color:#a9bbd8; font:500 10px var(--font-mono),monospace; }
   .mobile-menu nav a span { font:600 clamp(19px,5vw,24px)/1.1 var(--font-chakra),Arial,sans-serif; }
   .mobile-menu nav a b { color:#a9bbd8; font-size:19px; font-weight:400; }
@@ -1184,6 +1184,7 @@
 .reference-gallery-grid.gallery-all .gallery-column { display:flex; min-width:0; flex-direction:column; gap:20px; }
 .reference-gallery-grid.gallery-all .gallery-tile { position:relative; width:100%; min-height:0; flex:none; border-radius:0; }
 .reference-gallery-grid.gallery-all .gallery-tile img { object-fit:cover; }
+.reference-gallery-grid.gallery-all .gallery-tile { aspect-ratio:386.667 / 260; }
 .reference-gallery-grid.gallery-all .gallery-column-1 .tile-1 { aspect-ratio:386.667 / 300; }
 .reference-gallery-grid.gallery-all .gallery-column-1 .tile-4 { aspect-ratio:386.667 / 220; }
 .reference-gallery-grid.gallery-all .gallery-column-1 .tile-7 { aspect-ratio:386.667 / 340; }

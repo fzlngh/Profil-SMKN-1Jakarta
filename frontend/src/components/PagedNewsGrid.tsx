@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { CmsPublicItem } from "@/lib/cms-public";
+import { getNewsImage } from "@/lib/news-images";
 
 type Props = {
   items: CmsPublicItem[];
@@ -51,13 +52,13 @@ export function PagedNewsGrid({ items, currentPage, desktopPageSize, mobilePageS
   };
 
   return <>
-    <div className="news-card-grid news-grid-3">{visibleItems.map((item) => {
+    <div className="news-card-grid news-grid-3">{visibleItems.map((item, index) => {
       const slug = encodeURIComponent(item.slug || item.id);
       const excerpt = item.excerpt || item.description || item.subtitle || item.body || "";
       const date = formatDate(item.published_at || item.starts_at || item.created_at);
       return <article className="news-card" key={item.id}>
         <Link className="news-card-image" href={`${detailPath}/${slug}`} aria-label={`Baca ${item.title}`}>
-          {item.cover_image_url || item.image_url ? <img src={item.cover_image_url || item.image_url} alt="" loading="lazy" /> : <span aria-hidden="true"><b>▧</b>Foto berita</span>}
+          <img src={getNewsImage(item, index)} alt="" loading="lazy" />
         </Link>
         <div className="news-card-content">
           <span className="news-category">{item.author_label || item.category || "Berita sekolah"}</span>
