@@ -950,3 +950,59 @@ html.high-contrast body #mobile-navigation .mobile-menu-actions a * {
   text-underline-offset: 0 !important;
   -webkit-text-decoration-line: none !important;
 }
+/* Keep text white on blue panels and filled blue actions in high-contrast mode. */
+html.high-contrast body :is(
+  .program-help, .student-design-highlight, .pixel-event > b,
+  .agenda-events article > b, .calendar-days .has-event, .news-read-link
+) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background-color: var(--hc-navy) !important;
+  border-color: var(--hc-navy) !important;
+}
+
+html.high-contrast body :is(
+  .program-help, .student-design-highlight
+) :is(h1, h2, h3, h4, p, span, small, strong, b, a),
+html.high-contrast body :is(
+  .pixel-event > b, .agenda-events article > b, .calendar-days .has-event,
+  .news-read-link
+) :is(span, small, strong, b) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Footer links should not inherit the global high-contrast underline. */
+html.high-contrast body footer.site-footer,
+html.high-contrast body footer.site-footer * {
+  text-decoration: none !important;
+  text-decoration-line: none !important;
+  text-decoration-color: transparent !important;
+  text-decoration-thickness: 0 !important;
+  text-underline-offset: 0 !important;
+  -webkit-text-decoration-line: none !important;
+}
+
+html.high-contrast body footer.site-footer :is(a, button) {
+  border-bottom: 0 !important;
+  background-image: none !important;
+}
+/* Final override: high contrast never displays typographic underlines. */
+html.high-contrast body,
+html.high-contrast body *,
+html.high-contrast body *::before,
+html.high-contrast body *::after {
+  text-decoration: none !important;
+  text-decoration-line: none !important;
+  text-decoration-color: transparent !important;
+  text-decoration-thickness: 0 !important;
+  text-underline-offset: 0 !important;
+  -webkit-text-decoration-line: none !important;
+}
+
+/* Remove the separate active-item underline drawn by the desktop navigation. */
+html.high-contrast body .site-header-reference .main-nav > a::after,
+html.high-contrast body .site-header-reference .main-nav > .nav-dropdown > summary::after {
+  display: none !important;
+  content: none !important;
+}
