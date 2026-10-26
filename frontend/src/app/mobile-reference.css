@@ -645,3 +645,66 @@ html:not(.high-contrast) body :is(
 ) {
   background-color: #ffa500 !important;
 }
+/* Mobile Program Studi header matching the supplied 440x197 SVG reference. */
+@media (max-width: 700px) {
+  .program-page-hero {
+    position: relative !important;
+    min-height: 197px !important;
+    box-sizing: border-box;
+    padding: 0 !important;
+    overflow: hidden;
+    background-color: #0b2255 !important;
+    background-image: linear-gradient(#ffffff0a 1px, transparent 1px), linear-gradient(90deg, #ffffff0a 1px, transparent 1px) !important;
+    background-size: 40px 40px !important;
+  }
+
+  .program-page-hero .program-page-wrap {
+    width: calc(100% - 40px) !important;
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding: 45px 0 18px !important;
+  }
+
+  .program-page-hero .program-accent-line {
+    position: absolute;
+    top: 28px;
+    left: 20px;
+    display: block;
+    width: 40px;
+    height: 4px;
+    margin: 0;
+    background: #f5a500;
+  }
+
+  .program-page-hero .program-page-breadcrumb {
+    display: block;
+    margin: 0 0 11px !important;
+    color: #d4dcee !important;
+    font: 500 9px/12px var(--font-mono), monospace;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .program-page-hero h1 {
+    margin: 0 0 12px !important;
+    color: #ffffff !important;
+    font: 700 32px/1.12 var(--font-chakra), var(--font-inter), sans-serif !important;
+    letter-spacing: -0.025em;
+  }
+
+  .program-page-hero .program-page-description {
+    display: none;
+  }
+
+  .program-page-hero .program-page-mobile-description {
+    display: block;
+    max-width: 400px;
+    margin: 0;
+    color: #c6d1e5 !important;
+    font: 400 15px/1.45 var(--font-inter), Arial, sans-serif !important;
+  }
+}
+
+@media (min-width: 701px) {
+  .program-page-mobile-description { display: none !important; }
+}

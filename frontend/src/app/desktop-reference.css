@@ -4,7 +4,7 @@
 
 @media (max-width: 1023px) {
   .public-site-shell { display: block; }
-  .desktop-program-hero,
+  /* Program Studi keeps its shared hero visible on mobile. */
   .desktop-program-help,
   .pixel-partners-desktop,
   .desktop-cta-links,
